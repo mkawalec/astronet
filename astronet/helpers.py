@@ -1,4 +1,4 @@
-from srv import app
+from astronet import app
 from flask import (g, redirect, url_for, flash, session, request)
 
 from contextlib import closing

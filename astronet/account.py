@@ -1,6 +1,6 @@
-from infocredit import app
-from infocredit.helpers import (login_required, query_db,
-        gen_filename, save_events)
+from astronet import app
+from astronet.helpers import (login_required, query_db,
+        gen_filename)
 from flask import (Flask, request, redirect, url_for, abort,
         render_template, flash, g, session)
 
