@@ -62,6 +62,7 @@ def auth_required(f):
     return decorated
 
 from user import *
+from posts import *
 
 ################### Misc API
 
