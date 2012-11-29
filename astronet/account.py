@@ -31,7 +31,7 @@ def login():
                     
                     next = request.form['next']
                     if not next or next == 'None':
-                        return redirect(url_for('home')+'search') 
+                        return redirect(url_for('home')) 
                     else:
                         return redirect(next)
         else:
