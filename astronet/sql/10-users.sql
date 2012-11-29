@@ -13,5 +13,5 @@ CREATE TABLE users (
     -- Will be used for specifying search locale
     locale varchar(10) DEFAULT 'pl',
     -- This will define user's role
-    role varchar(5) DEFAULT 'user',
+    role varchar(5) DEFAULT 'user'
 );
