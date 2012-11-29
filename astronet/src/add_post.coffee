@@ -25,6 +25,38 @@ class MarkdownRender
             error: (data) =>
                 ajax_error data
         }
-                
+              
+
+class FormAjaxify
+    constructor: (form_id, redirect_to=null) ->
+        @bind_form form_id, redirect_to
+
+        return 0
+
+    bind_form: (form_id, redirect_to) ->
+        @form = $("##{form_id}")[0]
+        @submit_btn = $("##{form_id} btn-submit")
+
+        @submit_btn.bind 'click', (event) =>
+            # TODO: Make it work for a general form (too sleepy now
+            # to make it sane)
+            $.ajax {
+                url: script_root + '/api/post'
+                type: 'POST'
+                data:
+                    title: $('#input_title')[0].value
+                    lead: $('#input_lead')[0].value
+                    body: $('#input_body')[0].value
+                success: chk_status() =>
+                    data = argumets[0]
+
+                    alert redirect_to
+                    status_notify @form, 'success'
+                error: (data) =>
+                    ajax_error data
+            }
+
+            return 0
+
 
 render = new MarkdownRender()

@@ -1,0 +1,1 @@
+- Make loader be embeddable in objects, not only work on the full page
