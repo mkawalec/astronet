@@ -35,9 +35,10 @@ class FormAjaxify
 
     bind_form: (form_id, redirect_to) ->
         @form = $("##{form_id}")[0]
-        @submit_btn = $("##{form_id} btn-submit")
+        @submit_btn = $("##{form_id} .btn-submit")
 
         @submit_btn.bind 'click', (event) =>
+            event.preventDefault()
             # TODO: Make it work for a general form (too sleepy now
             # to make it sane)
             $.ajax {
@@ -48,9 +49,6 @@ class FormAjaxify
                     lead: $('#input_lead')[0].value
                     body: $('#input_body')[0].value
                 success: chk_status() =>
-                    data = argumets[0]
-
-                    alert redirect_to
                     status_notify @form, 'success'
                 error: (data) =>
                     ajax_error data
@@ -60,3 +58,4 @@ class FormAjaxify
 
 
 render = new MarkdownRender()
+form = new FormAjaxify('add_post')
