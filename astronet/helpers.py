@@ -116,7 +116,6 @@ def send_base64(what):
             direct_passthrough=True, status='200 OK')
 
 
-# TODO - this should differentiate between standard and ajax function
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):

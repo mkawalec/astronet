@@ -4,6 +4,7 @@ from flask import (Flask, request, redirect, url_for, abort,
         render_template, flash, jsonify, g, session, send_file)
 
 from datetime import timedelta
+from astronet.helpers import login_required
 
 SECRET_KEY = 'ddsnfkrjoireklfjdslkiro43213213m5,tsrfdeldmfxruc'
 SALT = 'nfkren<F4><F4>ffdsdsdfdewdsdfvvv'
@@ -25,3 +26,7 @@ from account import *
 def home():
     return render_template('home.html')
 
+@app.route('/add_post')
+@login_required
+def add_post():
+    return render_template('add_post.html')
