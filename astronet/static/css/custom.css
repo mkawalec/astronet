@@ -1,0 +1,31 @@
+body {
+    font-family: 'FontAwesome';
+    src: url('../font/fontawesome-webfont.eot');
+    src: url('../font/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../font/fontawesome-webfont.woff') format('woff'),
+    url('../font/fontawesome-webfont.ttf') format('truetype'),
+    url('../font/fontawesome-webfont.svg#FontAwesome') format('svg');
+}
+
+#page {
+    margin-top: 60px;
+}
+
+.navbar {
+}
+
+.brand {
+    background-image: url('../img/logo.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 42px;
+    height: 42px;
+    padding: 2px !important;
+}
+
+.company {
+    margin-bottom: 10px;
+    border: 1px dashed black;
+    padding: 2px;
+}
+

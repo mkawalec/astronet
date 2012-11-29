@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<form method="post" action="{{ url_for('login') }}">
+    <dl>
+        <dt><input type="text" name="email" class="input input-medium" placeholder="Wpisz email" />
+        <dt><input type="password" name="passwd" class="input input-medium" placeholder="Podaj hasło" />
+        <dt><a href="{{ url_for('register') }}">Nie masz konta? Zarejestruj się</a>
+        <dt><a href="{{ url_for('reset_pass') }}">Zapomniałaś hasła? Zresetuj je!</a>
+    </dl>
+
+    <input type="hidden" name="next" />
+    <input type="submit" class="btn btn-primary" value="Zaloguj" />
+</form>
+{% endblock %}

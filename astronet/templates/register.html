@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<form method="post" action="{{ url_for('register') }}">
+    <dl>
+        <dt><input type="text" name="email" class="input input-large" placeholder="Podaj swój adres email" />
+        <dt><input type="password" name="passwd1" class="input input-large" placeholder="Podaj hasło" />
+        <dt><input type="password" name="passwd2" class="input input-large" placeholder="Powtórz hasło" />
+        <dt><input type="text" name="result" class="input input-large" placeholder="Ile to {{ first }} + {{ second }}?"/>
+        <dt><a href="{{ url_for('login') }}">Masz już konto? Zaloguj się!</a>
+    </dl>
+    <input type="hidden" name="first" value="{{ first }}" />
+    <input type="hidden" name="second" value="{{ second }}" />
+    <input type="submit" class="btn btn-primary" value="Rejestruj" />
+</form>
+{% endblock %}

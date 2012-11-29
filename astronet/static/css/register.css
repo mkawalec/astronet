@@ -1,0 +1,30 @@
+#register_background {
+    background-color: #E5E5E5;
+    border-radius: 15px;
+    moz-border-radius: 15px;
+    padding: 30px 30px;
+}
+
+#submit {
+    float: right;
+    margin-top: 10px;
+}
+
+.header {
+    width: 100%;
+    text-align: center;
+    font-size: 40px;
+    line-height: 45px;
+    margin-bottom: 10px;
+}
+
+#pass_strength {
+    width: 150px;
+    height: 60px;
+    float: left;
+}
+
+.thanks {
+    width: 100%;
+    text-align: center;
+}

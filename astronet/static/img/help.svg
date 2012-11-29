@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg6361" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" sodipodi:docname="help-browser.svg" xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd" height="48px" sodipodi:version="0.32" width="48px" xmlns:cc="http://web.resource.org/cc/" xmlns:xlink="http://www.w3.org/1999/xlink" sodipodi:docbase="/home/tigert/cvs/freedesktop.org/tango-icon-theme/scalable/apps" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs3">
+  <radialGradient id="radialGradient21650" gradientUnits="userSpaceOnUse" cy="36.75" cx="25.125" gradientTransform="matrix(1 0 0 .59524 3.3697e-16 14.875)" r="15.75">
+   <stop id="stop21646" offset="0"/>
+   <stop id="stop21648" stop-opacity="0" offset="1"/>
+  </radialGradient>
+  <radialGradient id="radialGradient2207" gradientUnits="userSpaceOnUse" cy="28.459" cx="26.544" gradientTransform="matrix(1.2383 .0059548 -.0065078 1.3513 -6.9925 -9.7448)" r="22.376">
+   <stop id="stop2935" stop-color="#9cbcde" offset="0"/>
+   <stop id="stop2937" stop-color="#204a87" offset="1"/>
+  </radialGradient>
+  <radialGradient id="radialGradient2437" gradientUnits="userSpaceOnUse" cy="16.856" cx="-19.516" gradientTransform="matrix(4.446 -8.8526e-16 1.3672e-15 6.8665 67.251 -104.67)" r="8.7536">
+   <stop id="stop2433" stop-color="#fff" offset="0"/>
+   <stop id="stop2435" stop-color="#b8b8b8" offset="1"/>
+  </radialGradient>
+ </defs>
+ <sodipodi:namedview id="base" gridempcolor="#7b7bc3" borderopacity="0.15294118" gridcolor="#7171cd" gridopacity="0.12156863" fill="#deb887" showgrid="true" bordercolor="#666666" pagecolor="#ffffff" gridempspacing="10" stroke="#204a87" gridempopacity="0.5372549" showguides="true"/>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>Help Browser</dc:title>
+    <dc:date>2005-11-06</dc:date>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Tuomas Kuosmanen</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>help</rdf:li>
+      <rdf:li>browser</rdf:li>
+      <rdf:li>documentation</rdf:li>
+      <rdf:li>docs</rdf:li>
+      <rdf:li>man</rdf:li>
+      <rdf:li>info</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+    <cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/2.0/"/>
+    <dc:contributor>
+     <cc:Agent>
+      <dc:title>Jakub Steiner, Andreas Nilsson</dc:title>
+     </cc:Agent>
+    </dc:contributor>
+    <dc:source>http://tigert.com</dc:source>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/licenses/by-sa/2.0/">
+    <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/Notice"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/Attribution"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/ShareAlike"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1">
+  <path id="path21642" sodipodi:rx="15.750000" sodipodi:ry="9.3750000" style="color:#000000" sodipodi:type="arc" d="m40.875 36.75a15.75 9.375 0 1 1 -31.5 0 15.75 9.375 0 1 1 31.5 0z" fill-rule="evenodd" opacity=".63068" transform="matrix(1.1738 0 0 0.6 -5.0044 20.325)" sodipodi:cy="36.750000" sodipodi:cx="25.125000" fill="url(#radialGradient21650)"/>
+  <path id="path2093" sodipodi:rx="21.876116" sodipodi:ry="21.876116" sodipodi:type="arc" d="m45.785 23.826a21.876 21.876 0 1 1 -43.752 0 21.876 21.876 0 1 1 43.752 0z" transform="matrix(.93844 0 0 .93868 1.5641 1.6339)" stroke="#204a87" sodipodi:cy="23.825787" sodipodi:cx="23.909048" fill="url(#radialGradient2207)"/>
+  <path id="path2209" sodipodi:rx="21.876116" sodipodi:ry="21.876116" sodipodi:type="arc" d="m45.785 23.826a21.876 21.876 0 1 1 -43.752 0 21.876 21.876 0 1 1 43.752 0z" opacity=".96023" transform="matrix(.85510 0 0 .85521 3.5553 3.625)" stroke="#fff" sodipodi:cy="23.825787" sodipodi:cx="23.909048" stroke-width="3.0308" fill="none"/>
+  <path id="path1554" sodipodi:type="inkscape:offset" d="m-20.25 5.875c-1.059 0-2.148 0.1232-3.281 0.3438-1.133 0.2204-2.38 0.5375-3.75 1-0.011-0.0013-0.021-0.0013-0.031 0-0.013 0.0086-0.023 0.0191-0.032 0.0312-0.012 0.0086-0.022 0.0192-0.031 0.0312-0.001 0.0104-0.001 0.0209 0 0.0313-0.001 0.0104-0.001 0.0209 0 0.0313v5.1562c-0.001 0.01-0.001 0.021 0 0.031-0.001 0.011-0.001 0.021 0 0.031 0.009 0.013 0.019 0.023 0.031 0.032 0.009 0.012 0.019 0.022 0.032 0.031 0.01 0.001 0.02 0.001 0.031 0 0.01 0.001 0.021 0.001 0.031 0 0.01 0.001 0.021 0.001 0.031 0 0.011 0.001 0.021 0.001 0.031 0 1.143-0.719 2.234-1.267 3.282-1.625 1.048-0.369 2.043-0.562 2.937-0.562 0.949 0 1.645 0.21 2.157 0.624 0.508 0.403 0.781 0.984 0.781 1.719 0 0.481-0.144 0.952-0.438 1.438-0.283 0.487-0.74 1.03-1.375 1.593l-1.094 0.938c-1.201 1.08-1.989 1.991-2.374 2.719-0.384 0.711-0.563 1.519-0.563 2.437v0.813c-0.001 0.01-0.001 0.021 0 0.031-0.001 0.01-0.001 0.021 0 0.031 0.009 0.012 0.019 0.023 0.031 0.031 0.009 0.013 0.019 0.023 0.032 0.032 0.01 0.001 0.02 0.001 0.031 0 0.01 0.001 0.021 0.001 0.031 0h6.094c0.01 0.001 0.021 0.001 0.031 0 0.01 0.001 0.021 0.001 0.031 0 0.012-0.009 0.023-0.019 0.032-0.032 0.012-0.008 0.022-0.019 0.031-0.031 0.001-0.01 0.001-0.021 0-0.031 0.001-0.01 0.001-0.021 0-0.031v-0.75c0-0.468 0.148-0.893 0.375-1.281 0.222-0.392 0.708-0.951 1.468-1.626l1.063-0.937c1.067-0.982 1.831-1.885 2.281-2.75 0.45-0.874 0.688-1.873 0.688-2.969 0-2.126-0.744-3.7338-2.219-4.8435-1.475-1.121-3.606-1.6875-6.375-1.6875zm-3.562 19.156c-0.013 0.009-0.023 0.019-0.032 0.031-0.012 0.009-0.022 0.02-0.031 0.032-0.001 0.01-0.001 0.021 0 0.031-0.001 0.01-0.001 0.021 0 0.031v5.844c-0.001 0.01-0.001 0.021 0 0.031-0.001 0.011-0.001 0.021 0 0.031 0.009 0.013 0.019 0.023 0.031 0.032 0.009 0.012 0.019 0.022 0.032 0.031 0.01 0.001 0.02 0.001 0.031 0 0.01 0.001 0.021 0.001 0.031 0h6.094c0.01 0.001 0.021 0.001 0.031 0 0.01 0.001 0.021 0.001 0.031 0 0.012-0.009 0.023-0.019 0.032-0.031 0.012-0.009 0.022-0.019 0.031-0.032 0.001-0.01 0.001-0.02 0-0.031 0.001-0.01 0.001-0.021 0-0.031v-5.844c0.001-0.01 0.001-0.021 0-0.031 0.001-0.01 0.001-0.021 0-0.031-0.009-0.012-0.019-0.023-0.031-0.032-0.009-0.012-0.02-0.022-0.032-0.031-0.01-0.001-0.021-0.001-0.031 0-0.01-0.001-0.021-0.001-0.031 0h-6.094c-0.01-0.001-0.021-0.001-0.031 0-0.011-0.001-0.021-0.001-0.031 0z" stroke-opacity=".78613" xlink:href="#text2215" transform="matrix(.84990 0 0 .83520 41.73 8.5483)" stroke="#fff" stroke-width="1.0995px" fill="url(#radialGradient2437)"/>
+ </g>
+</svg>

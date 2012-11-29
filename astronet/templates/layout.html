@@ -1,0 +1,74 @@
+<!doctype html>
+<title>Infocredit</title>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.8.2.min.js') }}">
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}">
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sonic.js') }}">
+</script>
+
+
+<script type="text/javascript">
+    var script_root = {{ request.script_root|tojson|safe }};
+    var url_root = {{ request.url_root|tojson|safe }};
+</script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/helpers.js') }}">
+</script>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" >
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}" >
+
+{% block header %}{% endblock %}
+
+
+<div class="container" id="container">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <div class="brand"></div>
+                <ul class="nav">
+                    {% if not session.logged_in %}
+                    <li><a href="{{ url_for('login', next='None') }}">Zaloguj się</a></li>
+                    <li><a href="{{ url_for('register', next='None') }}">Rejestruj się</a></li>
+                    <li><a href="{{ url_for('reset_pass') }}">Resetuj hasło</a></li>
+                    {% else %}
+                    {% if session.role == 'manag' %}
+                        <li><a href="/find_attendee">Szukaj płatnika</a></li>
+                        <li><a href="/search">Szukaj firmy</a></li>
+                    {% else %}
+                        <li><a href="/search">Szukaj</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('history') }}">Historia</a></li>
+                    <li><a href="{{ url_for('settings') }}">Ustawienia</a></li>
+                    <li><a href="{{ url_for('catalogue') }}">Wpis katalogowy</a></li>
+                    <li><a href="{{ url_for('orders') }}">Zamówienia</a></li>
+                    <li><a href="{{ url_for('logout') }}">Wyloguj się</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="page">
+        <div class="alerts" style="margin-top:10px;margin-left: 20px;width:940px;">
+            {% for category, message in get_flashed_messages(with_categories=true) %}
+            <div class='alert alert-{{ category}}'>
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="row" style="margin-top: 5px">
+            {% block body %}{% endblock %}
+        </div>    
+    </div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/global.js') }}">
+</script>
+{% block footer %}
+{% endblock %}
