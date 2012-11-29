@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<form method="post" action"{{ url_for('api.post') }}" class="form-horizontal">
+    <legend>Dodaj posta</legend>
+    <div class="control-group">
+        <label class="control-label" for="input_title">Tytuł</label>
+        <div class="controls">
+            <input type="text" id="input_title" name="title" class="input-large" placeholder="Podaj tytuł" />
+        </div>
+    </div>
+</form>
+{% endblock %}
