@@ -30,11 +30,16 @@
                         <textarea rows="20" type="text" id="input_body" name="body" class="input-xxlarge" placeholder="Podaj treść. Pamiętaj o tym, że to pole wspiera markdown"></textarea>
                     </div>
                     <div class="tab-pane" id="rendered_tab">
-                        <p>Placeholder</p>
+                        <div id="markdown_render"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </form>
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/add_post.js') }}">
+</script>
 {% endblock %}

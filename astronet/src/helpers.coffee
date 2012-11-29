@@ -289,7 +289,7 @@ getbbox = (width, height, t_width=180, t_height=170) ->
     return [mult*width, mult*height]
 
 # Checks a json return status. A decorator
-chk_status = (error_handler, waiter=null) -> (method) -> ->
+chk_status = (waiter=null) -> (method) -> ->
     console.log arguments[0].status
     if waiter?
         clearInterval waiter
@@ -297,6 +297,8 @@ chk_status = (error_handler, waiter=null) -> (method) -> ->
     if arguments[0].status == 'succ'
         return method.apply @, arguments
     else
-        return method.apply error_handler, [arguments[0], 'error']
+        return method.apply ajax_error, [arguments[0], 'error']
 
-
+ajax_error = (data) ->
+    console.log 'error'
+    console.log data

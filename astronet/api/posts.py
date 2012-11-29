@@ -21,4 +21,4 @@ def post():
 @api.route('/post/preview', methods=['POST'])
 @auth_required
 def post_preview():
-    return jsonify(status='succ', preview = markdown(request.form['post_body']))
+    return jsonify(status='succ', preview=markdown(request.form['post_body']))

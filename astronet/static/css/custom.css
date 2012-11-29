@@ -32,3 +32,8 @@ body {
 .tab-pane {
     width: auto;
 }
+
+#markdown_render {
+    border: 1px dashed black;
+    padding: 5px;
+}
