@@ -20,7 +20,20 @@
     <div class="control-group">
         <label class="control-label" for="input_body">Treść newsa</label>
         <div class="controls">
-            <textarea rows="20" type="text" id="input_body" name="body" class="input-xxlarge" placeholder="Podaj treść. Pamiętaj o tym, że to pole wspiera markdown"></textarea>
+            <div class="tabbable tabs-right">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#source_tab" data-toggle="tab">Źródło</a></li>
+                    <li><a href="#rendered_tab" data-toggle="tab">Render</a></li>
+                </ul>
+                <div class="tab-content">    
+                    <div class="tab-pane active" id="source_tab">
+                        <textarea rows="20" type="text" id="input_body" name="body" class="input-xxlarge" placeholder="Podaj treść. Pamiętaj o tym, że to pole wspiera markdown"></textarea>
+                    </div>
+                    <div class="tab-pane" id="rendered_tab">
+                        <p>Placeholder</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </form>

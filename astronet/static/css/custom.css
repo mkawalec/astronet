@@ -29,3 +29,6 @@ body {
     padding: 2px;
 }
 
+.tab-pane {
+    width: auto;
+}

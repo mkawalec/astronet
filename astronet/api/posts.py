@@ -1,6 +1,8 @@
 from ..api import api, auth_required, query_db
 from flask import (request, g, jsonify, abort)
 
+from markdown import markdown
+
 @api.route('/post', methods=['POST'])
 @auth_required
 def post():
@@ -15,3 +17,8 @@ def post():
         elif ret == -1:
             return jsonify(status='db_constraints_error')
         return jsonify(status='db_error')
+
+@api.route('/post/preview', methods=['POST'])
+@auth_required
+def post_preview():
+    return jsonify(status='succ', preview = markdown(request.form['post_body']))
