@@ -13,7 +13,7 @@ def login():
 
     if request.method == 'POST':
         email = request.form['email']
-        user = query_db('SELECT id,passwd,real_name,email,salt'
+        user = query_db('SELECT id,passwd,real_name,email,salt '
                         'FROM users WHERE email=%s',
                         [email], one=True)
 
