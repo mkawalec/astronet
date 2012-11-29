@@ -3,5 +3,7 @@ CREATE TABLE posts (
     author bigint REFERENCES users(id),
     title varchar(300) NOT NULL UNIQUE,
     contents varchar,
-    draft boolean DEFAULT FALSE
+    draft boolean DEFAULT FALSE,
+
+    timestamp timestamp DEFAULT now()
 );
