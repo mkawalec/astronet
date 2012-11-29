@@ -13,8 +13,8 @@ DB = 'astronet'
    
 app = Flask(__name__)
 
-#from infocredit.api import api
-#app.register_blueprint(api, url_prefix='/api')
+from astronet.api import api
+app.register_blueprint(api, url_prefix='/api')
 
 app.config.from_object(__name__)
 
