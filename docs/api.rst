@@ -26,3 +26,12 @@ User account
 .. autofunction:: user_email
 
 .. autofunction:: user_password
+
+Post functions
+--------------
+
+.. module:: astronet.api.posts
+
+.. autofunction:: post
+
+.. autofunction:: post_preview

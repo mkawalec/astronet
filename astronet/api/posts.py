@@ -6,7 +6,7 @@ from markdown import markdown
 @api.route('/post', methods=['POST'])
 @auth_required
 def post(post=None):
-    # We want to save a post
+    """ Saves a post """
     if request.method == 'POST':
         if post == None:
             post = request.form
@@ -23,4 +23,5 @@ def post(post=None):
 @api.route('/post/preview', methods=['POST'])
 @auth_required
 def post_preview():
+    """ Gets a markdown post preview """
     return jsonify(status='succ', preview=markdown(request.form['post_body']))
