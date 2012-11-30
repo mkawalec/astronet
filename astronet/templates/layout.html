@@ -37,6 +37,7 @@
                     <li><a href="{{ url_for('register', next='None') }}">Rejestruj się</a></li>
                     <li><a href="{{ url_for('reset_pass') }}">Resetuj hasło</a></li>
                     {% else %}
+                    <li><a href="{{ url_for('add_post') }}">Dodaj posta</a></li>
                     <li><a href="{{ url_for('logout') }}">Wyloguj się</a></li>
                     {% endif %}
                 </ul>

@@ -38,6 +38,7 @@ def post_preview():
 
 @api.route('/posts')
 def get_posts():
+    """ Returns all posts visible to the user """
     ret = query_db('SELECT author, title, lead, string_id FROM posts WHERE '
                    'draft=FALSE ORDER BY id DESC')
     return jsonify(status='succ', posts=ret)

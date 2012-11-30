@@ -30,6 +30,7 @@ def home():
 
 @app.route('/post/<string_id>')
 def show_post(string_id):
+    """ Show a post with a given id """
     news = json.loads(post(string_id=string_id).data)
     if news['status'] == 'succ':
         return render_template('show_post.html', post=news['post'])

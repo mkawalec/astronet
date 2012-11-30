@@ -37,6 +37,8 @@ Main views
 
 .. autofunction:: add_post
 
+.. autofunction:: show_post
+
 
 Helper functions
 ----------------

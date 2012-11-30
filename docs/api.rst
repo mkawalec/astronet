@@ -35,3 +35,5 @@ Post functions
 .. autofunction:: post
 
 .. autofunction:: post_preview
+
+.. autofunction:: get_posts
