@@ -2,3 +2,4 @@
 - Add Mozilla Persona login
     - when a new person logs in with persona she has an entry
       corresponding to her email created in users table
+- Validators on fields
