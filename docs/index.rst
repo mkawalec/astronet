@@ -11,7 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-
+.. module:: astronet
 
 Indices and tables
 ==================
