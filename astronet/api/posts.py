@@ -1,13 +1,21 @@
-from ..api import api, auth_required, query_db
+from ..api import api, auth_required, query_db, gen_filename
 from flask import (request, g, jsonify, abort)
 
 from markdown import markdown
 
 @api.route('/post', methods=['POST'])
+@api.route('/post/<string_id>')
 @auth_required
-def post(post=None):
-    """ Saves a post """
-    if request.method == 'POST':
+def post(post=None, string_id=None):
+    """ Saves or gets a post """
+    if request.method == 'GET' and string_id:
+        ret = query_db('SELECT author, title, body FROM posts WHERE '
+                       'draft=FALSE AND string_id=%s', (string_id,),
+                       one=True)
+        if ret == None:
+            return jsonify(status='db_null_error')
+        return jsonify(status='succ', post=ret)
+    elif request.method == 'POST':
         if post == None:
             post = request.form
 
@@ -28,6 +36,6 @@ def post_preview():
 
 @api.route('/posts')
 def get_posts():
-    ret = query_db('SELECT author, title, lead FROM posts WHERE '
+    ret = query_db('SELECT author, title, lead, string_id FROM posts WHERE '
                    'draft=FALSE ORDER BY id DESC')
     return jsonify(status='succ', posts=ret)

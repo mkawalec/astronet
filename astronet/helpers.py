@@ -115,9 +115,8 @@ def gen_filename(length=10):
              'U', 'W', 'Q', 'X', 'Y', 'Z', '1', '2', '3', '4', '5',
              '6', '7', '8', '9', '0']
     
-    for i in range(number):
+    for i in range(length):
         filename += chars[randint(0, len(chars)-1)]
-
     return filename
 
 ## Sends to the client a StringIO object not analysing

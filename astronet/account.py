@@ -161,6 +161,6 @@ def register():
 
         else:
             flash('Error adding you', 'error')
-        return redirect(url_for('search'))
+        return redirect(url_for('home'))
     return render_template('register.html', first=randint(1,20), second=randint(1,20))
 

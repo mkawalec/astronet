@@ -1,6 +1,6 @@
 # coding=utf-8
 from .. import app
-from ..helpers import query_db, login_required
+from ..helpers import query_db, login_required, gen_filename
 from flask import (Blueprint, render_template,
         abort, request, Response, g, jsonify, session)
 from hashlib import sha256
