@@ -28,6 +28,15 @@ def home():
     posts = json.loads(get_posts().data)['posts']
     return render_template('home.html', posts=posts)
 
+@app.route('/post/<string_id>')
+def show_post(string_id):
+    news = json.loads(post(string_id=string_id).data)
+    if news['status'] == 'succ':
+        return render_template('show_post.html', post=news['post'])
+    else:
+        flash(u'Błąd przy pobieraniu posta!', 'error')
+        return redirect(url_for('home'))
+
 @app.route('/add_post', methods=['POST', 'GET'])
 @login_required
 def add_post():

@@ -8,12 +8,14 @@ from markdown import markdown
 @auth_required
 def post(post=None, string_id=None):
     """ Saves or gets a post """
-    if request.method == 'GET' and string_id:
+    if string_id:
         ret = query_db('SELECT author, title, body FROM posts WHERE '
                        'draft=FALSE AND string_id=%s', (string_id,),
                        one=True)
         if ret == None:
             return jsonify(status='db_null_error')
+
+        ret['body'] = markdown(ret['body'])
         return jsonify(status='succ', post=ret)
     elif request.method == 'POST':
         if post == None:
