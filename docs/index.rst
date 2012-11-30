@@ -25,6 +25,16 @@ Account
 
 .. autofunction:: reset_pass
 
+Main views
+==========
+
+.. module:: astronet
+
+.. autofunction:: home
+
+.. autofunction:: add_post
+
+
 Helper functions
 ================
 

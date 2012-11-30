@@ -24,11 +24,15 @@ from account import *
 
 @app.route('/')
 def home():
+    """ Return the homepage with all the posts """
     return render_template('home.html')
 
 @app.route('/add_post', methods=['POST', 'GET'])
 @login_required
 def add_post():
+    """ Generate the posts addition template when accessed with **GET** and 
+        add a post when accessed with **POST**
+    """
     if request.method == 'POST':
         ret = post(request.form)
         if json.loads(ret)['status'] == 'succ':
