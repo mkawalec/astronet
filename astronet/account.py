@@ -1,3 +1,4 @@
+# coding=utf-8
 from astronet import app
 from astronet.helpers import (login_required, query_db,
         gen_filename)
@@ -9,6 +10,19 @@ from random import randint
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """ Displays a login template when accessed with **GET** and loggs
+        the user in when accessed with **POST**.
+
+        The **POST** request must have the following::
+            
+            request.form = {
+                'email': user_email,
+                'passwd': user_password
+            }
+
+        .. WARNING::
+            This function will not work nicely with JSON-supporting scripts
+    """
     email = ''
 
     if request.method == 'POST':
@@ -23,6 +37,12 @@ def login():
         elif user['passwd'] == (
                 sha256(request.form['passwd'] + user['salt'] +
                     app.config['SALT']).hexdigest()):
+                    
+                    # Check if this user is already logged in
+                    if 'logged_in' in session and session['logged_in']:
+                        flash(u'Ten użytkownik już jest zalogowany!')
+                        return redirect(url_for('home'))
+
                     session['logged_in'] = True
                     session['email'] = user['email']
                     session['uid'] = user['id']
@@ -43,6 +63,8 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    """ When accessed with **GET**, loggs the currently logged in
+        user out """
     if 'logged_in' in session:
         if session['logged_in']:
             del session['logged_in']
@@ -63,10 +85,30 @@ def logout():
 # TODO: Implement
 @app.route('/password_reset', methods=['POST', 'GET'])
 def reset_pass():
+    """ A template of password resetter """
     return render_template('reset_pass.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """ Register a user if certain conditions are met. Renders a registration
+        template if accessed with **GET** and tries to register if
+        queried by **POST**
+
+        Requires the following parameters::
+            
+            request.form = {
+                'passwd1': password_first_time,
+                'passwd2': password_second_time,
+                'first': first_number,
+                'second': second_number,
+                'result': sum_of_numbers,
+                'email': users_email
+            }
+
+        The numbers are a basic captcha, in order to register
+        the prospective user needs to provide the sum of two numbers
+        correctly
+    """
     if request.method == 'POST':
         if request.form['passwd1'] != request.form['passwd2']:
             flash('The passwords are not the same', 'error')

@@ -1,3 +1,4 @@
+# coding=utf-8
 from astronet import app
 from flask import (g, redirect, url_for, flash, session, request)
 
@@ -19,9 +20,11 @@ devnull = open('/dev/null', 'w')
 
 
 def connect_db():
+    """ Connect to the database and return the connection object """
     return psycopg2.connect("dbname="+app.config['DB']+" user=postgres")
 
 def init_db():
+    """ Initialises (creates) a database, useful for testing """
     create = Process(target=create_db, args=(app.config['DB'],))
     create.start()
     create.join()
@@ -37,6 +40,7 @@ def init_db():
                 db.commit()
 
 def destroy_db():
+    """ Removes the database """
     destroy = Process(target=remove_db, args=(app.config['DB'],))
     destroy.start()
     destroy.join()
@@ -52,6 +56,7 @@ def remove_db(db_name):
 
 @app.before_request
 def before_request():
+    """ Stuff executed before the request. Sets up the database connection """
     g.db = connect_db()
     g.db.set_client_encoding('UTF8')
     g.db_cursor = g.db.cursor()
@@ -60,11 +65,18 @@ def before_request():
 
 @app.teardown_request
 def teardown_request(exception):
+    """ Stuff executed at the end of request. Disconnects from the database """
     g.db_cursor.close()
     g.db.close()
 
 
 def query_db(query, args=(), one=False):
+    """ A database interface proxy. Returns a list of dictionaries
+        with dictionary keys corresponding to column names. 
+
+        if *one* is True, only the first result is returned as
+        a dictionary (NOT a list having one element)
+    """
     cursor = g.db_cursor
     try:
         cursor.execute(query, args)
@@ -88,7 +100,13 @@ def query_db(query, args=(), one=False):
     
     return (rv[0] if rv else None) if one else rv
 
-def gen_filename(number=10):
+def gen_filename(length=10):
+    """ Generates a (rougly) random string of a given length
+        consisting of upper and lower case letters and numbers.
+        
+        The default works well for situations when a reasonable 
+        entropy is needed (filenames?)
+    """
     filename = ''
     chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
              'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'w', 'x',
@@ -106,6 +124,7 @@ def gen_filename(number=10):
 ## its contents in any way - it will be base64
 ## encoded before sending
 def send_base64(what):
+    """ Base64 encodes a file and sends it in http request """
     what.seek(0)
     ret = b64encode(what.getvalue())
     
@@ -117,6 +136,16 @@ def send_base64(what):
 
 
 def login_required(f):
+    """ Wraps a method so that it can only be ran by an authorized user.
+        It is used as follows::
+            
+            @login_required
+            def restricted_function():
+
+        .. NOTE::
+            Be aware that it doesn't check if user has any rights to the
+            given page, it only checks if she is logged in.
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'logged_in' not in session:
@@ -129,19 +158,43 @@ def login_required(f):
     return decorated_function
 
 def create_query(feed):
-        words = feed.strip().split()
-        
-        query = ''
-        for (i,word) in enumerate(words):
-            if len(word) > 2:
-                if i != 0 and len(query) > 0:
-                    query += ' | '
-                query += word
-        return query
+    """ Creates a full-text query from user-provided text data in *feed* """
+    words = feed.strip().split()
+    
+    query = ''
+    for (i,word) in enumerate(words):
+        if len(word) > 2:
+            if i != 0 and len(query) > 0:
+                query += ' | '
+            query += word
+    return query
 
 def stringify(results):
+    """ Encode all of the results as strings to get rid of non-matching
+        datatypes issues
+    """
     for result in results:
         for param in result:
             result[param] = unicode(result[param])
 
     return results
+
+def get_size(bb, sizex, sizey):
+    """ Returns a size in pixels of X and Y dimensions of a picture
+        such that the picture fits sizex, sizey size constraints and 
+        keeps the aspect ratio
+    """
+    width = bb[2]-bb[0]
+    height = bb[3]-bb[1]
+    mult = 1
+
+    if width > height:
+        mult = sizex/width
+        if height*mult > sizey:
+            mult = sizey/height*mult
+    else:
+        mult = sizey/height
+        if width*mult > sizex:
+            mult = sizex/width*mult
+
+    return (int(width*mult), int(height*mult))

@@ -11,7 +11,38 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-.. module:: astronet
+
+Account
+=======
+
+.. module:: astronet.account
+
+.. autofunction:: login
+
+.. autofunction:: logout
+
+.. autofunction:: register
+
+.. autofunction:: reset_pass
+
+Helper functions
+================
+
+.. module:: astronet.helpers
+
+.. autofunction:: login_required
+
+.. autofunction:: send_base64
+
+.. autofunction:: gen_filename
+
+.. autofunction:: query_db
+
+.. autofunction:: stringify
+
+.. autofunction:: create_query
+
+.. autofunction:: get_size
 
 Indices and tables
 ==================
