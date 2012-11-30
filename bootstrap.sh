@@ -3,6 +3,7 @@ echo "Installing packages\n"
 sudo pip2 install gevent flask sphinx psycopg2 pylibmc markdown
 
 echo "Setting up the database\n"
+echo "DROP DATABASE astronet"|psql -U postgres
 cat astronet/sql/00-database.sql|psql -U postgres
 cat astronet/sql/*.sql|psql -U postgres -d astronet
 
