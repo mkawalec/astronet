@@ -8,7 +8,7 @@ def user_name():
     """ If accessed by **GET** returns the user real_name, if known.
         
         If **POST** is used the real name for the currently authenticated
-        user is changed. The **POST**ed parameters must be::
+        user is changed. The **POST** ed parameters must be::
 
             request.form = {
                 'real_name': user_real_name
@@ -36,7 +36,7 @@ def user_name():
 @api.route('/user/email', methods=['GET', 'POST'])
 @auth_required
 def user_email():
-    """ Either **GET**s the currently set email or enables the user
+    """ Either **GET** s the currently set email or enables the user
         to **POST** a new one
     """
     # Update the email
