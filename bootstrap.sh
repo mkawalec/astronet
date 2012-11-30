@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Installing packages"
-sudo pip2 install gevent flask sphinx psycopg2 pylibmc markdown
+sudo pip install gevent flask sphinx psycopg2 pylibmc markdown
 
 echo "Setting up the database"
 echo "DROP DATABASE astronet"|psql -U postgres
