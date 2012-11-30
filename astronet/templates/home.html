@@ -2,4 +2,14 @@
 
 {% block body %}
 To jest główna strona, hej
+
+<div id="posts_wrapper">
+    {% for post in posts %}
+    <div class="post">
+        <div class="post_title">{{ post.title }}</div>
+        <div class="post_author">{{ post.author }}</div>
+        <div class="post_lead">{{ post.lead }}</div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

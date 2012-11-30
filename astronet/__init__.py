@@ -14,7 +14,7 @@ DB = 'astronet'
    
 app = Flask(__name__)
 
-from astronet.api import api
+from astronet.api import api, post, get_posts
 app.register_blueprint(api, url_prefix='/api')
 
 app.config.from_object(__name__)
@@ -25,7 +25,8 @@ from account import *
 @app.route('/')
 def home():
     """ Return the homepage with all the posts """
-    return render_template('home.html')
+    posts = json.loads(get_posts().data)['posts']
+    return render_template('home.html', posts=posts)
 
 @app.route('/add_post', methods=['POST', 'GET'])
 @login_required
@@ -34,7 +35,7 @@ def add_post():
         add a post when accessed with **POST**
     """
     if request.method == 'POST':
-        ret = post(request.form)
+        ret = post(request.form).data
         if json.loads(ret)['status'] == 'succ':
             flash(u'Twój post został dodany', 'success')
             return redirect(url_for('home'))

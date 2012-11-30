@@ -25,3 +25,9 @@ def post(post=None):
 def post_preview():
     """ Gets a markdown post preview """
     return jsonify(status='succ', preview=markdown(request.form['post_body']))
+
+@api.route('/posts')
+def get_posts():
+    ret = query_db('SELECT author, title, lead FROM posts WHERE '
+                   'draft=FALSE ORDER BY id DESC')
+    return jsonify(status='succ', posts=ret)
