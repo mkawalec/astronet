@@ -11,9 +11,9 @@ def post(post=None):
         if post == None:
             post = request.form
 
-        ret = query_db('INSERT INTO posts (author, title, lead, body) '
-                       'VALUES (%s, %s, %s, %s)',
-                       (g.uid, post['title'], post['lead'],post['body']))
+        ret = query_db('INSERT INTO posts (author, title, lead, body, string_id) '
+                       'VALUES (%s, %s, %s, %s, %s)',
+                       (g.uid, post['title'], post['lead'],post['body'], gen_filename()))
         if ret == 1:
             return jsonify(status='succ')
         elif ret == -1:
