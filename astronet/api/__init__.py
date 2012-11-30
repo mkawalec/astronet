@@ -1,3 +1,4 @@
+# coding=utf-8
 from .. import app
 from ..helpers import query_db, login_required
 from flask import (Blueprint, render_template,
@@ -14,6 +15,10 @@ api = Blueprint('api', __name__,
                         template_folder='../templates/api')
 
 def check_auth(username='', password=''):
+    """ Authentication checker. Works both for browsers autenticating
+        with cookies and Basic HTTP Auth requests
+    """
+
     # If the user has a session (ie. is accessing the api
     # through a logged in browser), allow her to proceed
     if 'logged_in' in session:
@@ -47,6 +52,9 @@ def authenticate():
     {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
 def auth_required(f):
+    """ Wrapper for API functions that enforces the need for authentication
+        before accessing a method
+    """
     @wraps(f)
     def decorated(*args, **kwargs):
         # In case session exists 
@@ -69,5 +77,16 @@ from posts import *
 @api.route('/test')
 @auth_required
 def test():
+    """ A test function that always returns::
+
+            {
+                status: 'succ',
+                result: 'test'
+            }
+
+        .. NOTE:: 
+            It is intended to check if you can connect and authenticate 
+            with the site properly
+    """
     return jsonify(status='succ', result='test')
 

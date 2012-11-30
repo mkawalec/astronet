@@ -9,11 +9,13 @@ Welcome to Astronet's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
+   
+    api
 
 
 Account
-=======
+-------
 
 .. module:: astronet.account
 
@@ -26,7 +28,7 @@ Account
 .. autofunction:: reset_pass
 
 Main views
-==========
+----------
 
 .. module:: astronet
 
@@ -36,7 +38,7 @@ Main views
 
 
 Helper functions
-================
+----------------
 
 .. module:: astronet.helpers
 
