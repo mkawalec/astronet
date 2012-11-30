@@ -58,4 +58,6 @@ class FormAjaxify
 
 
 render = new MarkdownRender()
-form = new FormAjaxify('add_post')
+
+# Zdecydowałem na razie, że nie będę Ajaxował tego forma
+#form = new FormAjaxify('add_post')

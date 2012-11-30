@@ -5,6 +5,8 @@ from flask import (Flask, request, redirect, url_for, abort,
 
 from datetime import timedelta
 
+import json
+
 SECRET_KEY = 'ddsnfkrjoireklfjdslkiro43213213m5,tsrfdeldmfxruc'
 SALT = 'nfkren<F4><F4>ffdsdsdfdewdsdfvvv'
 PERMANENT_SESSION_LIFETIME = timedelta(days=30)
@@ -24,7 +26,19 @@ from account import *
 def home():
     return render_template('home.html')
 
-@app.route('/add_post')
+@app.route('/add_post', methods=['POST', 'GET'])
 @login_required
 def add_post():
+    if request.method == 'POST':
+        ret = post(request.form)
+        if json.loads(ret)['status'] == 'succ':
+            flash(u'Twój post został dodany', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash(u'Nie można było dodać posta')
+            return render_template('add_post.html',
+                    title=request.form['title'].strip(),
+                    lead=request.form['lead'].strip(),
+                    body=request.form['body'].strip())
+
     return render_template('add_post.html')

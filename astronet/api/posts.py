@@ -5,13 +5,15 @@ from markdown import markdown
 
 @api.route('/post', methods=['POST'])
 @auth_required
-def post():
+def post(post=None):
     # We want to save a post
     if request.method == 'POST':
+        if post == None:
+            post = request.form
+
         ret = query_db('INSERT INTO posts (author, title, lead, body) '
                        'VALUES (%s, %s, %s, %s)',
-                       (g.uid, request.form['title'], request.form['lead'],
-                           request.form['body']))
+                       (g.uid, post['title'], post['lead'],post['body']))
         if ret == 1:
             return jsonify(status='succ')
         elif ret == -1:
