@@ -130,7 +130,7 @@ def register():
                                    first=randint(1,20),
                                    second=randint(1,20))
 
-        if int(request.form['first'])+int(request.form['second']) != int(request.form['result']):
+        if (request.form['result'].isdigit() == False) or (int(request.form['first'])+int(request.form['second']) != int(request.form['result'])):
             flash('The result you entered is incorrect', 'error')
             return render_template('register.html',
                                    email=request.form['email'],
