@@ -87,7 +87,7 @@ def get_body(nr):
             break
         if start:
             ans += line
-        if '<BR><SPAN CLASS="midder">' in line:
+        if '<TR><TD><SPAN CLASS="midder">' in line:
             start = True
 
 def get_author(nr):
@@ -149,24 +149,37 @@ def get_source(nr):
                 return line.split('<SMALL><BR>Źródło:')[1].split('HREF="')[1].split('">')[0]
         except:
             pass
+        
+def get_readers(nr):
+    """Returns source of article (string) or None if there is no source."""
+    path = 'danekod/'
+    text = open(path+str(nr), 'rb').readlines()
+    for line in text:
+        try:
+            return line.split('<BR><BR>W całości newsa przeczytało osób: ')[1][:-1]
+        except:
+            pass    
 
 ## Testing
 for i in range(1,7000,200):
     try:
-        #print get_body(7098)
+        print get_readers(i)
+        #print get_body(i)
+        #print i
+        #print get_lead(i)
         #print get_date(i)
         #print get_author(i)
         #print get_data(i)
         #print get_source(i)
-        print get_update(i)
+        #print get_update(i)
     except:
         pass
 
 #dla każdego pliku w DANE:
 # for i in `ls`; do iconv -f ISO-8859-2 -t utf8 $i > "nowy"$i; done
 
-## po odchudzeniu wyciągnąć datę, treść reszty, bibliografia, ile osób przeczytało, ostatnia aktualizacja
 ## do tego: obrazek - link, opis, kto dodał
+
 ## dopisać żeby wybierało ludzi jak redakcja publikowała za nich artykuł
 ## zbieranie linkow ze zrodel?
 
