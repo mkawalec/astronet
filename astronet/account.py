@@ -124,8 +124,10 @@ def register():
                                    first=randint(1,20),
                                    second=randint(1,20))
 
-        if len(request.form['email']) == 0:
-            flash('The email is empty', 'error')
+        if len(request.form['email']) == 0 or \
+                    '@' not in request.form['email'] or \
+                    '.' not in request.form['email'].split('@')[1]:
+            flash('The email is empty or has wrong format', 'error')
             return render_template('register.html',
                                    first=randint(1,20),
                                    second=randint(1,20))
