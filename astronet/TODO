@@ -3,3 +3,9 @@
     - when a new person logs in with persona she has an entry
       corresponding to her email created in users table
 - Validators on fields
+
+
+- zrezygnowac z dodawania numerkow, albo wygenerowac rysunki, bo bot i tak pobierze numerki ze zrodla strony i doda (nie wiem czy komus by sie chcialo robic bota, ktory czyta obrazki)
+ w razie czego link do klikniecia na mailu. inne pytanie czy chcemy zeby kazdy mogl miec konto czy tylko redaktorzy. co jestesmy w stanie zapewnic szaraczkom po zalogowaniu?
+
+- komentarze i pytania tutaj, bezpośrednio w kodzie (chyba nie, bo jest zbyt sterylny i szkoda to psuć) czy jeszcze gdzieś indziej?
