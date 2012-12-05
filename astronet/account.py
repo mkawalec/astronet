@@ -32,7 +32,7 @@ def login():
                         [email], one=True)
 
         if user is None:
-            flash('There is no user with this email.', 'error')
+            flash(u'Użytkownik o podanym emailu nie istnieje.', 'error')
             email = ''
         elif user['passwd'] == (
                 sha256(request.form['passwd'] + user['salt'] +
@@ -40,14 +40,14 @@ def login():
                     
                     # Check if this user is already logged in
                     if 'logged_in' in session and session['logged_in']:
-                        flash(u'Ten użytkownik już jest zalogowany!')
+                        flash(u'Ten użytkownik już jest zalogowany!','error')
                         return redirect(url_for('home'))
 
                     session['logged_in'] = True
                     session['email'] = user['email']
                     session['uid'] = user['id']
 
-                    flash('You were logged in', 'success')
+                    flash(u'Zostałeś zalogowany', 'success')
                     
                     next = request.form['next']
                     if not next or next == 'None':
@@ -55,7 +55,7 @@ def login():
                     else:
                         return redirect(next)
         else:
-            flash('Wrong password.', 'error')
+            flash(u'Złe hasło.', 'error')
 
     next = None if not 'next' in request.args else request.args['next']
     return render_template('login.html', next=next, email=email)
@@ -74,11 +74,11 @@ def logout():
                 del session['uid']
             if 'role' in session:
                 del session['role']
-            flash('Successfully logged out', 'success')
+            flash(u'Wylogowano pomyślnie', 'success')
 
             return redirect(url_for('home'))
 
-    flash('Something went wrong when logging you out', 'error')
+    flash(u'Podczas logowania nastąpił błąd.', 'error')
     
     return redirect(url_for('home'))
 
@@ -111,14 +111,14 @@ def register():
     """
     if request.method == 'POST':
         if request.form['passwd1'] != request.form['passwd2']:
-            flash('The passwords are not the same', 'error')
+            flash(u'Hasła nie są takie same', 'error')
             return render_template('register.html',
                                    email=request.form['email'],
                                    first=randint(1,20),
                                    second=randint(1,20))
 
         if len(request.form['passwd1']) == 0:
-            flash('The passwords are empty', 'error')
+            flash(u'Hasło jest puste', 'error')
             return render_template('register.html',
                                    email=request.form['email'],
                                    first=randint(1,20),
@@ -127,14 +127,14 @@ def register():
         if len(request.form['email']) == 0 or \
                     '@' not in request.form['email'] or \
                     '.' not in request.form['email'].split('@')[1]:
-            flash('The email is empty or has wrong format', 'error')
+            flash(u'Adres email ma zły format', 'error')
             return render_template('register.html',
                                    first=randint(1,20),
                                    second=randint(1,20))
 
         if (request.form['result'].isdigit() == False) or \
                 (int(request.form['first'])+int(request.form['second']) != int(request.form['result'])):
-            flash('The result you entered is incorrect', 'error')
+            flash(u'Wprowadzony wynik jest niepoprawny', 'error')
             return render_template('register.html',
                                    email=request.form['email'],
                                    first=randint(1,20),
@@ -142,7 +142,7 @@ def register():
             
         if query_db('SELECT id FROM users WHERE email=%s',
                     [request.form['email']], one=True) is not None:
-            flash('The email is already in use', 'error')
+            flash(u'Podany email jest już w użyciu', 'error')
             return render_template('register.html', 
                                    email=request.form['email'],
                                    first=randint(1,20),
@@ -153,8 +153,7 @@ def register():
                  'VALUES (%s,%s,%s)',
                  [sha256(request.form['passwd1']+salt+app.config['SALT']).hexdigest(),
                   salt,request.form['email']]):
-            flash('Your account was created. Good sailing sailor!', 
-                'success')
+            flash(u'Konto zostało utworzone pomyślnie.', 'success')
 
             # Automatically logging the user
             session['uid'] = query_db('SELECT id FROM users WHERE email=%s',
@@ -163,7 +162,7 @@ def register():
             session['email'] = request.form['email']
 
         else:
-            flash('Error adding you', 'error')
+            flash(u'Nastąpił błąd przy rejestracji', 'error')
         return redirect(url_for('home'))
     return render_template('register.html', first=randint(1,20), second=randint(1,20))
 
