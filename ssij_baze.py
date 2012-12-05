@@ -4,7 +4,8 @@ import sys
 import urllib2
 
 
-#ran=10
+#dla każdego pliku w DANE dokonano konwersji kodowania:
+# for i in `ls`; do iconv -f ISO-8859-2 -t utf8 $i > "nowy"$i; done
 
 def zassij():
     """Get astronews from ADRES to the number of RAN and save files in PATH """
@@ -94,20 +95,25 @@ def get_author(nr):
     """Returns author(s) of article (string) """
     path = 'danekod/'
     text = open(path+str(nr), 'rb').readlines()
+    ans = ""
+    #for line in text:
+        #if "<I>Artykuł przygotow" in line:
+            #return line.split("<I>Artykuł przygotow")[1].split(".</I>")[0]
     for line in text:
         try:
             if line.split('<SMALL><BR>Dodał')[1].split('>')[1].split('</A>')[0] != None:
-                return line.split('<SMALL><BR>Dodał')[1].split('>')[1].split('</A')[0]
+                return ans+line.split('<SMALL><BR>Dodał')[1].split('>')[1].split('</A')[0]
                 break
         except:
             pass
         try:
             if line.split('<SMALL>Dodał')[1].split('>')[1].split('</A')[0] != None:
-                return line.split('<SMALL>Dodał')[1].split('>')[1].split('</')[0]
+                return ans+line.split('<SMALL>Dodał')[1].split('>')[1].split('</')[0]
                 break
         except:
             pass
 
+            
 def get_update(nr):
     """Returns last update time (string) or None """
     path = 'danekod/'
@@ -151,7 +157,7 @@ def get_source(nr):
             pass
         
 def get_readers(nr):
-    """Returns source of article (string) or None if there is no source."""
+    """Returns number of article readers or None."""
     path = 'danekod/'
     text = open(path+str(nr), 'rb').readlines()
     for line in text:
@@ -160,10 +166,51 @@ def get_readers(nr):
         except:
             pass    
 
+def get_image(nr):
+    """Returns tuple of image information (url, descri) or None if there is no image in an article."""
+    path = 'danekod/'
+    text = open(path+str(nr), 'rb').readlines() 
+    lis = []
+    ans = ""
+    start = False
+    nr = ""
+    source = ""
+    description = ""
+    date = ""
+    author = ""
+    min = ""
+    alt = ""
+    for line in text:
+        if '</TR></TABLE>' in line:
+            start = False
+            lis.append((nr, source,  description, date, author, min, alt,))
+            ans = ""
+        if start:
+            ans += line
+            if 'ALT="' in line: 
+                alt = line.split('ALT="')[1].split('" BORDER')[0]
+            if 'ALT="' in line: 
+                min = line.split('ALT="')[0][5:-2].split('" BORDER')[0]
+            if '<SMALL><BR>Dodał' in line:
+                author = line.split('">')[1].split('</A')[0]
+                date = line.split('">')[1].split('</A')[1][4:-12]
+            if '<TD VALIGN=TOP>' in line:
+                description = line[15:-5]
+            if '<SMALL><BR>Źródło' in line:
+                source = line.split('HREF="')[1].split('">')[0]
+        if 'http://www.astronet.pl/redir.cgi?' in line:
+            start = True
+            nr = line.split('http://www.astronet.pl/redir.cgi?')[1].split('">')[0][2:]
+    return lis[1:-1]
+
+
 ## Testing
-for i in range(1,7000,200):
+#print get_image(7098)[2]
+for i in range(1,7100,200):
     try:
-        print get_readers(i)
+        pass
+        #print get_image(i)
+        #print get_readers(i)
         #print get_body(i)
         #print i
         #print get_lead(i)
@@ -175,13 +222,18 @@ for i in range(1,7000,200):
     except:
         pass
 
-#dla każdego pliku w DANE:
-# for i in `ls`; do iconv -f ISO-8859-2 -t utf8 $i > "nowy"$i; done
+get_image(7098)
 
+### Teraz:
 ## do tego: obrazek - link, opis, kto dodał
 
-## dopisać żeby wybierało ludzi jak redakcja publikowała za nich artykuł
+
+
+### Na później:
+## obrazek - wybieranie dokładnego adresu do linku?
+## author - gdy redakcja publikowala "<I>Artykuł przygotow"
 ## zbieranie linkow ze zrodel?
+## zebranie komentarzy
 
 
 
