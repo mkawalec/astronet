@@ -14,3 +14,5 @@ CREATE TABLE users (
 
     timestamp timestamp DEFAULT now()
 );
+
+ALTER TABLE users ADD reset_hash varchar(10);
