@@ -164,10 +164,22 @@ def get_readers(nr):
         try:
             return line.split('<BR><BR>W całości newsa przeczytało osób: ')[1][:-1]
         except:
-            pass    
+            pass  
+
+
+
+
+def get_kategory(nr):
+    """Returns kategory of article readers or None."""
+    path = 'danekod/'
+    text = open(path+str(nr), 'rb').readlines()
+    for line in text:
+        if '<TR><TD><SPAN CLASS="midder">' in line:
+            return line.split('(')[1].split(')')[0]
+
 
 def get_image(nr):
-    """Returns tuple of image information (url, descri) or None if there is no image in an article."""
+    """Returns tuple of image information (nr, source,  description, date, author, min, alt,) or None if there is no image in an article."""
     path = 'danekod/'
     text = open(path+str(nr), 'rb').readlines() 
     lis = []
@@ -203,13 +215,28 @@ def get_image(nr):
             nr = line.split('http://www.astronet.pl/redir.cgi?')[1].split('">')[0][2:]
     return lis[1:-1]
 
+def editors():
+    """Returns tuples of (author, nick, mail) """
+    text = open('redaktorzy', 'rb').readlines()    
+    e = []
+    for line in text: 
+        if 'mailto' in line:
+            mail = line.split('mailto:')[1].split('">')[0]
+            author = line.split('mailto:')[1].split('">')[1].split('</')[0]
+            nick = line.split('mailto:')[1].split('">')[1].split('</')[1].split('(')[1].split(')')[0]
+            e.append((author, nick, mail))
+    e = sorted(set(e))
+    return e
+
 
 ## Testing
+#print editors()
 #print get_image(7098)[2]
 for i in range(1,7100,200):
     try:
         pass
         #print get_image(i)
+        #print get_kategory(i)
         #print get_readers(i)
         #print get_body(i)
         #print i
@@ -222,14 +249,15 @@ for i in range(1,7100,200):
     except:
         pass
 
-get_image(7098)
+#get_image(7098)
 
 ### Teraz:
-## do tego: obrazek - link, opis, kto dodał
+## 
 
 
 
 ### Na później:
+## być może przerobić to na klasy - klasa news i klasa image z metodami wyciągającymi odpowiednie dane - wtedy powinno szybciej chodzić, bo tylko raz artykuł jest przrabiany przez skrypt, a nie za każdą informacją.
 ## obrazek - wybieranie dokładnego adresu do linku?
 ## author - gdy redakcja publikowala "<I>Artykuł przygotow"
 ## zbieranie linkow ze zrodel?
