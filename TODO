@@ -4,6 +4,16 @@
       corresponding to her email created in users table
 - Validators on fields
 
+Rzeczy do zrobienia:
+1. Dodać komcie. To zrobię ja (Michał), bo mam gdzieś w jakimś
+wcześniejszym projekcie wyczesany kod komciów, który trzeba poprawić
+trochę i będzie gicior.
+2. Dodać, że jeśli ktoś ma rolę 'admin' (albo coś takiego) może
+zarządzać userami (tabelka pokazująca nazwy userów, ilości artykułów
+jakie napisali itepe z możliwością przejścia do profilu/podniesienia
+rangi/usunięcia konta/wyłączenia lub włączenia możliwości publikowania)
+3. Dodać stronę usera
+
 
 - zrezygnowac z dodawania numerkow, albo wygenerowac rysunki, bo bot i tak pobierze numerki ze zrodla strony i doda (nie wiem czy komus by sie chcialo robic bota, ktory czyta obrazki)
  w razie czego link do klikniecia na mailu. inne pytanie czy chcemy zeby kazdy mogl miec konto czy tylko redaktorzy. co jestesmy w stanie zapewnic szaraczkom po zalogowaniu?
