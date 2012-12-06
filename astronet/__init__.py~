@@ -64,7 +64,7 @@ def add_post():
 def show_profile():
     """Shows user's profile. He can manage it in here, see his posts, statistic, drafts(?) change password, email etc. """
     posts = json.loads(get_posts(session['uid']).data)['posts']
-    drafts = json.loads(get_posts(session['uid'],True).data)['posts']
+    drafts = json.loads(get_posts(session['uid']).data)['posts']
     return render_template('profile.html',posts=posts, drafts=drafts)
     
 

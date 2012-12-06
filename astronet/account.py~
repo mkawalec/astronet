@@ -8,7 +8,15 @@ from flask import (Flask, request, redirect, url_for, abort,
 #import smtplib
 from hashlib import sha256
 from random import randint
+import json
 
+@app.route('/user', methods=['GET', 'POST'])
+@login_required
+def show_profile():
+    """Shows user's profile. He can manage it in here, see his posts, statistic, drafts(?) change password, email etc. """
+    news = json.loads(get_posts(g.uid).data)
+    return render_template('profile.html',posts=ret)
+    
     
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -40,9 +40,9 @@ def post_preview():
 def get_posts(author=None,draft=False):
     """ Returns all posts visible to the user """
     if draft:
-        draft='t'
+        draft='TRUE'
     else:
-        draft='f'
+        draft='FALSE'
         
     if author == None:
         ret = query_db('SELECT author, title, lead, string_id FROM posts WHERE '
