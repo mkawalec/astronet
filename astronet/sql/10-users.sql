@@ -16,3 +16,4 @@ CREATE TABLE users (
 );
 
 ALTER TABLE users ADD reset_hash varchar(10);
+ALTER TABLE users ADD string_id varchar(12);

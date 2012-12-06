@@ -30,7 +30,7 @@ def login():
 
     if request.method == 'POST':
         email = request.form['email']
-        user = query_db('SELECT id,passwd,real_name,email,salt '
+        user = query_db('SELECT id,passwd,real_name,email,salt,string_id '
                         'FROM users WHERE email=%s',
                         [email], one=True)
 
@@ -49,6 +49,7 @@ def login():
                     session['logged_in'] = True
                     session['email'] = user['email']
                     session['uid'] = user['id']
+                    session['string_id'] = user['string_id']
 
                     flash(u'Zostałeś zalogowany', 'success')
                     
@@ -87,7 +88,6 @@ def logout():
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 # TODO: Implement, check if everything is hacker-proof
 @app.route('/password_reset', methods=['POST', 'GET'])
-
 def reset_pass():
     """ A template of password resetter """
     if request.method == 'POST':
@@ -212,11 +212,11 @@ def register():
                                    first=randint(1,20),
                                    second=randint(1,20))
         
-        salt = gen_filename(10)
-        if query_db('INSERT INTO users (passwd,salt,email) '
-                 'VALUES (%s,%s,%s)',
+        salt = gen_filename()
+        if query_db('INSERT INTO users (passwd,salt,email,string_id) '
+                 'VALUES (%s,%s,%s,%s)',
                  [sha256(request.form['passwd1']+salt+app.config['SALT']).hexdigest(),
-                  salt,request.form['email']]):
+                  salt,request.form['email'], gen_filename()]):
             flash(u'Konto zostało utworzone pomyślnie.', 'success')
 
             # Automatically logging the user
