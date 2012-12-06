@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<form method="post" action="{{ url_for('reset_pass_hash', hash=hash) }}">
+    <dl>
+        <dt><input type="password" name="passwd1" class="input input-large" placeholder="Podaj hasło" />
+        <dt><input type="password" name="passwd2" class="input input-large" placeholder="Powtórz hasło" />
+        <dt><a href="{{ url_for('login') }}">Masz już konto? Zaloguj się!</a>
+    </dl>
+    <input type="submit" class="btn btn-primary" value="Zmień hasło" />
+</form>
+{% endblock %}
