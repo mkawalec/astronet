@@ -1,5 +1,6 @@
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
+    string_id varchar(12) NOT NULL UNIQUE,
     -- User email - some additional constraints here
     email varchar(50) UNIQUE,
     -- The 'real' name of the user
@@ -11,9 +12,8 @@ CREATE TABLE users (
     disabled boolean DEFAULT FALSE,
     -- This will define user's role
     role varchar(5) DEFAULT 'user',
+    -- Password reset hash
+    reset_hash varchar(10),
 
     timestamp timestamp DEFAULT now()
 );
-
-ALTER TABLE users ADD reset_hash varchar(10);
-ALTER TABLE users ADD string_id varchar(12) NOT NULL UNIQUE;
