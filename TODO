@@ -4,6 +4,8 @@
       corresponding to her email created in users table
 - Validators on fields
 
+- zrobić by konfiguracja była brana z osobnego pliku konfiguracyjnego
+
 Rzeczy do zrobienia:
 1. Dodać komcie. To zrobię ja (Michał), bo mam gdzieś w jakimś
 wcześniejszym projekcie wyczesany kod komciów, który trzeba poprawić
