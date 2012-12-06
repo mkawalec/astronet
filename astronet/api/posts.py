@@ -36,18 +36,15 @@ def post_preview():
     """ Gets a markdown post preview """
     return jsonify(status='succ', preview=markdown(request.form['post_body']))
 
+@api.route('/posts/<author>')
 @api.route('/posts')
-def get_posts(author=None,draft=False):
+def get_posts(author=None):
     """ Returns all posts visible to the user """
-    if draft:
-        draft='t'
-    else:
-        draft='f'
-        
-    if author == None:
+    if not author:
         ret = query_db('SELECT author, title, lead, string_id FROM posts WHERE '
-                   'draft=%s ORDER BY id DESC',draft)
+                   'draft=FALSE ORDER BY id DESC')
     else:
-        ret = query_db('SELECT author, title, lead, string_id FROM posts WHERE '
-                   'author=%s AND draft=%s ORDER BY id DESC', [author,draft])
+        ret = query_db('SELECT p.author, p.title, p.lead FROM posts p, users u '
+                   'WHERE p.author=u.id AND u.string_id=%s AND draft=FALSE '
+                   'ORDER BY p.id DESC', (author,))
     return jsonify(status='succ', posts=ret)
