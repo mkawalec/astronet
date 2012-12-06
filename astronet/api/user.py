@@ -1,6 +1,8 @@
 from ..api import api, auth_required, query_db
 from flask import (request, render_template, g, jsonify, abort)
 
+
+
 # User name operations
 @api.route('/user/name', methods=['GET', 'POST'])
 @auth_required

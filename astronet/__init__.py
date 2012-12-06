@@ -57,3 +57,15 @@ def add_post():
                     body=request.form['body'].strip())
 
     return render_template('add_post.html')
+
+
+@app.route('/user', methods=['GET', 'POST'])
+@login_required
+def show_profile():
+    """Shows user's profile. He can manage it in here, see his posts, statistic, drafts(?) change password, email etc. """
+    posts = json.loads(get_posts(session['uid']).data)['posts']
+    drafts = json.loads(get_posts(session['uid'],True).data)['posts']
+    return render_template('profile.html',posts=posts, drafts=drafts)
+    
+
+    

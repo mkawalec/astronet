@@ -4,9 +4,12 @@ from astronet.helpers import (login_required, query_db,
         gen_filename)
 from flask import (Flask, request, redirect, url_for, abort,
         render_template, flash, g, session)
-
+# TODO nie wiem czy to działa
+#import smtplib
 from hashlib import sha256
 from random import randint
+
+    
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -81,12 +84,73 @@ def logout():
     flash(u'Podczas logowania nastąpił błąd.', 'error')
     
     return redirect(url_for('home'))
-
-# TODO: Implement
+app.config['TRAP_BAD_REQUEST_ERRORS'] = True
+# TODO: Implement, check if everything is hacker-proof
 @app.route('/password_reset', methods=['POST', 'GET'])
+
 def reset_pass():
     """ A template of password resetter """
+    if request.method == 'POST':
+        if len(request.form['email']) == 0 or \
+                    '@' not in request.form['email'] or \
+                    '.' not in request.form['email'].split('@')[1]:
+            flash(u'Wprowadzono niepoprawny adres email', 'error')
+            return render_template('reset_pass.html')
+            
+        if query_db('SELECT id FROM users WHERE email=%s',
+                    [request.form['email']], one=True) is None:
+            flash(u'Podany adres nie występuje w bazie', 'error')
+            return render_template('reset_pass.html')                
+
+        if query_db('UPDATE users set reset_hash = %s WHERE email = %s',
+        [gen_filename(10),request.form['email']]):
+            # here one has to generate mail and send it TODO - configure mail server and check if it works
+            #sender = 'from@fromdomain.com'
+            #receivers = ['asd@a.com']
+            #message = """From: From Person <from@fromdomain.com>
+            #To: To Person <to@todomain.com>
+            #Subject: SMTP e-mail test
+            #This is a test e-mail message.
+            #"""
+            #try:
+                #smtpObj = smtplib.SMTP('localhost')
+                #smtpObj.sendmail(sender, receivers, message)         
+                #print "Successfully sent email"
+            #except SMTPException:
+                #print "Error: unable to send email"
+            flash(u'Na podany adres email wysłano link do zmiany hasła.', 'success')
+            return redirect(url_for('home'))
     return render_template('reset_pass.html')
+    
+@app.route('/password_reset/<hash>', methods=['POST', 'GET'])
+def reset_pass_hash(hash):
+    """ It checks if hash is all right and sets new password while cleaning hash from database. """
+    if request.method == 'POST':
+        if request.form['passwd1'] != request.form['passwd2']:
+            flash(u'Hasła nie są takie same', 'error')
+            return render_template('new_pass.html',hash=hash)
+
+        if query_db('SELECT id FROM users WHERE reset_hash= %s ',
+                    [hash], one=True) is not None:
+            req = query_db('SELECT id,salt,email FROM users WHERE reset_hash= %s', [hash], one=True)
+            uid,salt,email = req['id'],req['salt'],req['email']
+        else:
+            flash(u'Błąd bazy danych', 'error')
+            return render_template('new_pass.html')               
+
+        if query_db('UPDATE users set reset_hash = %s, passwd =%s WHERE email = %s',
+        ['',sha256(request.form['passwd1']+salt+app.config['SALT']).hexdigest(),email]):
+            flash(u'Hasło zostało zmienione.', 'success')
+            # Automatically logging the user
+            session['uid'] = uid
+            session['logged_in'] = True
+            session['email'] = email                    
+            return redirect(url_for('home'))
+        else:
+            flash(u'Błąd bazy danych', 'error')
+    return render_template('new_pass.html',hash=hash)
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
