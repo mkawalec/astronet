@@ -29,3 +29,7 @@ głosów za i min 4 głosy redektorów, czy cokolwiek])
 
 - komentarze i pytania tutaj, bezpośrednio w kodzie (chyba nie, bo jest zbyt sterylny i szkoda to psuć) czy jeszcze gdzieś indziej?
 Michał: Tak, tutaj.
+
+
+M: Move config to a file as described in
+http://flask.pocoo.org/docs/config/
