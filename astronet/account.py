@@ -100,7 +100,7 @@ def reset_pass():
             flash(u'Wprowadzono niepoprawny adres email', 'error')
             return render_template('reset_pass.html')
             
-        if query_db('SELECT id FROM users WHERE email=%s',
+        if query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
                     [request.form['email']], one=True) is None:
             flash(u'Podany adres nie występuje w bazie', 'error')
             return render_template('reset_pass.html')                
