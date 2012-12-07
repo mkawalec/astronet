@@ -1,5 +1,8 @@
 - generate astronomical keywords for html meta-data from text and lead
 M: What do you mean exactly?
+D: <META NAME="Keywords" CONTENT="komputer, Internet, edytor, HTML">
+   putting dynamic keywords which will depend on article topic in here
+   will cause higher position in google
 
 M: Also, keep the 72 chars limit as hard limit in text files and
    soft one in code
