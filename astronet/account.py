@@ -163,9 +163,9 @@ def reset_pass_finalize(hash):
 
     # We need to check if the reset hash is correct here
     # for instance in case of someone wrongly entering the hash
-    correct = query_db('SELECT id FROM users WHERE reset_hash=%s LIMIT 1',
+    correct_hash = query_db('SELECT id FROM users WHERE reset_hash=%s LIMIT 1',
                        (hash,), one=True)
-    if not correct:
+    if not correct_hash:
         flash(u'Błędny kod resetujący hasło!', 'error')
         return redirect(url_for('home'))
     return render_template('new_pass.html',hash=hash)
