@@ -1,5 +1,6 @@
 # coding=utf-8
 from astronet import app
+from astronet.api import log_me_in
 from astronet.helpers import (login_required, query_db,
         gen_filename)
 from flask import (Flask, request, redirect, url_for, abort,
@@ -44,12 +45,9 @@ def login():
                     if 'logged_in' in session and session['logged_in']:
                         flash(u'Ten użytkownik już jest zalogowany!','error')
                         return redirect(url_for('home'))
-
-                    session['logged_in'] = True
-                    session['email'] = user['email']
-                    session['uid'] = user['id']
-                    session['string_id'] = user['string_id']
-
+                    
+                    log_me_in(user['id'],user['email'],
+                                        user['string_id'])
                     flash(u'Zostałeś zalogowany', 'success')
                     
                     next = request.form['next']
@@ -121,8 +119,8 @@ def reset_pass_finalize(hash):
             flash(u'Hasła nie są takie same', 'error')
             return render_template('new_pass.html',hash=hash)
 
-        user_data = query_db('SELECT id,salt,email FROM users '
-                             'WHERE reset_hash=%s LIMIT 1',
+        user_data = query_db('SELECT id,string_id,salt,email FROM '
+                             'users WHERE reset_hash=%s LIMIT 1',
                              (hash,), one=True)
         if not user_data:
             flash(u'Błędy kod aktywacyjny', 'error')
@@ -134,13 +132,8 @@ def reset_pass_finalize(hash):
                             user_data['salt']+app.config['SALT']).hexdigest(),
                     user_data['email'])):
             flash(u'Hasło zostało zmienione.', 'success')
-            # Automatically logging the user
-            # This needs to be done though login function,
-            # we don't want to have login capability in many places
-            # TODO
-            session['uid'] = uid
-            session['logged_in'] = True
-            session['email'] = email                    
+            log_me_in(user_data['uid'],user_data['email'],user_data['string_id'])
+            flash(u'Zostałeś zalogowany', 'success')
             return redirect(url_for('home'))
         else:
             flash(u'Błąd bazy danych', 'error')
@@ -228,11 +221,10 @@ def register():
             flash(u'Konto zostało utworzone pomyślnie.', 'success')
 
             # Automatically logging the user
-            # TODO: Invoke login function here to limit code duplication
-            session['uid'] = query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
-                                      [email], one=True)['id']
-            session['logged_in'] = True
-            session['email'] = email
+            ret = query_db('SELECT id, string_id FROM users '
+                           'WHERE email=%s LIMIT 1', [email], one=True)
+            log_me_in(ret['id'],email,ret['string_id'])
+            flash(u'Zostałeś zalogowany', 'success')
 
         else:
             flash(u'Nastąpił błąd przy rejestracji', 'error')
