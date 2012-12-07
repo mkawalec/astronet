@@ -194,6 +194,7 @@ def register():
         correctly
     """
     if request.method == 'POST':
+        # TODO: This needs an overhaul, we need a sane correctness checking
         if request.form['passwd1'] != request.form['passwd2']:
             flash(u'Hasła nie są takie same', 'error')
             return render_template('register.html',
