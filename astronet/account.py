@@ -88,7 +88,7 @@ def logout():
 # TODO: Implement, check if everything is hacker-proof
 @app.route('/password_reset', methods=['POST', 'GET'])
 def reset_pass():
-    """ A template of password resetter """
+    """ A password reset form """
     if request.method == 'POST':
         # We want to protect against spaces '_'
         email = request.form['email']

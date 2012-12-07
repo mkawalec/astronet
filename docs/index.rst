@@ -28,6 +28,8 @@ Account
 
 .. autofunction:: reset_pass
 
+.. autofunction:: reset_pass_finalize
+
 Main views
 ----------
 
