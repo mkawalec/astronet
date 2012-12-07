@@ -91,6 +91,9 @@ def logout():
 def reset_pass():
     """ A template of password resetter """
     if request.method == 'POST':
+        # We want to protect against spaces '_'
+        email = request.form['email'].strip()
+
         if len(request.form['email']) == 0 or \
                     '@' not in request.form['email'] or \
                     '.' not in request.form['email'].split('@')[1]:
@@ -213,17 +216,19 @@ def register():
                                    second=randint(1,20))
         
         salt = gen_filename()
+        email = request.form['email'].strip()
+
         if query_db('INSERT INTO users (passwd,salt,email,string_id) '
                  'VALUES (%s,%s,%s,%s)',
                  [sha256(request.form['passwd1']+salt+app.config['SALT']).hexdigest(),
-                  salt,request.form['email'], gen_filename()]):
+                  salt,email, gen_filename()]):
             flash(u'Konto zostało utworzone pomyślnie.', 'success')
 
             # Automatically logging the user
             session['uid'] = query_db('SELECT id FROM users WHERE email=%s',
-                                      [request.form['email']], one=True)['id']
+                                      [email], one=True)['id']
             session['logged_in'] = True
-            session['email'] = request.form['email']
+            session['email'] = email
 
         else:
             flash(u'Nastąpił błąd przy rejestracji', 'error')
