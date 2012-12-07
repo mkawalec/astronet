@@ -85,7 +85,7 @@ def logout():
     flash(u'Podczas logowania nastąpił błąd.', 'error')
     
     return redirect(url_for('home'))
-app.config['TRAP_BAD_REQUEST_ERRORS'] = True
+
 # TODO: Implement, check if everything is hacker-proof
 @app.route('/password_reset', methods=['POST', 'GET'])
 def reset_pass():
