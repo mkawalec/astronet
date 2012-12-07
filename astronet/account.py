@@ -92,11 +92,11 @@ def reset_pass():
     """ A template of password resetter """
     if request.method == 'POST':
         # We want to protect against spaces '_'
-        email = request.form['email'].strip()
+        email = request.form['email']
 
-        if len(request.form['email']) == 0 or \
-                    '@' not in request.form['email'] or \
-                    '.' not in request.form['email'].split('@')[1]:
+        # We want to match the email with a regex, otherwise
+        # we are being lame
+        if not re.match('^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$', email):
             flash(u'Wprowadzono niepoprawny adres email', 'error')
             return render_template('reset_pass.html')
             
