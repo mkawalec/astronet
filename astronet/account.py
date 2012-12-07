@@ -106,7 +106,7 @@ def reset_pass():
             return render_template('reset_pass.html')                
 
         if query_db('UPDATE users set reset_hash = %s WHERE email = %s',
-        [gen_filename(10),request.form['email']]):
+                (gen_filename(10),request.form['email'])):
             # here one has to generate mail and send it TODO - configure mail server and check if it works
             # Also, this must NOT go here. We need additional function in a different file
             # that sends emails, otherwise we will just end up with a mess
