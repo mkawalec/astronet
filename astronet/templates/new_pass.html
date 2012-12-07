@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<form method="post" action="{{ url_for('reset_pass_hash', hash=hash) }}">
+<form method="post" action="{{ url_for('reset_pass_finalize', hash=hash) }}">
     <dl>
         <dt><input type="password" name="passwd1" class="input input-large" placeholder="Podaj hasło" />
         <dt><input type="password" name="passwd2" class="input input-large" placeholder="Powtórz hasło" />

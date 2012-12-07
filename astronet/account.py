@@ -105,7 +105,7 @@ def reset_pass():
             flash(u'Podany adres nie występuje w bazie', 'error')
             return render_template('reset_pass.html')                
 
-        if query_db('UPDATE users set reset_hash = %s WHERE email = %s',
+        if query_db('UPDATE users set reset_hash=%s WHERE email=%s',
                 (gen_filename(10),request.form['email'])):
             # here one has to generate mail and send it TODO - configure mail server and check if it works
             # Also, this must NOT go here. We need additional function in a different file
@@ -128,31 +128,46 @@ def reset_pass():
     return render_template('reset_pass.html')
     
 @app.route('/password_reset/<hash>', methods=['POST', 'GET'])
-def reset_pass_hash(hash):
-    """ It checks if hash is all right and sets new password while cleaning hash from database. """
+def reset_pass_finalize(hash):
+    """ It checks if hash is all right and sets new password 
+        while cleaning hash from database. """
+
     if request.method == 'POST':
-        if request.form['passwd1'] != request.form['passwd2']:
+        if request.form['passwd1'].strip() != request.form['passwd2'].strip():
             flash(u'Hasła nie są takie same', 'error')
             return render_template('new_pass.html',hash=hash)
 
-        if query_db('SELECT id FROM users WHERE reset_hash= %s ',
-                    [hash], one=True) is not None:
-            req = query_db('SELECT id,salt,email FROM users WHERE reset_hash= %s', [hash], one=True)
-            uid,salt,email = req['id'],req['salt'],req['email']
-        else:
-            flash(u'Błąd bazy danych', 'error')
-            return render_template('new_pass.html')               
+        user_data = query_db('SELECT id,salt,email FROM users '
+                             'WHERE reset_hash=%s LIMIT 1',
+                             (hash,), one=True)
+        if not user_data:
+            flash(u'Błędy kod aktywacyjny', 'error')
+            return render_template('new_pass.html')
 
-        if query_db('UPDATE users set reset_hash = %s, passwd =%s WHERE email = %s',
-        ['',sha256(request.form['passwd1']+salt+app.config['SALT']).hexdigest(),email]):
+        if query_db('UPDATE users SET reset_hash=%s, passwd=%s '
+                    'WHERE email = %s', (None, 
+                    sha256(request.form['passwd1'].strip()+\
+                            user_data['salt']+app.config['SALT']).hexdigest(),
+                    user_data['email'])):
             flash(u'Hasło zostało zmienione.', 'success')
             # Automatically logging the user
+            # This needs to be done though login function,
+            # we don't want to have login capability in many places
+            # TODO
             session['uid'] = uid
             session['logged_in'] = True
             session['email'] = email                    
             return redirect(url_for('home'))
         else:
             flash(u'Błąd bazy danych', 'error')
+
+    # We need to check if the reset hash is correct here
+    # for instance in case of someone wrongly entering the hash
+    correct = query_db('SELECT id FROM users WHERE reset_hash=%s LIMIT 1',
+                       (hash,), one=True)
+    if not correct:
+        flash(u'Błędny kod resetujący hasło!', 'error')
+        return redirect(url_for('home'))
     return render_template('new_pass.html',hash=hash)
 
 
