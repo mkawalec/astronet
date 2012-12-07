@@ -4,10 +4,9 @@ from astronet.helpers import (login_required, query_db,
         gen_filename)
 from flask import (Flask, request, redirect, url_for, abort,
         render_template, flash, g, session)
-# TODO nie wiem czy to działa
-#import smtplib
 from hashlib import sha256
 from random import randint
+import mailing
 
     
 
@@ -107,22 +106,7 @@ def reset_pass():
 
         if query_db('UPDATE users set reset_hash=%s WHERE email=%s',
                 (gen_filename(10),request.form['email'])):
-            # here one has to generate mail and send it TODO - configure mail server and check if it works
-            # Also, this must NOT go here. We need additional function in a different file
-            # that sends emails, otherwise we will just end up with a mess
-            #sender = 'from@fromdomain.com'
-            #receivers = ['asd@a.com']
-            #message = """From: From Person <from@fromdomain.com>
-            #To: To Person <to@todomain.com>
-            #Subject: SMTP e-mail test
-            #This is a test e-mail message.
-            #"""
-            #try:
-                #smtpObj = smtplib.SMTP('localhost')
-                #smtpObj.sendmail(sender, receivers, message)         
-                #print "Successfully sent email"
-            #except SMTPException:
-                #print "Error: unable to send email"
+            mailing.email(user_data['email'], 'pass_reset')
             flash(u'Na podany adres email wysłano link do zmiany hasła.', 'success')
             return redirect(url_for('home'))
     return render_template('reset_pass.html')
