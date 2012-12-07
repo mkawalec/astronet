@@ -31,7 +31,7 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         user = query_db('SELECT id,passwd,real_name,email,salt,string_id '
-                        'FROM users WHERE email=%s',
+                        'FROM users WHERE email=%s LIMIT 1',
                         [email], one=True)
 
         if user is None:
@@ -202,7 +202,7 @@ def register():
                                    first=randint(1,20),
                                    second=randint(1,20))
             
-        if query_db('SELECT id FROM users WHERE email=%s',
+        if query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
                     [request.form['email']], one=True) is not None:
             flash(u'Podany email jest już w użyciu', 'error')
             return render_template('register.html', 
