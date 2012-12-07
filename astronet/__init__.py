@@ -11,6 +11,7 @@ SECRET_KEY = 'ddsnfkrjoireklfjdslkiro43213213m5,tsrfdeldmfxruc'
 SALT = 'nfkren<F4><F4>ffdsdsdfdewdsdfvvv'
 PERMANENT_SESSION_LIFETIME = timedelta(days=30)
 DB = 'astronet'
+TRAP_BAD_REQUEST_ERRORS = False
    
 app = Flask(__name__)
 
