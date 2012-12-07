@@ -32,7 +32,7 @@ def login():
         email = request.form['email']
         user = query_db('SELECT id,passwd,real_name,email,salt,string_id '
                         'FROM users WHERE email=%s LIMIT 1',
-                        [email], one=True)
+                        (email,), one=True)
 
         if user is None:
             flash(u'Użytkownik o podanym emailu nie istnieje.', 'error')
@@ -98,7 +98,7 @@ def reset_pass():
             return render_template('reset_pass.html')
             
         if query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
-                    [request.form['email']], one=True) is None:
+                    (request.form['email'],), one=True) is None:
             flash(u'Podany adres nie występuje w bazie', 'error')
             return render_template('reset_pass.html')                
 
@@ -208,7 +208,7 @@ def register():
                                    second=randint(1,20))
             
         if query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
-                [email], one=True) is not None:
+                (email,), one=True) is not None:
             flash(u'Podany email jest już w użyciu', 'error')
             return render_template('register.html', 
                                    email=email,
@@ -227,7 +227,7 @@ def register():
 
             # Automatically logging the user
             ret = query_db('SELECT id, string_id FROM users '
-                           'WHERE email=%s LIMIT 1', [email], one=True)
+                           'WHERE email=%s LIMIT 1', (email,), one=True)
             log_me_in(ret['id'],email,ret['string_id'])
             flash(u'Zostałeś zalogowany', 'success')
 
