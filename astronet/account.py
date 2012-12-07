@@ -8,7 +8,7 @@ from flask import (Flask, request, redirect, url_for, abort,
 from hashlib import sha256
 from random import randint
 import mailing
-
+import re
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -172,50 +172,55 @@ def register():
     """
     if request.method == 'POST':
         # TODO: This needs an overhaul, we need a sane correctness checking
-        if request.form['passwd1'] != request.form['passwd2']:
+        email = request.form['email'].strip()
+        passwd1 = request.form['passwd1'].strip()
+        passwd2 = request.form['passwd2'].strip()
+        
+        if passwd1 != passwd2:
             flash(u'Hasła nie są takie same', 'error')
             return render_template('register.html',
-                                   email=request.form['email'],
+                                   email=email,
                                    first=randint(1,20),
                                    second=randint(1,20))
 
-        if len(request.form['passwd1']) == 0:
+        if len(passwd1) == 0:
             flash(u'Hasło jest puste', 'error')
             return render_template('register.html',
-                                   email=request.form['email'],
+                                   email=email,
                                    first=randint(1,20),
                                    second=randint(1,20))
 
-        if len(request.form['email']) == 0 or \
-                    '@' not in request.form['email'] or \
-                    '.' not in request.form['email'].split('@')[1]:
+        if len(email) == 0 or \
+                not re.match('^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$', email):
             flash(u'Adres email ma zły format', 'error')
             return render_template('register.html',
                                    first=randint(1,20),
                                    second=randint(1,20))
 
-        if (request.form['result'].isdigit() == False) or \
-                (int(request.form['first'])+int(request.form['second']) != int(request.form['result'])):
+        if (request.form['result'].strip().isdigit() == False) or \
+                    (int(request.form['first'].strip()) + \
+                     int(request.form['second'].strip()) != \
+                     int(request.form['result'].strip())):
             flash(u'Wprowadzony wynik jest niepoprawny', 'error')
             return render_template('register.html',
-                                   email=request.form['email'],
+                                   email=email,
                                    first=randint(1,20),
                                    second=randint(1,20))
             
         if query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
-                    [request.form['email']], one=True) is not None:
+                [email], one=True) is not None:
             flash(u'Podany email jest już w użyciu', 'error')
             return render_template('register.html', 
-                                   email=request.form['email'],
+                                   email=email,
                                    first=randint(1,20),
                                    second=randint(1,20))
         
         salt = gen_filename()
-        email = request.form['email'].strip()
+        
 
         if query_db('INSERT INTO users (passwd,salt,email,string_id) '
                  'VALUES (%s,%s,%s,%s)',
-                 (sha256(request.form['passwd1'].strip()+\
+                 (sha256(passwd1+\
                          salt+app.config['SALT']).hexdigest(),
                   salt,email, gen_filename())):
             flash(u'Konto zostało utworzone pomyślnie.', 'success')
