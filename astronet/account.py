@@ -222,12 +222,14 @@ def register():
 
         if query_db('INSERT INTO users (passwd,salt,email,string_id) '
                  'VALUES (%s,%s,%s,%s)',
-                 [sha256(request.form['passwd1']+salt+app.config['SALT']).hexdigest(),
-                  salt,email, gen_filename()]):
+                 (sha256(request.form['passwd1'].strip()+\
+                         salt+app.config['SALT']).hexdigest(),
+                  salt,email, gen_filename())):
             flash(u'Konto zostało utworzone pomyślnie.', 'success')
 
             # Automatically logging the user
-            session['uid'] = query_db('SELECT id FROM users WHERE email=%s',
+            # TODO: Invoke login function here to limit code duplication
+            session['uid'] = query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
                                       [email], one=True)['id']
             session['logged_in'] = True
             session['email'] = email
