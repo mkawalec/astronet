@@ -12,5 +12,10 @@
     <input type="hidden" name="first" value="{{ first }}" />
     <input type="hidden" name="second" value="{{ second }}" />
     <input type="submit" class="btn btn-primary" value="Rejestruj" />
+    <div id="pass_strength"></div>
 </form>
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/register.js') }}"></script>
 {% endblock %}
