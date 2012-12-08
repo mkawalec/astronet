@@ -16,6 +16,7 @@ touch astronet/config.cfg
 echo "SECRET_KEY = 'ddsnfkrjoireklfjdslkiro43213213m5,tsrfdeldmfxruc'
 SALT = 'nfkren<F4><F4>ffdsdsdfdewdsdfvvv'
 DB = 'astronet'
+DB_PORT = '5432'
 TRAP_BAD_REQUEST_ERRORS = False" > astronet/config.cfg
 
 echo "Generating documentation"
