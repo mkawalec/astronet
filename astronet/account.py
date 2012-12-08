@@ -171,6 +171,7 @@ def register():
     """
     if request.method == 'POST':
         # TODO: This needs an overhaul, we need a sane correctness checking
+        # some were made, but mayby it needs more improvements 
         email = request.form['email'].strip()
         passwd1 = request.form['passwd1'].strip()
         passwd2 = request.form['passwd2'].strip()
