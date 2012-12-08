@@ -14,6 +14,13 @@ from psycopg2.extensions import adapt
 api = Blueprint('api', __name__,
                         template_folder='../templates/api')
 
+def log_me_in(uid,email,string_id):
+    """Automatically logging the user """
+    session['logged_in'] = True
+    session['uid'] = uid
+    session['email'] = email
+    session['string_id'] = string_id
+                        
 def check_auth(username='', password=''):
     """ Authentication checker. Works both for browsers autenticating
         with cookies and Basic HTTP Auth requests

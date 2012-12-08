@@ -9,7 +9,7 @@ import json
    
 app = Flask(__name__)
 
-from astronet.api import api, post, get_posts
+from astronet.api import api, post, get_posts, get_drafts
 app.register_blueprint(api, url_prefix='/api')
 
 app.config.from_pyfile('config.cfg')

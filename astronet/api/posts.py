@@ -23,7 +23,7 @@ def post(post=None, string_id=None):
 
         ret = query_db('INSERT INTO posts (author, title, lead, body, string_id) '
                        'VALUES (%s, %s, %s, %s, %s)',
-                       (g.uid, post['title'], post['lead'],post['body'], gen_filename()))
+                       (g.string_id, post['title'], post['lead'],post['body'], gen_filename()))
         if ret == 1:
             return jsonify(status='succ')
         elif ret == -1:
@@ -48,3 +48,17 @@ def get_posts(author=None):
                    'WHERE p.author=u.id AND u.string_id=%s AND draft=FALSE '
                    'ORDER BY p.id DESC', (author,))
     return jsonify(status='succ', posts=ret)
+
+
+@api.route('/drafts/<author>')
+@api.route('/drafts')
+def get_drafts(author=None):
+    """ Returns all posts visible to the user """
+    if not author:
+        ret = query_db('SELECT author, title, lead, string_id FROM posts WHERE '
+                   'draft=TRUE ORDER BY id DESC')
+    else:
+        ret = query_db('SELECT p.author, p.title, p.lead FROM posts p, users u '
+                   'WHERE p.author=u.id AND u.string_id=%s AND draft=TRUE '
+                   'ORDER BY p.id DESC', (author,))
+    return jsonify(status='succ', drafts=ret)

@@ -1,5 +1,6 @@
 # coding=utf-8
 from astronet import app
+from astronet.api import log_me_in
 from astronet.helpers import (login_required, query_db,
         gen_filename)
 from flask import (Flask, request, redirect, url_for, abort,
@@ -7,7 +8,7 @@ from flask import (Flask, request, redirect, url_for, abort,
 from hashlib import sha256
 from random import randint
 import mailing
-
+import re
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -30,8 +31,8 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         user = query_db('SELECT id,passwd,real_name,email,salt,string_id '
-                        'FROM users WHERE email=%s',
-                        [email], one=True)
+                        'FROM users WHERE email=%s LIMIT 1',
+                        (email,), one=True)
 
         if user is None:
             flash(u'Użytkownik o podanym emailu nie istnieje.', 'error')
@@ -44,12 +45,9 @@ def login():
                     if 'logged_in' in session and session['logged_in']:
                         flash(u'Ten użytkownik już jest zalogowany!','error')
                         return redirect(url_for('home'))
-
-                    session['logged_in'] = True
-                    session['email'] = user['email']
-                    session['uid'] = user['id']
-                    session['string_id'] = user['string_id']
-
+                    
+                    log_me_in(user['id'],user['email'],
+                                        user['string_id'])
                     flash(u'Zostałeś zalogowany', 'success')
                     
                     next = request.form['next']
@@ -91,22 +89,21 @@ def reset_pass():
     """ A password reset form """
     if request.method == 'POST':
         # We want to protect against spaces '_'
-        email = request.form['email']
+        email = request.form['email'].strip()
 
-        # We want to match the email with a regex, otherwise
-        # we are being lame
         if not re.match('^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$', email):
             flash(u'Wprowadzono niepoprawny adres email', 'error')
             return render_template('reset_pass.html')
             
         if query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
-                    [request.form['email']], one=True) is None:
+                    (email,), one=True) is None:
             flash(u'Podany adres nie występuje w bazie', 'error')
             return render_template('reset_pass.html')                
-
+        
+        new_hash = gen_filename(10)
         if query_db('UPDATE users set reset_hash=%s WHERE email=%s',
-                (gen_filename(10),request.form['email'])):
-            mailing.email(user_data['email'], 'pass_reset')
+                (new_hash,email)):
+            mailing.email(email, 'pass_reset',hash=new_hash)
             flash(u'Na podany adres email wysłano link do zmiany hasła.', 'success')
             return redirect(url_for('home'))
     return render_template('reset_pass.html')
@@ -121,8 +118,8 @@ def reset_pass_finalize(hash):
             flash(u'Hasła nie są takie same', 'error')
             return render_template('new_pass.html',hash=hash)
 
-        user_data = query_db('SELECT id,salt,email FROM users '
-                             'WHERE reset_hash=%s LIMIT 1',
+        user_data = query_db('SELECT id,string_id,salt,email FROM '
+                             'users WHERE reset_hash=%s LIMIT 1',
                              (hash,), one=True)
         if not user_data:
             flash(u'Błędy kod aktywacyjny', 'error')
@@ -134,13 +131,8 @@ def reset_pass_finalize(hash):
                             user_data['salt']+app.config['SALT']).hexdigest(),
                     user_data['email'])):
             flash(u'Hasło zostało zmienione.', 'success')
-            # Automatically logging the user
-            # This needs to be done though login function,
-            # we don't want to have login capability in many places
-            # TODO
-            session['uid'] = uid
-            session['logged_in'] = True
-            session['email'] = email                    
+            log_me_in(user_data['id'],user_data['email'],user_data['string_id'])
+            flash(u'Zostałeś zalogowany', 'success')
             return redirect(url_for('home'))
         else:
             flash(u'Błąd bazy danych', 'error')
@@ -179,60 +171,65 @@ def register():
     """
     if request.method == 'POST':
         # TODO: This needs an overhaul, we need a sane correctness checking
-        if request.form['passwd1'] != request.form['passwd2']:
+        # some were made, but mayby it needs more improvements 
+        email = request.form['email'].strip()
+        passwd1 = request.form['passwd1'].strip()
+        passwd2 = request.form['passwd2'].strip()
+        
+        if passwd1 != passwd2:
             flash(u'Hasła nie są takie same', 'error')
             return render_template('register.html',
-                                   email=request.form['email'],
+                                   email=email,
                                    first=randint(1,20),
                                    second=randint(1,20))
 
-        if len(request.form['passwd1']) == 0:
+        if len(passwd1) == 0:
             flash(u'Hasło jest puste', 'error')
             return render_template('register.html',
-                                   email=request.form['email'],
+                                   email=email,
                                    first=randint(1,20),
                                    second=randint(1,20))
 
-        if len(request.form['email']) == 0 or \
-                    '@' not in request.form['email'] or \
-                    '.' not in request.form['email'].split('@')[1]:
+        if len(email) == 0 or \
+                not re.match('^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$', email):
             flash(u'Adres email ma zły format', 'error')
             return render_template('register.html',
                                    first=randint(1,20),
                                    second=randint(1,20))
 
-        if (request.form['result'].isdigit() == False) or \
-                (int(request.form['first'])+int(request.form['second']) != int(request.form['result'])):
+        if (request.form['result'].strip().isdigit() == False) or \
+                    (int(request.form['first'].strip()) + \
+                     int(request.form['second'].strip()) != \
+                     int(request.form['result'].strip())):
             flash(u'Wprowadzony wynik jest niepoprawny', 'error')
             return render_template('register.html',
-                                   email=request.form['email'],
+                                   email=email,
                                    first=randint(1,20),
                                    second=randint(1,20))
             
-        if query_db('SELECT id FROM users WHERE email=%s',
-                    [request.form['email']], one=True) is not None:
+        if query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
+                (email,), one=True) is not None:
             flash(u'Podany email jest już w użyciu', 'error')
             return render_template('register.html', 
-                                   email=request.form['email'],
+                                   email=email,
                                    first=randint(1,20),
                                    second=randint(1,20))
         
         salt = gen_filename()
-        email = request.form['email'].strip()
+        
 
         if query_db('INSERT INTO users (passwd,salt,email,string_id) '
                  'VALUES (%s,%s,%s,%s)',
-                 (sha256(request.form['passwd1'].strip()+\
+                 (sha256(passwd1+\
                          salt+app.config['SALT']).hexdigest(),
                   salt,email, gen_filename())):
             flash(u'Konto zostało utworzone pomyślnie.', 'success')
 
             # Automatically logging the user
-            # TODO: Invoke login function here to limit code duplication
-            session['uid'] = query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
-                                      [email], one=True)['id']
-            session['logged_in'] = True
-            session['email'] = email
+            ret = query_db('SELECT id, string_id FROM users '
+                           'WHERE email=%s LIMIT 1', (email,), one=True)
+            log_me_in(ret['id'],email,ret['string_id'])
+            flash(u'Zostałeś zalogowany', 'success')
 
         else:
             flash(u'Nastąpił błąd przy rejestracji', 'error')

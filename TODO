@@ -19,8 +19,12 @@ rangi/usunięcia konta/wyłączenia lub włączenia możliwości publikowania)
 4. Zarządzanie szkicami
 
 
-- zrezygnowac z dodawania numerkow, albo wygenerowac rysunki, bo bot i tak pobierze numerki ze zrodla strony i doda (nie wiem czy komus by sie chcialo robic bota, ktory czyta obrazki)
- w razie czego link do klikniecia na mailu. inne pytanie czy chcemy zeby kazdy mogl miec konto czy tylko redaktorzy. co jestesmy w stanie zapewnic szaraczkom po zalogowaniu?
+- zrezygnowac z dodawania numerkow, albo wygenerowac rysunki, bo bot i
+tak pobierze numerki ze zrodla strony i doda (nie wiem czy komus by sie
+chcialo robic bota, ktory czyta obrazki)
+ w razie czego link do klikniecia na mailu. inne pytanie czy chcemy
+zeby kazdy mogl miec konto czy tylko redaktorzy. co jestesmy w stanie
+zapewnic szaraczkom po zalogowaniu?
 Michał: Można polubiać artykuły, komentować, patrzeć na odpowiedzi na
 komcie. Szaraczek też może submitnąć artykuł, tylko potrzebuje
 akceptacji redaktora taki artykuł, wtedy możemy zwiększyć participation
@@ -28,10 +32,17 @@ akceptacji redaktora taki artykuł, wtedy możemy zwiększyć participation
 to zaakceptuje lub nie [albo jakaś inna zasada, na przykład przewaga 2
 głosów za i min 4 głosy redektorów, czy cokolwiek])
 
-- komentarze i pytania tutaj, bezpośrednio w kodzie (chyba nie, bo jest zbyt sterylny i szkoda to psuć) czy jeszcze gdzieś indziej?
-Michał: Tak, tutaj.
-
 
 M: Move config to a file as described in
 http://flask.pocoo.org/docs/config/
+<<<<<<< HEAD
 M: Done
+=======
+
+
+D: robimy coś, że hash do zmiany hasla jest wazny przez 24h czy cos?
+
+
+
+
+>>>>>>> 89c90c3bf9eb5dad2e6ffad3982374d4984dc04b
