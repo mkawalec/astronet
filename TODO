@@ -15,6 +15,7 @@ zarządzać userami (tabelka pokazująca nazwy userów, ilości artykułów
 jakie napisali itepe z możliwością przejścia do profilu/podniesienia
 rangi/usunięcia konta/wyłączenia lub włączenia możliwości publikowania)
 3. Dodać stronę usera
+    - zmiana hasła i maila z poziomu niej
 4. Zarządzanie szkicami
 
 
@@ -33,3 +34,4 @@ Michał: Tak, tutaj.
 
 M: Move config to a file as described in
 http://flask.pocoo.org/docs/config/
+M: Done
