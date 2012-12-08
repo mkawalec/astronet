@@ -6,19 +6,13 @@ from flask import (Flask, request, redirect, url_for, abort,
 from datetime import timedelta
 
 import json
-
-SECRET_KEY = 'ddsnfkrjoireklfjdslkiro43213213m5,tsrfdeldmfxruc'
-SALT = 'nfkren<F4><F4>ffdsdsdfdewdsdfvvv'
-PERMANENT_SESSION_LIFETIME = timedelta(days=30)
-DB = 'astronet'
-TRAP_BAD_REQUEST_ERRORS = False
    
 app = Flask(__name__)
 
 from astronet.api import api, post, get_posts
 app.register_blueprint(api, url_prefix='/api')
 
-app.config.from_object(__name__)
+app.config.from_pyfile('config.cfg')
 
 from helpers import *
 from account import *
