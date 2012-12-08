@@ -15,7 +15,7 @@ TRAP_BAD_REQUEST_ERRORS = False
    
 app = Flask(__name__)
 
-from astronet.api import api, post, get_posts
+from astronet.api import api, post, get_posts, get_drafts
 app.register_blueprint(api, url_prefix='/api')
 
 app.config.from_object(__name__)
@@ -64,8 +64,8 @@ def add_post():
 @login_required
 def show_profile():
     """Shows user's profile. He can manage it in here, see his posts, statistic, drafts(?) change password, email etc. """
-    posts = json.loads(get_posts(session['uid']).data)['posts']
-    drafts = json.loads(get_posts(session['uid'],True).data)['posts']
+    posts = json.loads(get_posts(session['string_id']).data)['posts']
+    drafts = json.loads(get_drafts(session['string_id']).data)['drafts']
     return render_template('profile.html',posts=posts, drafts=drafts)
     
 
