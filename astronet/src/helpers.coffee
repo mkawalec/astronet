@@ -215,12 +215,12 @@ nicefy_time = (number) ->
                 {ending: ' μs', amount: Math.pow(10, -6)},
                 {ending: ' ms', amount: Math.pow(10, -3)},
                 {ending: ' s', amount: 1},
-                {ending: ' min.', amount: 60},
-                {ending: ' hours', amount: 60*60},
-                {ending: ' days', amount: 60*60*24},
-                {ending: ' years', amount: 60*60*24*365},
-                {ending: ' millenia', amount: 60*60*24*365*1000},
-                {ending: ' billenia', amount: 60*60*24*365*1000*1000}]
+                {ending: ' min', amount: 60},
+                {ending: ' godzin', amount: 60*60},
+                {ending: ' dni', amount: 60*60*24},
+                {ending: ' lat', amount: 60*60*24*365},
+                {ending: ' tysięcy lat', amount: 60*60*24*365*1000},
+                {ending: ' milionów lat', amount: 60*60*24*365*1000*1000}]
     for i in [0..endings.length]
         if i == 0
             if number < endings[0].amount
