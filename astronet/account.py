@@ -89,22 +89,21 @@ def reset_pass():
     """ A password reset form """
     if request.method == 'POST':
         # We want to protect against spaces '_'
-        email = request.form['email']
+        email = request.form['email'].strip()
 
-        # We want to match the email with a regex, otherwise
-        # we are being lame
         if not re.match('^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$', email):
             flash(u'Wprowadzono niepoprawny adres email', 'error')
             return render_template('reset_pass.html')
             
         if query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
-                    (request.form['email'],), one=True) is None:
+                    (email,), one=True) is None:
             flash(u'Podany adres nie występuje w bazie', 'error')
             return render_template('reset_pass.html')                
-
+        
+        new_hash = gen_filename(10)
         if query_db('UPDATE users set reset_hash=%s WHERE email=%s',
-                (gen_filename(10),request.form['email'])):
-            mailing.email(user_data['email'], 'pass_reset')
+                (new_hash,email)):
+            mailing.email(email, 'pass_reset',hash=new_hash)
             flash(u'Na podany adres email wysłano link do zmiany hasła.', 'success')
             return redirect(url_for('home'))
     return render_template('reset_pass.html')
@@ -132,7 +131,7 @@ def reset_pass_finalize(hash):
                             user_data['salt']+app.config['SALT']).hexdigest(),
                     user_data['email'])):
             flash(u'Hasło zostało zmienione.', 'success')
-            log_me_in(user_data['uid'],user_data['email'],user_data['string_id'])
+            log_me_in(user_data['id'],user_data['email'],user_data['string_id'])
             flash(u'Zostałeś zalogowany', 'success')
             return redirect(url_for('home'))
         else:

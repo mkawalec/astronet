@@ -1,28 +1,27 @@
 # coding=utf-8
 import smtplib
+from email.mime.text import MIMEText
 
-
-def email(to, about):
+def email(to, about,hash=None):
     if about == 'pass_reset':
-        # The email constructing actions
-        pass
+        COMMASPACE = ', '
+        sender = 'admin@astronet.pl'
+        receivers = [to]
+        msg = 'Witaj,\r'+\
+        'dostaliśmy od Ciebie prośbę o zmianę hasła.\r'+\
+        'Jeżeli to nie Ty chcesz zmienić hasło, zignoruj tę wiadomość.\r'+\
+        'Jeżeli chcesz zmienić hasło kliknij w poniższy link i postępuj zgodnie z instrukcjami.\r'+\
+        'http://127.0.0.1:5000/password_reset/%s' % (hash,)
+        msg = MIMEText(msg)
+        msg['From'] = sender
+        msg['To'] = COMMASPACE.join(receivers)
+        msg['Subject'] = 'Astronet: Zmiana hasła'
 
-    # The common sending actions go here
-    # with exceptions going to a log
+        try:
+            s = smtplib.SMTP('localhost')
+            s.sendmail(sender,receivers, msg.as_string())
+            s.quit()      
+        except :
+            pass
+            #TODO logging - where? what exactly?
 
-
-    
-# here one has to generate mail and send it TODO - configure mail server and check if it works
-#sender = 'from@fromdomain.com'
-#receivers = ['asd@a.com']
-#message = """From: From Person <from@fromdomain.com>
-#To: To Person <to@todomain.com>
-#Subject: SMTP e-mail test
-#This is a test e-mail message.
-#"""
-#try:
-    #smtpObj = smtplib.SMTP('localhost')
-    #smtpObj.sendmail(sender, receivers, message)         
-    #print "Successfully sent email"
-#except SMTPException:
-    #print "Error: unable to send email"
