@@ -57,10 +57,11 @@ def add_post():
 @app.route('/user', methods=['GET', 'POST'])
 @login_required
 def show_profile():
-    """Shows user's profile. He can manage it in here, see his posts, statistic, drafts(?) change password, email etc. """
-    posts = json.loads(get_posts(session['uid']).data)['posts']
-    drafts = json.loads(get_posts(session['uid'],True).data)['posts']
-    return render_template('profile.html',posts=posts, drafts=drafts)
+    """ Shows user's profile. He can manage it in here, see his posts,
+        statistic, drafts(?) change password, email etc. """
+    posts = query_db('SELECT author, title, lead, draft FROM posts '
+                     'WHERE author=%s', (session['uid'],))
+    return render_template('profile.html',posts=posts)
     
 
     
