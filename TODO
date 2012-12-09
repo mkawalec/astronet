@@ -5,6 +5,7 @@
 - Validators on fields
 
 - zrobić by konfiguracja była brana z osobnego pliku konfiguracyjnego
+(done: M)
 
 Rzeczy do zrobienia:
 1. Dodać komcie. To zrobię ja (Michał), bo mam gdzieś w jakimś
@@ -35,14 +36,8 @@ głosów za i min 4 głosy redektorów, czy cokolwiek])
 
 M: Move config to a file as described in
 http://flask.pocoo.org/docs/config/
-<<<<<<< HEAD
 M: Done
-=======
 
 
 D: robimy coś, że hash do zmiany hasla jest wazny przez 24h czy cos?
-
-
-
-
->>>>>>> 89c90c3bf9eb5dad2e6ffad3982374d4984dc04b
+M: Pewnie, dawaj
