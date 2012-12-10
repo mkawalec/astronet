@@ -94,15 +94,16 @@ def reset_pass():
         if not re.match('^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$', email):
             flash(u'Wprowadzono niepoprawny adres email', 'error')
             return render_template('reset_pass.html')
-            
-        if query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
-                    (email,), one=True) is None:
+        
+        user_data = query_db('SELECT id FROM users WHERE email=%s LIMIT 1',
+                    (email,), one=True)
+        if user_data is None:
             flash(u'Podany adres nie występuje w bazie', 'error')
             return render_template('reset_pass.html')                
         
         new_hash = gen_filename(10)
-        if query_db('UPDATE users set reset_hash=%s WHERE email=%s',
-                (new_hash,email)):
+        if query_db('INSERT INTO hashes (hash_value,owner) VALUES (%s,%s)',
+                (new_hash,user_data["id"])):
             mailing.email(email, 'pass_reset',hash=new_hash)
             flash(u'Na podany adres email wysłano link do zmiany hasła.', 'success')
             return redirect(url_for('home'))
@@ -118,18 +119,17 @@ def reset_pass_finalize(hash):
             flash(u'Hasła nie są takie same', 'error')
             return render_template('new_pass.html',hash=hash)
 
-        user_data = query_db('SELECT id,string_id,salt,email FROM '
-                             'users WHERE reset_hash=%s LIMIT 1',
+        user_data = query_db('SELECT u.id,u.string_id,u.salt,u.email,h.timestamp FROM '
+                             'users u, hashes h WHERE h.hash_value=%s AND u.id=h.owner ORDER BY timestamp LIMIT 1',
                              (hash,), one=True)
         if not user_data:
             flash(u'Błędy kod aktywacyjny', 'error')
             return render_template('new_pass.html')
 
-        if query_db('UPDATE users SET reset_hash=%s, passwd=%s '
-                    'WHERE email = %s', (None, 
-                    sha256(request.form['passwd1'].strip()+\
+        if query_db('UPDATE users SET passwd=%s '
+                    'WHERE id = %s', (sha256(request.form['passwd1'].strip()+\
                             user_data['salt']+app.config['SALT']).hexdigest(),
-                    user_data['email'])):
+                            user_data['id'])):
             flash(u'Hasło zostało zmienione.', 'success')
             log_me_in(user_data['id'],user_data['email'],user_data['string_id'])
             flash(u'Zostałeś zalogowany', 'success')
@@ -139,7 +139,9 @@ def reset_pass_finalize(hash):
 
     # We need to check if the reset hash is correct here
     # for instance in case of someone wrongly entering the hash
-    correct_hash = query_db('SELECT id FROM users WHERE reset_hash=%s LIMIT 1',
+    correct_hash = query_db('SELECT u.id,h.timestamp FROM '
+               'users u, hashes h WHERE h.hash_value=%s AND u.id=h.owner '
+               'ORDER BY timestamp LIMIT 1',
                        (hash,), one=True)
     if not correct_hash:
         flash(u'Błędny kod resetujący hasło!', 'error')
