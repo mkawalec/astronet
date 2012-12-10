@@ -41,3 +41,7 @@ M: Done
 
 D: robimy coś, że hash do zmiany hasla jest wazny przez 24h czy cos?
 M: Pewnie, dawaj
+
+
+M: Zrobić walidowanie adresów email tak jak tutaj:
+http://www.doughellmann.com/PyMOTW/smtplib/

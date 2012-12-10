@@ -21,12 +21,8 @@ devnull = open('/dev/null', 'w')
 
 def connect_db():
     """ Connect to the database and return the connection object """
-<<<<<<< HEAD
     return psycopg2.connect("dbname="+app.config['DB']+" user=postgres port="+\
             app.config['DB_PORT'])
-=======
-    return psycopg2.connect("dbname="+app.config['DB']+" user=postgres port=5433")
->>>>>>> 89c90c3bf9eb5dad2e6ffad3982374d4984dc04b
 
 def init_db():
     """ Initialises (creates) a database, useful for testing """
