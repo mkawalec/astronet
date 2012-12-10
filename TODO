@@ -34,10 +34,6 @@ to zaakceptuje lub nie [albo jakaś inna zasada, na przykład przewaga 2
 głosów za i min 4 głosy redektorów, czy cokolwiek])
 
 
-M: Move config to a file as described in
-http://flask.pocoo.org/docs/config/
-M: Done
+ - Add logging:
+   http://flask.pocoo.org/docs/errorhandling/
 
-
-D: robimy coś, że hash do zmiany hasla jest wazny przez 24h czy cos?
-M: Pewnie, dawaj
