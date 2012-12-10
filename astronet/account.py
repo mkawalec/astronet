@@ -119,19 +119,23 @@ def reset_pass_finalize(hash):
             flash(u'Hasła nie są takie same', 'error')
             return render_template('new_pass.html',hash=hash)
 
-        user_data = query_db('SELECT u.id,u.string_id,u.salt,u.email,h.timestamp FROM '
-                             'users u, hashes h WHERE h.hash_value=%s AND u.id=h.owner ORDER BY timestamp LIMIT 1',
-                             (hash,), one=True)
+        user_data = query_db('SELECT u.id as uid,u.string_id,u.salt,u.email '
+                  'FROM users u, hashes h WHERE h.hash_value=%s AND '
+                  '(current_timestamp - h.timestamp) < (\'1 day\')::interval AND '
+                  'u.id=h.owner ORDER BY h.timestamp DESC LIMIT 1',
+                   (hash,), one=True)
         if not user_data:
             flash(u'Błędy kod aktywacyjny', 'error')
-            return render_template('new_pass.html')
+            return redirect(url_for('home'))
 
         if query_db('UPDATE users SET passwd=%s '
                     'WHERE id = %s', (sha256(request.form['passwd1'].strip()+\
                             user_data['salt']+app.config['SALT']).hexdigest(),
-                            user_data['id'])):
+                            user_data['uid'])):
+            query_db('DELETE FROM hashes WHERE hash_value=%s',
+                                        (hash,))
             flash(u'Hasło zostało zmienione.', 'success')
-            log_me_in(user_data['id'],user_data['email'],user_data['string_id'])
+            log_me_in(user_data['uid'],user_data['email'],user_data['string_id'])
             flash(u'Zostałeś zalogowany', 'success')
             return redirect(url_for('home'))
         else:
@@ -140,8 +144,9 @@ def reset_pass_finalize(hash):
     # We need to check if the reset hash is correct here
     # for instance in case of someone wrongly entering the hash
     correct_hash = query_db('SELECT u.id,h.timestamp FROM '
-               'users u, hashes h WHERE h.hash_value=%s AND u.id=h.owner '
-               'ORDER BY timestamp LIMIT 1',
+               'users u, hashes h WHERE h.hash_value=%s AND u.id=h.owner AND '
+               '(current_timestamp - h.timestamp) < (\'1 day\')::interval '
+               'ORDER BY h.timestamp DESC LIMIT 1',
                        (hash,), one=True)
     if not correct_hash:
         flash(u'Błędny kod resetujący hasło!', 'error')
