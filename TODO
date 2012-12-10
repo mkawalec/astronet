@@ -37,3 +37,7 @@ głosów za i min 4 głosy redektorów, czy cokolwiek])
  - Add logging:
    http://flask.pocoo.org/docs/errorhandling/
 
+
+M: Zrobić walidowanie adresów email tak jak tutaj:
+http://www.doughellmann.com/PyMOTW/smtplib/
+
