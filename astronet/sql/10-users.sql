@@ -12,8 +12,6 @@ CREATE TABLE users (
     disabled boolean DEFAULT FALSE,
     -- This will define user's role
     role varchar(5) DEFAULT 'user',
-    -- Password reset hash
-    reset_hash varchar(10),
 
     timestamp timestamp DEFAULT now()
 );
