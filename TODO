@@ -17,8 +17,9 @@ jakie napisali itepe z możliwością przejścia do profilu/podniesienia
 rangi/usunięcia konta/wyłączenia lub włączenia możliwości publikowania)
 3. Dodać stronę usera
     - zmiana hasła i maila z poziomu niej
+(done: D)
 4. Zarządzanie szkicami
-
+5. Dzielenie wyników postów na podstrony.
 
 - zrezygnowac z dodawania numerkow, albo wygenerowac rysunki, bo bot i
 tak pobierze numerki ze zrodla strony i doda (nie wiem czy komus by sie
