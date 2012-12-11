@@ -14,12 +14,13 @@ from psycopg2.extensions import adapt
 api = Blueprint('api', __name__,
                         template_folder='../templates/api')
 
-def log_me_in(uid,email,string_id):
+def log_me_in(uid,email,string_id,real_name):
     """Automatically logging the user """
     session['logged_in'] = True
     session['uid'] = uid
     session['email'] = email
     session['string_id'] = string_id
+    session['real_name'] = real_name
                         
 def check_auth(username='', password=''):
     """ Authentication checker. Works both for browsers autenticating
@@ -31,22 +32,25 @@ def check_auth(username='', password=''):
     if 'logged_in' in session:
         print True
         if session['logged_in'] == True:
+            #TODO tutaj powinno sie dopisac 
+            #real_name, string_id etc czy g nie obsuguje tego?
             g.email = session['email']
             g.uid = session['uid']
             return True
 
     # If the API is accessed programmatically, ask about the
     # password
-    passwd = query_db('SELECT passwd FROM users WHERE uname=%s',
-            [username], one=True)
+    passwd = query_db('SELECT passwd FROM users WHERE uname=%s LIMIT 1',
+            (username,), one=True)
     if passwd == None:
         return False
     passwd = passwd['passwd']
     
     if passwd == (sha256(password + app.config['SALT']).hexdigest()):
         g.username = username
-        g.uid = query_db('SELECT id FROM users WHERE uname=%s',
-                         [username], one=True)['id']
+       #TODO osochodzi? UNAME - nie ma czegoś takiego w bazie?!
+        g.uid = query_db('SELECT id FROM users WHERE uname=%s LIMIT 1',
+                         (username,), one=True)['id']
         return True
     return False
 
