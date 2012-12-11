@@ -47,7 +47,7 @@ def login():
                         return redirect(url_for('home'))
                     
                     log_me_in(user['id'],user['email'],
-                                        user['string_id'])
+                                 user['string_id'],user['real_name'])
                     flash(u'Zostałeś zalogowany', 'success')
                     
                     next = request.form['next']
@@ -82,6 +82,88 @@ def logout():
     flash(u'Podczas logowania nastąpił błąd.', 'error')
     
     return redirect(url_for('home'))
+
+
+@app.route('/user/edit', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    """ One can manage user's profile profile. Change real name,
+    password or email."""
+    if request.method == 'POST':
+        email1 = request.form['email1'].strip()
+        email2 = request.form['email2'].strip()
+        real_name = request.form['real_name'].strip()
+        
+        if len(real_name) != 0:
+            if query_db('UPDATE users SET real_name=%s WHERE id=%s', (real_name,session["uid"])):
+                flash(u'Uaktualniono Twoje imię i naziwsko', 'success')
+            else:
+                flash(u'Wystąpił błąd bazy danych', 'error')
+        else:
+            pass
+        
+        
+        
+        if (len(email1) == 0) and (len(email2) == 0):
+            pass
+        elif (len(email1) == 0) or\
+                (len(email2) == 0) or\
+                not re.match('^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.'
+                    '[a-zA-Z]{2,6}$', email1) or\
+                not re.match('^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.'
+                    '[a-zA-Z]{2,6}$', email2) or\
+                query_db('SELECT id from users WHERE email=%s LIMIT 1', 
+                    (email1,)) :
+            flash(u'Wprowadzono niepoprawny adres email '
+                u'lub podany adres jest już zajęty', 'error')
+            return render_template('edit_profile.html',)
+        elif (len(email1) != 0) and (len(email1) != 0) and \
+                                    email1 == email2:
+            if query_db('UPDATE users SET email=%s WHERE '
+                    'id=%s', (email1,session["uid"])):
+                flash(u'Uaktualniono Twój nowy adres email', 'success')
+            else:
+                flash(u'Wystąpił błąd bazy danych', 'error')
+        else:
+            flash(u'Wprowadzono niepoprawny adres email', 'error')
+            
+            
+            
+        passwd_old = request.form['passwd_old'].strip()
+        passwd1 = request.form['passwd1'].strip()
+        passwd2 = request.form['passwd2'].strip()
+        if len(passwd1) == 0 and len(passwd2) == 0 and\
+                        len(passwd_old) == 0:
+            pass
+        else:
+            error = False
+            if passwd1 != passwd2:
+                flash(u'Hasła nie są takie same', 'error')
+                error = True
+
+            if len(passwd1) == 0 or len(passwd2) == 0:
+                flash(u'Hasło jest puste', 'error')
+                error = True
+            
+            user_data = query_db('SELECT passwd, salt FROM users '
+                        'WHERE id=%s LIMIT 1', (session["uid"],), one=True)
+            if (sha256(passwd_old+user_data['salt']+\
+                       app.config['SALT']).hexdigest()) !=\
+                       user_data["passwd"]:
+                flash(u'Nieprawidłowe hasło', 'error')
+                error = True
+            
+            if not error and query_db('UPDATE users SET passwd=%s WHERE id=%s',
+                        (sha256(passwd1+user_data['salt']+\
+                        app.config['SALT']).hexdigest(),
+                        session['uid'])):
+                flash(u'Hasło zostało zmienione', 'success')
+            else:
+                flash(u'Wystąpił błąd bazy danych', 'error')
+    return render_template('edit_profile.html',)
+
+
+
 
 # TODO: Implement, check if everything is hacker-proof
 @app.route('/password_reset', methods=['POST', 'GET'])
@@ -119,7 +201,8 @@ def reset_pass_finalize(hash):
             flash(u'Hasła nie są takie same', 'error')
             return render_template('new_pass.html',hash=hash)
 
-        user_data = query_db('SELECT u.id as uid,u.string_id,u.salt,u.email '
+        user_data = query_db('SELECT u.id as uid,u.real_name,u.string_id, '
+                  'u.salt,u.email '
                   'FROM users u, hashes h WHERE h.hash_value=%s AND '
                   '(current_timestamp - h.timestamp) < (\'1 day\')::interval AND '
                   'u.id=h.owner ORDER BY h.timestamp DESC LIMIT 1',
@@ -129,13 +212,13 @@ def reset_pass_finalize(hash):
             return redirect(url_for('home'))
 
         if query_db('UPDATE users SET passwd=%s '
-                    'WHERE id = %s', (sha256(request.form['passwd1'].strip()+\
+                    'WHERE id=%s', (sha256(request.form['passwd1'].strip()+\
                             user_data['salt']+app.config['SALT']).hexdigest(),
                             user_data['uid'])):
             query_db('DELETE FROM hashes WHERE hash_value=%s',
                                         (hash,))
             flash(u'Hasło zostało zmienione.', 'success')
-            log_me_in(user_data['uid'],user_data['email'],user_data['string_id'])
+            log_me_in(user_data['uid'],user_data['email'],user_data['string_id'],user_data['real_name'])
             flash(u'Zostałeś zalogowany', 'success')
             return redirect(url_for('home'))
         else:
@@ -233,9 +316,9 @@ def register():
             flash(u'Konto zostało utworzone pomyślnie.', 'success')
 
             # Automatically logging the user
-            ret = query_db('SELECT id, string_id FROM users '
+            ret = query_db('SELECT id, string_id, real_name FROM users '
                            'WHERE email=%s LIMIT 1', (email,), one=True)
-            log_me_in(ret['id'],email,ret['string_id'])
+            log_me_in(ret['id'],email,ret['string_id'],ret["real_name"])
             flash(u'Zostałeś zalogowany', 'success')
 
         else:

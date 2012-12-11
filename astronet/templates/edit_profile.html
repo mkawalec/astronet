@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<form method="post" action="{{ url_for('edit_profile') }}">
+    <dl>
+        <dt><input type="text" name="real_name" class="input input-large" placeholder="Twoje imię i naziwsko" />
+    </dl>
+    Zmiana adresu email
+    <dl>
+        <dt><input type="text" name="email1" class="input input-large" placeholder="Proszę wpisz nowy adres email" />
+        <dt><input type="text" name="email2" class="input input-large" placeholder="Powtórz swój nowy adres email" />
+    </dl>
+    Zmiana hasła
+    <dl>
+        <dt><input type="password" name="passwd_old" class="input input-large" placeholder="Podaj stare hasło" />
+        <dt><input type="password" name="passwd1" class="input input-large" placeholder="Podaj nowe hasło" />
+        <dt><input type="password" name="passwd2" class="input input-large" placeholder="Powtórz nowe hasło" />
+    </dl>
+    <input type="submit" class="btn btn-primary" value="Zapisz zmiany" />
+</form>
+{% endblock %}
+
