@@ -6,6 +6,7 @@
 
 - dodać ochronę przed CSRF, jak pokazane na
   http://flask.pocoo.org/snippets/3/ , używając gen_filename()
+  albo (preferencyjnie?) na http://sjl.bitbucket.org/flask-csrf/
 
 - zrobić by konfiguracja była brana z osobnego pliku konfiguracyjnego
 (done: M)
