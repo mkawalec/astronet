@@ -4,6 +4,9 @@
       corresponding to her email created in users table
 - Validators on fields
 
+- dodać ochronę przed CSRF, jak pokazane na
+  http://flask.pocoo.org/snippets/3/ , używając gen_filename()
+
 - zrobić by konfiguracja była brana z osobnego pliku konfiguracyjnego
 (done: M)
 
