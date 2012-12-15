@@ -3,7 +3,10 @@ from astronet import app
 from flask import (g, redirect, url_for, flash, session, request)
 
 from contextlib import closing
+
 import psycopg2
+from psycopg2.pool import ThreadedConnectionPool
+
 from hashlib import sha256
 from base64 import b64encode
 
@@ -18,11 +21,13 @@ from subprocess import call
 
 devnull = open('/dev/null', 'w')
 
+# Creating a database connection pool
+pool = ThreadedConnectionPool(20, 100, dsn='dbname='+app.config['DB']+\
+        ' user=postgres port='+app.config['DB_PORT'])
 
 def connect_db():
     """ Connect to the database and return the connection object """
-    return psycopg2.connect("dbname="+app.config['DB']+" user=postgres port="+\
-            app.config['DB_PORT'])
+    return pool.getconn()
 
 def init_db():
     """ Initialises (creates) a database, useful for testing """
@@ -67,8 +72,7 @@ def before_request():
 @app.teardown_request
 def teardown_request(exception):
     """ Stuff executed at the end of request. Disconnects from the database """
-    g.db_cursor.close()
-    g.db.close()
+    pool.putconn(g.db)
 
 
 def query_db(query, args=(), one=False):

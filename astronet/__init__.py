@@ -8,11 +8,11 @@ from datetime import timedelta
 import json
    
 app = Flask(__name__)
+app.config.from_pyfile('config.cfg')
 
 from astronet.api import api, post, get_posts, get_drafts
 app.register_blueprint(api, url_prefix='/api')
 
-app.config.from_pyfile('config.cfg')
 
 from helpers import *
 from account import *
