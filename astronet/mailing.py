@@ -9,10 +9,10 @@ def email(to, about,hash=None):
 
     if about == 'pass_reset':
         COMMASPACE = ', '
-        msg = u'Witaj,\r'+\
-        u'dostaliśmy od Ciebie prośbę o zmianę hasła.\r'+\
+        msg = u'Witaj,\r\n'+\
+        u'dostaliśmy od Ciebie prośbę o zmianę hasła.\r\n'+\
         u'Jeżeli to nie Ty chcesz zmienić hasło, zignoruj tę wiadomość.\r'+\
-        u'Jeżeli chcesz zmienić hasło kliknij w poniższy link i postępuj zgodnie z instrukcjami.\r'+\
+        u'Jeżeli chcesz zmienić hasło kliknij w poniższy link i postępuj zgodnie z instrukcjami.\r\n'+\
         u'http://127.0.0.1:5000/password_reset/%s' % (hash,)
         msg = MIMEText(msg.encode('utf-8'), 'plain', 'UTF-8')
         msg['From'] = sender

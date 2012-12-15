@@ -61,7 +61,10 @@ def show_profile():
         statistic, drafts(?) change password, email etc. """
     posts = query_db('SELECT author, title, lead, draft FROM posts '
                      'WHERE author=%s', (session['uid'],))
-    return render_template('profile.html',posts=posts)
+    return render_template('profile.html',posts=posts,real_name=session["real_name"],email=session["email"])
+
+
+
     
 
     

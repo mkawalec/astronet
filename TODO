@@ -21,8 +21,9 @@ jakie napisali itepe z możliwością przejścia do profilu/podniesienia
 rangi/usunięcia konta/wyłączenia lub włączenia możliwości publikowania)
 3. Dodać stronę usera
     - zmiana hasła i maila z poziomu niej
+(done: D)
 4. Zarządzanie szkicami
-
+5. Dzielenie wyników postów na podstrony.
 
 - zrezygnowac z dodawania numerkow, albo wygenerowac rysunki, bo bot i
 tak pobierze numerki ze zrodla strony i doda (nie wiem czy komus by sie
@@ -38,14 +39,10 @@ to zaakceptuje lub nie [albo jakaś inna zasada, na przykład przewaga 2
 głosów za i min 4 głosy redektorów, czy cokolwiek])
 
 
-M: Move config to a file as described in
-http://flask.pocoo.org/docs/config/
-M: Done
-
-
-D: robimy coś, że hash do zmiany hasla jest wazny przez 24h czy cos?
-M: Pewnie, dawaj
+ - Add logging:
+   http://flask.pocoo.org/docs/errorhandling/
 
 
 M: Zrobić walidowanie adresów email tak jak tutaj:
 http://www.doughellmann.com/PyMOTW/smtplib/
+
