@@ -8,7 +8,7 @@ def email(to, about,hash=None):
     msg = ''
 
     if about == 'pass_reset':
-        COMMASPACE = ', '
+        # TODO: Dodać tutaj jakieś style, by to wyglądało ludzko 
         msg = u'Witaj,\r\n'+\
         u'dostaliśmy od Ciebie prośbę o zmianę hasła.\r\n'+\
         u'Jeżeli to nie Ty chcesz zmienić hasło, zignoruj tę wiadomość.\r'+\
@@ -16,7 +16,7 @@ def email(to, about,hash=None):
         u'http://127.0.0.1:5000/password_reset/%s' % (hash,)
         msg = MIMEText(msg.encode('utf-8'), 'plain', 'UTF-8')
         msg['From'] = sender
-        msg['To'] = COMMASPACE.join(receivers)
+        msg['To'] = ', '.join(receivers)
         msg['Subject'] = u'Astronet: Zmiana hasła'
 
     s = smtplib.SMTP('astronet.pl')

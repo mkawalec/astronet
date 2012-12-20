@@ -8,8 +8,9 @@
   http://flask.pocoo.org/snippets/3/ , używając gen_filename()
   albo (preferencyjnie?) na http://sjl.bitbucket.org/flask-csrf/
 
-- zrobić by konfiguracja była brana z osobnego pliku konfiguracyjnego
-(done: M)
+A co jeśli komć jest w bazie tym samym co wpis i można komcie przerabiać
+na wpisy (upenić się, że nie akceptuje się arbitralnego htmla w
+markdownie)
 
 Rzeczy do zrobienia:
 1. Dodać komcie. To zrobię ja (Michał), bo mam gdzieś w jakimś
