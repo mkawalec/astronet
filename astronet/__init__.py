@@ -21,6 +21,9 @@ from account import *
 def home():
     """ Return the homepage with all the posts """
     posts = json.loads(get_posts().data)['posts']
+    for post in posts:
+	    post['author'] = query_db('SELECT real_name FROM users WHERE id=%s LIMIT 1', 
+                (post['author'],), one=True)['real_name']
     return render_template('home.html', posts=posts)
 
 @app.route('/post/<string_id>')
@@ -65,6 +68,6 @@ def show_profile():
 
 
 
-    
+        
 
-    
+        
