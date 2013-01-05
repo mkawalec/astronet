@@ -30,7 +30,7 @@ def login():
 
     if request.method == 'POST':
         email = request.form['email']
-        user = query_db('SELECT id,passwd,real_name,email,salt,string_id '
+        user = query_db('SELECT id,passwd,real_name,email,salt,string_id,role '
                         'FROM users WHERE email=%s LIMIT 1',
                         (email,), one=True)
 
@@ -46,8 +46,8 @@ def login():
                         flash(u'Ten użytkownik już jest zalogowany!','error')
                         return redirect(url_for('home'))
                     
-                    log_me_in(user['id'],user['email'],
-                                 user['string_id'],user['real_name'])
+                    log_me_in(user['id'],user['email'],user['string_id'],
+                            user['real_name'],user['role'])
                     flash(u'Zostałeś zalogowany', 'success')
                     
                     next = request.form['next']
@@ -202,7 +202,7 @@ def reset_pass_finalize(hash):
             return render_template('new_pass.html',hash=hash)
 
         user_data = query_db('SELECT u.id as uid,u.real_name,u.string_id, '
-                  'u.salt,u.email '
+                  'u.salt,u.email,u.role '
                   'FROM users u, hashes h WHERE h.hash_value=%s AND '
                   '(current_timestamp - h.timestamp) < (\'1 day\')::interval AND '
                   'u.id=h.owner ORDER BY h.timestamp DESC LIMIT 1',
@@ -218,7 +218,7 @@ def reset_pass_finalize(hash):
             query_db('DELETE FROM hashes WHERE hash_value=%s',
                                         (hash,))
             flash(u'Hasło zostało zmienione.', 'success')
-            log_me_in(user_data['uid'],user_data['email'],user_data['string_id'],user_data['real_name'])
+            log_me_in(user_data['uid'],user_data['email'],user_data['string_id'],user_data['real_name'],user_data['role'])
             flash(u'Zostałeś zalogowany', 'success')
             return redirect(url_for('home'))
         else:
@@ -316,13 +316,105 @@ def register():
             flash(u'Konto zostało utworzone pomyślnie.', 'success')
 
             # Automatically logging the user
-            ret = query_db('SELECT id, string_id, real_name FROM users '
+            ret = query_db('SELECT id, string_id, real_name, role FROM users '
                            'WHERE email=%s LIMIT 1', (email,), one=True)
-            log_me_in(ret['id'],email,ret['string_id'],ret["real_name"])
+            log_me_in(ret['id'],email,ret['string_id'],ret['real_name'],ret['role'])
             flash(u'Zostałeś zalogowany', 'success')
 
         else:
             flash(u'Nastąpił błąd przy rejestracji', 'error')
         return redirect(url_for('home'))
     return render_template('register.html', first=randint(1,20), second=randint(1,20))
+
+
+@app.route('/admin', methods=['GET'])
+@login_required
+def show_admin_panel():
+    """ Shows admin panel. Allows to manage users (change roles, remove) """
+    if session['role'] != 'admin':
+        flash(u'Nie masz wystarczających uprawnień.', 'error')
+        return redirect(url_for('home'))
+
+    keys = ['id', 'email', 'real_name', 'disabled', 'role', 'timestamp']
+    sort_by = 'id'
+    if 'sort_by' in request.args:
+        if keys.index(request.args['sort_by']) != ValueError:
+            sort_by = request.args['sort_by']
+    if 'desc' in request.args:
+        sort_by += ' DESC'
+    users = query_db('SELECT id, email, real_name, disabled, role, timestamp '
+                     'FROM users ORDER BY %s' % (sort_by))
+    return render_template('admin.html', users=users)
+
+@app.route('/admin/manage_user', methods=['GET', 'POST'])
+@login_required
+def manage_user():
+    # TODO: remove user
+    if session['role'] != 'admin':
+        flash(u'Nie masz wystarczających uprawnień.', 'error')
+        return redirect(url_for('home'))
+
+    roles = ['user', 'admin']
+    if request.method == 'POST':
+        user_id = int(request.form['user_id'])
+        user = query_db('SELECT email, real_name, disabled, role '
+                        'FROM users WHERE id=%s', (user_id,), one=True)
+        
+        email = request.form['email'].strip()
+        real_name = request.form['real_name'].strip()
+        role = request.form['role'].strip()
+        disabled = ('disabled' in request.form)
+        
+
+        if len(real_name) != 0 and real_name != user['real_name']:
+            if query_db('UPDATE users SET real_name=%s WHERE id=%s',
+                        (real_name,user_id)):
+                flash(u'Uaktualniono imię i naziwsko', 'success')
+            else:
+                flash(u'Wystąpił błąd bazy danych', 'error')
+        
+
+        if email == user['email']:
+            pass
+        elif len(email) == 0 or\
+                not re.match('^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.'
+                    '[a-zA-Z]{2,6}$', email) or\
+                query_db('SELECT id FROM users WHERE email=%s LIMIT 1', 
+                    (email,)):
+            flash(u'Wprowadzono niepoprawny adres email '
+                u'lub podany adres jest już zajęty', 'error')
+        else:
+             if query_db('UPDATE users SET email=%s WHERE '
+                    'id=%s', (email,user_id)):
+                flash(u'Uaktualniono adres email', 'success')
+             else:
+                flash(u'Wystąpił błąd bazy danych', 'error')
+        
+
+        if role == user['role']:
+            pass
+        elif role in roles:
+            if query_db('UPDATE users SET role=%s WHERE id=%s',
+                        (role, user_id)):
+                flash(u'Uaktualniono rolę', 'success')
+            else:
+                flash(u'Wystąpił błąd bazy danych', 'error')
+        else:
+            flash(u'Wprowadzono niepoprawną rolę', 'error')
+
+
+        if disabled != user['disabled']:
+            if query_db('UPDATE users SET disabled=%s WHERE id=%s',
+                        (disabled,user_id)):
+                flash(u'Uaktualniono stan zablokowania', 'success')
+            else:
+                flash(u'Wystąpił błąd bazy danych', 'error')
+
+
+        return redirect(url_for('show_admin_panel'))
+    else:
+        user_id = int(request.args['user_id'])
+        user = query_db('SELECT id, email, real_name, disabled, role, timestamp '
+                        'FROM users WHERE id=%s', (user_id,), one=True)
+        return render_template('manage_user.html', user=user, roles=roles)
 

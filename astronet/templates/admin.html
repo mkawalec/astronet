@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<table class="users_table">
+    <tr>
+        <td>Id</td>
+        <td>Imię i nazwisko</td>
+        <td>E-mail</td>
+        <td>Rola</td>
+        <!-- <td>Data rejestracji(?)</td> -->
+    </tr>
+    {% for user in users %}
+    <form method="get" action="{{ url_for('manage_user') }}">
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        {% if user.disabled %}
+        <tr class="disabled_user">
+        {% else %}
+        <tr class="user">
+        {% endif %}
+            <td class="user_id">{{ user.id }}</td>
+            <td class="user_real_name">{{ user.real_name }}</td>
+            <td class="user_email">{{ user.email }}</td>
+            <td class="user_role">{{ user.role }}</td>
+            <!-- <td class="user_timestamp">{{ user.timestamp }}</td> -->
+            <td><button class="btn btn-submit">Zarządzaj użytkownikiem</button></td>
+        </tr>
+    </form>
+    {% endfor %}
+</table><br>
+<form method="get">
+    Sortuj po: 
+    <select name="sort_by">
+        <option value="id">Id</option>
+        <option value="real_name">Imię i nazwisko</option>
+        <option value="email">E-mail</option>
+        <option value="role">Rola</option>
+    </select> 
+    <label><input type="checkbox" name="desc"> malejąco</label>
+    <button class="btn btn-submit">Sortuj</button>
+</form>
+{% endblock %}
+

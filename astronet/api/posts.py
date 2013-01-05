@@ -23,7 +23,7 @@ def post(post=None, string_id=None):
 
         ret = query_db('INSERT INTO posts (author, title, lead, body, string_id) '
                        'VALUES (%s, %s, %s, %s, %s)',
-                       (g.string_id, post['title'], post['lead'],post['body'], gen_filename()))
+                       (g.uid, post['title'], post['lead'],post['body'], gen_filename()))
         if ret == 1:
             return jsonify(status='succ')
         elif ret == -1:
