@@ -5,6 +5,6 @@ CREATE TABLE comments (
     parent bigint REFERENCES comments(id),
     post bigint REFERENCES posts(id),
 
-    body varchar(1000) -- Is it a good limit?
+    body varchar(1000), -- Is it a good limit?
     timestamp timestamp DEFAULT now()
-)
+);
