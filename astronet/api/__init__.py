@@ -83,6 +83,7 @@ def auth_required(f):
 
 from user import *
 from posts import *
+from comments import *
 
 ################### Misc API
 
