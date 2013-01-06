@@ -79,3 +79,16 @@ def comments(post_id):
             return jsonify(status='db_null_error')
         return jsonify(status='not_authorized')
 
+    if request.method == 'PUT':
+        f = request.form
+        ret = query_db ('SELECT update_comment(%s, %s, %s)',
+                [f['string_id'], session['uid'], f['body']])
+        if ret == 1:
+            return jsonify(status='succ')
+        elif ret == -1:
+            return jsonify(status='db_null_error')
+        return jsonify(status='not_authorized')
+
+        
+
+
