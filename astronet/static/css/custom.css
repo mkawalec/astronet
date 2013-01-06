@@ -14,14 +14,14 @@ body {
 .navbar {
 }
 
-.brand {
+/*.brand {
     background-image: url('../img/logo.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 42px;
     height: 42px;
     padding: 2px !important;
-}
+}*/
 
 .company {
     margin-bottom: 10px;

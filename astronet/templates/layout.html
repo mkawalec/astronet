@@ -13,7 +13,7 @@
 
 <script type="text/javascript">
     var script_root = {{ request.script_root|tojson|safe }};
-    var url_root = {{ request.url_root|tojson|safe }};
+var url_root = {{ request.url_root|tojson|safe }};
 </script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/helpers.js') }}">
@@ -30,22 +30,30 @@
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
-                <div class="brand"></div>
-                <ul class="nav">
-                    <li><a href="{{ url_for('home') }}">Home</a></li>
-                    {% if not session.logged_in %}
-                    <li><a href="{{ url_for('login', next='None') }}">Zaloguj się</a></li>
-                    <li><a href="{{ url_for('register', next='None') }}">Rejestruj się</a></li>
-                    <li><a href="{{ url_for('reset_pass') }}">Resetuj hasło</a></li>
-                    {% else %}
-                    {% if session.role == 'admin' %}
-                    <li><a href="{{ url_for('show_admin_panel') }}">Panel administracyjny</a></li>
-                    {% endif %}
-                    <li><a href="{{ url_for('add_post') }}">Dodaj posta</a></li>
-                    <li><a href="{{ url_for('show_profile') }}">Mój profil</a></li>
-                    <li><a href="{{ url_for('logout') }}">Wyloguj się</a></li>
-                    {% endif %}
-                </ul>
+                <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href='#'>Astronet</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="{{ url_for('home') }}">Home</a></li>
+                        {% if not session.logged_in %}
+                        <li><a href="{{ url_for('login', next='None') }}">Zaloguj się</a></li>
+                        <li><a href="{{ url_for('register', next='None') }}">Rejestruj się</a></li>
+                        <li><a href="{{ url_for('reset_pass') }}">Resetuj hasło</a></li>
+                        {% else %}
+                        {% if session.role == 'admin' %}
+                        <li><a href="{{ url_for('show_admin_panel') }}">Panel administracyjny</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('add_post') }}">Dodaj posta</a></li>
+                        <li><a href="{{ url_for('show_profile') }}">Mój profil</a></li>
+                        <li><a href="{{ url_for('logout') }}">Wyloguj się</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
