@@ -5,4 +5,14 @@
 <div class="post_author">{{ post.author }}</div>
 <div class="post_body">{{ post.body|safe }}</div>
 
+<div id="comments"></div>
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/show_post.js') }}"></script>
+<script type="text/javascript">
+    var holder = $('#comments')[0];
+    var post_id = "{{ post.string_id }}";
+    var comm_list = new CommentList(holder, post_id);
+</script>
 {% endblock %}

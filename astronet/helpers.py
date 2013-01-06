@@ -105,7 +105,7 @@ def query_db(query, args=(), one=False):
     
     return (rv[0] if rv else None) if one else rv
 
-def gen_filename(length=10):
+def gen_filename(length=12):
     """ Generates a (rougly) random string of a given length
         consisting of upper and lower case letters and numbers.
         

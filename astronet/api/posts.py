@@ -9,7 +9,8 @@ from markdown import markdown
 def post(post=None, string_id=None):
     """ Saves or gets a post """
     if string_id:
-        ret = query_db('SELECT author, title, body FROM posts WHERE '
+        ret = query_db('SELECT author, title, body, string_id '
+                       'FROM posts WHERE '
                        'draft=FALSE AND string_id=%s', (string_id,),
                        one=True)
         if ret == None:

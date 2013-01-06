@@ -1,18 +1,21 @@
+# coding=utf-8
 from ..api import api, auth_required
-from ..helpers import gen_filename
+from ..helpers import gen_filename, query_db
+from flask import request, jsonify,g 
 
-class Tree_element:
+class TreeElement:
     def __init__(self, comment_toset=None):
         self.children = []
         self.comment = comment_toset
-    
-    def __repr__(self):
-        ret = 'Children: '
-        for child in self.children:
-            ret += child + ' '
-        ret += '\n'
-        ret += 'Comment: ' + self.comment + '\n\n'
-        return ret
+
+    def serialize(self):
+        d = dict()
+        d['children'] = self.children
+        d['comment'] = self.comment
+        if d['comment'] != None:
+            d['comment']['timestamp'] = str(d['comment']['timestamp'])
+
+        return d
 
 def generate_tree(comments):
     """ Generates a hierarchical comments list. What it does is inverting
@@ -21,37 +24,45 @@ def generate_tree(comments):
     """
     tree = []
     tree_hash = {}
-    tree.append(Tree_element())
+    tree.append(TreeElement())
     for comment in comments:
-        tree.append(Tree_element(comment))
+        tree.append(TreeElement(comment))
         # We cache the location of this comment id
         tree_hash[comment['string_id']] = len(tree)-1
 
         # If somebody had posted this comment as a reply
         if comment['parent']:
-            tree[tree_hash[comment['reply_to']]].children.append(len(tree)-1)
-    return tree
+            tree[tree_hash[comment['parent']]].children.append(len(tree)-1)
+        else:
+            tree[0].children.append(len(tree)-1)
+
+    ret = []
+    for comment in tree:
+        ret.append(comment.serialize())
+    return ret
 
 @api.route('/comments/<post_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 @auth_required
 def comments(post_id):
     if request.method == 'GET':
         comments = query_db('SELECT string_id, author, parent, '
-                'timestamp, body FROM comments WHERE post=%s',[post_id])
+                'timestamp, body FROM comments WHERE post=%s '
+                'ORDER BY id ASC',[post_id])
         if len(comments) == 0:
             return jsonify(status='db_null_error')
-        return jsonify(status='succ', posts=generate_tree(comments))
+        return jsonify(status='succ', comments=generate_tree(comments))
 
     if request.method == 'POST':
-        f = request.form
-        if not 'parent' in f:
-            f['parent'] = None
+        f = dict(request.form)
+        if not 'parent' in f or f['parent'][0] == 'null' \
+                or len(f['parent'][0]) == 0:
+            f['parent'][0] = None
 
-        if len(f['body'].strip()) > 1000:
+        if len(f['body'][0].strip()) > 1000:
             return jsonify(status='db_constraints_error', field='body')
         ret = query_db('INSERT INTO comments (string_id, author, parent'
                 ',post, body) VALUES (%s,%s,%s,%s,%s)',
-                [gen_filename(), g.uid, f['parent'], post_id, f['body']])
+                [gen_filename(), g.uid, f['parent'][0], post_id, f['body'][0]])
         if ret == 1:
             return jsonify(status='succ')
         elif ret == -1:
