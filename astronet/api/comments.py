@@ -69,4 +69,13 @@ def comments(post_id):
             return jsonify(status='db_constraints_error')
         return jsonify(status='db_error')
 
+    if request.method == 'DELETE':
+        f = request.form
+        ret = query_db('SELECT delete_comment(%s, %s)',
+                [f['string_id'], session['uid']])
+        if ret == 1:
+            return jsonify(status='succ')
+        elif ret == -1:
+            return jsonify(status='db_null_error')
+        return jsonify(status='not_authorized')
 
