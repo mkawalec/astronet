@@ -46,9 +46,10 @@ class CommentBox
             success: (data) =>
                 if data.status == 'succ'
                     parent = $(".comment[data-string_id='#{@parent}']")
-                    lvl = ((parent.attr 'class').match /level[0-9]/)[0].match /[0-9]/[0]
-                    console.log data.comment
-                    new Comment null, null, lvl+2, @post_id, @parent, data.comment
+                    lvl = ((parent.attr 'class').match /level[0-9]/)[0]
+                    lvl = parseInt (lvl.match /[0-9]/)[0]
+
+                    new Comment null, null, lvl+1, @post_id, @parent, data.comment
                 return
             error: (data) ->
                 console.log data, 'error'
@@ -63,7 +64,6 @@ class Comment
             @id = @tree[@i].comment['string_id']
 
         @bootstrap()
-        console.log 'dssad2222'
         return
 
     bootstrap: ->
@@ -132,17 +132,13 @@ class Comment
 
         $(@comment_box).hide()
         @append()
-        console.log 'sdsad'
 
     append: ->
-        console.log 'dupa'
         if @parent == null
             @wrapper.appendChild @comment
-            console.log 'blah'
         else
             parent = $(".comment[data-string_id='#{@parent}'] .children_box")[0]
             parent.appendChild @comment
-            console.log 'appending', @comment, 'to', parent
 
         if @tree != null
             for child in @tree[@i].children
