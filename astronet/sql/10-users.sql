@@ -8,7 +8,7 @@ CREATE TABLE users (
     -- User password
     passwd varchar,
     -- Salt, user-variable
-    salt varchar(10), 
+    salt varchar(12), 
     disabled boolean DEFAULT FALSE,
     -- This will define user's role
     role varchar(5) DEFAULT 'user',
