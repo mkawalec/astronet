@@ -37,32 +37,35 @@ class CommentBox
         return box
 
 class Comment
-    constructor: (contents, @level, @post_id, @parent=null) ->
-        if @parent?
-            if @parent.comment != null
-                @parent = @parent.comment['string_id']
-            else
-                @parent = null
+    constructor: (@tree, @i, @level, @post_id, @parent=null) ->
+        @wrapper = $('.comments_wrapper')[0]
+        @id = @tree[@i].comment['string_id']
+
+        @bootstrap()
+        return
+
+    bootstrap: ->
+        comment = @tree[@i].comment
 
         @comment = document.createElement 'div'
         $(@comment).attr 'class', "comment level#{@level}"
-        $(@comment).attr 'data-string_id', contents.comment['string_id']
+        $(@comment).attr 'data-string_id', comment['string_id']
 
         @body = document.createElement 'div'
         $(@body).attr 'class', 'body'
-        $(@body).html contents.comment['body']
+        $(@body).html comment['body']
 
         @timestamp = document.createElement 'div'
         $(@timestamp).attr 'class', 'timestamp'
-        $(@timestamp).html contents.comment['timestamp']
+        $(@timestamp).html comment['timestamp']
 
-        if (parseInt uid) == contents.comment['author']
+        if (parseInt uid) == comment['author']
             @delete = document.createElement 'div'
             $(@delete).text 'X'
             $(@delete).bind 'click', (event) =>
                 $.ajax {
                     type: 'DELETE'
-                    url: script_root+'/api/comment/'+contents.comment['string_id']
+                    url: script_root+'/api/comment/'+comment['string_id']
                     success: (data) =>
                         if data.status == 'succ'
                             $(@comment).hide 'fast'
@@ -78,9 +81,9 @@ class Comment
         $(@author).attr 'class', 'author'
         # TODO: Show some useful details about an author and not
         # her string id:D
-        $(@author).html contents.comment['author']
+        $(@author).html comment['author']
 
-        @comment_box = new CommentBox @post_id, contents.comment['string_id']
+        @comment_box = new CommentBox @post_id, comment['string_id']
 
         @write_btn = document.createElement 'a'
         $(@write_btn).attr 'href', '#'
@@ -95,14 +98,27 @@ class Comment
         @comment.appendChild @author
         @comment.appendChild @timestamp
         @comment.appendChild @body
-        @comment.appendChild @children_box
 
         if uid.length > 0
             @comment.appendChild @write_btn
             @comment.appendChild @comment_box
 
+        @comment.appendChild @children_box
+
         $(@comment_box).hide()
-        return @comment
+        @append()
+
+    append: ->
+        if @parent == null
+            @wrapper.appendChild @comment
+        else
+            parent = $(".comment[data-string_id='#{@parent}'] .children_box")[0]
+            parent.appendChild @comment
+
+        for child in @tree[@i].children
+            @children.push (new Comment @tree, child, @level+1, @post_id, @id)
+
+    children: []
 
 class CommentList
     constructor: (@holder, @post_id) ->
@@ -136,21 +152,20 @@ class CommentList
 
                 @comments = data.comments
                 # Generate comments starting from the top nodes
-                @print_comments @comments[0], 0, null
+                @print_comments()
             error: (data) =>
                 console.log 'errror, error'
                 console.log data
         }
 
-    print_comments: (start_node, level, parent) ->
-        if level > 0
-            @comms_wrapper.appendChild (new Comment start_node, level,
-                @post_id, parent)
+    print_comments: () ->
+        for child in @comments[0].children
+            @comments.push (new Comment @comments, child, 0, @post_id)
 
-        for child in start_node.children
-            @print_comments @comments[child], level+1, start_node
 
     clean: ->
         for child in @holder.children
             @holder.removeChild @holder.children[0]
         @bootstrap()
+    
+    comments: []
