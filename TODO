@@ -6,6 +6,8 @@ uprości wszystko)/
 4. Zmigrować na WTFforms
 5. Zobaczyć jak ten nowy kod się sprawuje
 
+NOTE: Use #include clauses for coffeescript classes
+
 - Make loader be embeddable in objects, not only work on the full page
 - Add Mozilla Persona login
     - when a new person logs in with persona she has an entry
