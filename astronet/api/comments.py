@@ -84,7 +84,7 @@ def show_comments(post_id):
     return jsonify(status='succ', comments=generate_tree(comments))
 
 @api.route('/comment/<comment_id>', methods=['GET', 'DELETE'])
-@auth.required
+@auth_required
 def comment(comment_id):
     if request.method == 'DELETE':
         ret = query_db('SELECT delete_comment(%s, %s)',
