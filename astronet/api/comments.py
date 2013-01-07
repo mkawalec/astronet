@@ -41,17 +41,9 @@ def generate_tree(comments):
         ret.append(comment.serialize())
     return ret
 
-@api.route('/comments/<post_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@api.route('/comments/<post_id>', methods=['POST', 'PUT'])
 @auth_required
-def comments(post_id):
-    if request.method == 'GET':
-        comments = query_db('SELECT string_id, author, parent, '
-                'timestamp, body FROM comments WHERE post=%s '
-                'ORDER BY id ASC',[post_id])
-        if len(comments) == 0:
-            return jsonify(status='db_null_error')
-        return jsonify(status='succ', comments=generate_tree(comments))
-
+def comments(post_id=None):
     if request.method == 'POST':
         f = dict(request.form)
         if not 'parent' in f or f['parent'][0] == 'null' \
@@ -60,35 +52,53 @@ def comments(post_id):
 
         if len(f['body'][0].strip()) > 1000:
             return jsonify(status='db_constraints_error', field='body')
+
+        string_id = gen_filename()
         ret = query_db('INSERT INTO comments (string_id, author, parent'
                 ',post, body) VALUES (%s,%s,%s,%s,%s)',
-                [gen_filename(), g.uid, f['parent'][0], post_id, f['body'][0]])
+                [string_id, g.uid, f['parent'][0], post_id, f['body'][0]])
         if ret == 1:
-            return jsonify(status='succ')
+            return jsonify(status='succ', string_id=string_id)
         elif ret == -1:
             return jsonify(status='db_constraints_error')
         return jsonify(status='db_error')
 
-    if request.method == 'DELETE':
-        f = request.form
-        ret = query_db('SELECT delete_comment(%s, %s)',
-                [f['string_id'], session['uid']])
-        if ret == 1:
-            return jsonify(status='succ')
-        elif ret == -1:
-            return jsonify(status='db_null_error')
-        return jsonify(status='not_authorized')
-
     if request.method == 'PUT':
         f = request.form
         ret = query_db ('SELECT update_comment(%s, %s, %s)',
-                [f['string_id'], session['uid'], f['body']])
+                [f['string_id'].strip(), session['uid'], f['body']],
+                one=True)
         if ret == 1:
             return jsonify(status='succ')
         elif ret == -1:
             return jsonify(status='db_null_error')
         return jsonify(status='not_authorized')
 
-        
+@api.route('/comments/<post_id>')
+def show_comments(post_id):
+    comments = query_db('SELECT string_id, author, parent, '
+            'timestamp, body FROM comments WHERE post=%s '
+            'ORDER BY id ASC',[post_id])
+    if len(comments) == 0:
+        return jsonify(status='db_null_error')
+    return jsonify(status='succ', comments=generate_tree(comments))
 
+@api.route('/comment/<comment_id>', methods=['GET', 'DELETE'])
+@auth.required
+def comment(comment_id):
+    if request.method == 'DELETE':
+        ret = query_db('SELECT delete_comment(%s, %s)',
+                [comment_id.strip(), g.uid], one=True)['delete_comment']
+        print ret, comment_id, len(comment_id)
+        if ret == 1:
+            return jsonify(status='succ')
+        elif ret == -1:
+            return jsonify(status='db_null_error')
+        return jsonify(status='not_authorized')
+
+    elif request.methods == 'GET':
+        ret = query_db('SELECT string_id, author, parent, '
+                'timestamp, body FROM comments WHERE string_id=%s',
+                [comment_id], one=True)
+        return jsonify(status='succ', comment=ret)
 

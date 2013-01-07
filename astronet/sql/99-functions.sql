@@ -13,22 +13,6 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
-DROP FUNCTION IF EXISTS check_auth(varchar, bigint);
-CREATE FUNCTION check_auth(varchar, bigint) RETURNS integer AS $$
-BEGIN
-    IF (SELECT COUNT(*) FROM comments WHERE string_id=$1) = 0 THEN
-        RETURN -1;
-    END IF;
-    IF (SELECT COUNT(*) FROM comments WHERE string_id=$1 AND
-        author=$2) = 0 THEN
-        RETURN -2;
-    END IF;
-    RETURN 1;
-END;
-$$ LANGUAGE 'plpgsql';
-
-
-
 DROP FUNCTION IF EXISTS update_comment(varchar, bigint, varchar);
 CREATE FUNCTION update_comment(varchar, bigint, varchar) RETURNS integer AS $$
 DECLARE
@@ -43,3 +27,18 @@ BEGIN
     RETURN 1;
 END;
 $$ LANGUAGE 'plpgsql';
+
+DROP FUNCTION IF EXISTS check_auth(varchar, bigint);
+CREATE FUNCTION check_auth(varchar, bigint) RETURNS integer AS $$
+BEGIN
+    IF (SELECT COUNT(*) FROM comments WHERE string_id=$1) = 0 THEN
+        RETURN -1;
+    END IF;
+    IF (SELECT COUNT(*) FROM comments WHERE string_id=$1 AND
+        author=$2) = 0 THEN
+        RETURN -2;
+    END IF;
+    RETURN 1;
+END;
+$$ LANGUAGE 'plpgsql';
+

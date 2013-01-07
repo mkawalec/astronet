@@ -3,9 +3,7 @@ from flask import (request, g, jsonify, abort)
 
 from markdown import markdown
 
-@api.route('/post', methods=['POST'])
 @api.route('/post/<string_id>')
-@auth_required
 def post(post=None, string_id=None):
     """ Saves or gets a post """
     if string_id:
@@ -18,7 +16,10 @@ def post(post=None, string_id=None):
 
         ret['body'] = markdown(ret['body'])
         return jsonify(status='succ', post=ret)
-    elif request.method == 'POST':
+
+@api.route('/post', methods=['POST'])
+@auth_required
+def save_post(post=None):
         if post == None:
             post = request.form
 

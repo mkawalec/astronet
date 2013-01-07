@@ -1,6 +1,5 @@
 class CommentBox
     constructor: (post_id, parent=null) ->
-        console.log parent
         box = document.createElement 'div'
         $(box).attr 'class', 'comment_box'
 
@@ -27,13 +26,10 @@ class CommentBox
                     post: post_id
                     body: $.trim comment_input.value
                 success: (data) =>
-                    $(send_btn).text 'Wysłano!'
-                    $(send_btn).attr 'disabled', 'true'
-                    console.log data
+                    $(box).hide 'fast'
                 error: (data) =>
                     $(send_btn).text 'Błąd!'
             }
-
 
         box.appendChild body
         box.appendChild send_btn
@@ -59,6 +55,24 @@ class Comment
         @timestamp = document.createElement 'div'
         $(@timestamp).attr 'class', 'timestamp'
         $(@timestamp).html contents.comment['timestamp']
+
+        if (parseInt uid) == contents.comment['author']
+            @delete = document.createElement 'div'
+            $(@delete).text 'X'
+            $(@delete).bind 'click', (event) =>
+                $.ajax {
+                    type: 'DELETE'
+                    url: script_root+'/api/comment/'+contents.comment['string_id']
+                    success: (data) =>
+                        if data.status == 'succ'
+                            $(@comment).hide 'fast'
+                            # TODO: Add getting the actual comment
+                            # from the server
+                    error: (data) =>
+                        console.log 'error'
+                }
+
+            @comment.appendChild @delete
         
         @author = document.createElement 'div'
         $(@author).attr 'class', 'author'
@@ -79,8 +93,10 @@ class Comment
         @comment.appendChild @author
         @comment.appendChild @timestamp
         @comment.appendChild @body
-        @comment.appendChild @write_btn
-        @comment.appendChild @comment_box
+
+        if uid.length > 0
+            @comment.appendChild @write_btn
+            @comment.appendChild @comment_box
 
         $(@comment_box).hide()
         return @comment
@@ -99,7 +115,14 @@ class CommentList
 
         @holder.appendChild @add_new
         @holder.appendChild @comms_wrapper
-        @holder.appendChild (new CommentBox @post_id)
+
+        if uid.length > 0
+            @holder.appendChild (new CommentBox @post_id)
+        else
+            @notice = document.createElement 'div'
+            $(@notice).attr 'class', 'notice'
+            $(@notice).text 'Zaloguj się by dodawać komentarze'
+            @holder.appendChild @notice
 
         $.ajax {
             type: 'GET'
@@ -109,7 +132,6 @@ class CommentList
                     return 0
 
                 @comments = data.comments
-                console.log @comments
                 # Generate comments starting from the top nodes
                 @print_comments @comments[0], 0, null
             error: (data) =>
@@ -118,7 +140,6 @@ class CommentList
         }
 
     print_comments: (start_node, level, parent) ->
-        console.log start_node
         if level > 0
             @comms_wrapper.appendChild (new Comment start_node, level,
                 @post_id, parent)
@@ -126,3 +147,7 @@ class CommentList
         for child in start_node.children
             @print_comments @comments[child], level+1, start_node
 
+    clean: ->
+        for child in @holder.children
+            @holder.removeChild @holder.children[0]
+        @bootstrap()
