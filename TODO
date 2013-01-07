@@ -1,8 +1,10 @@
 Rzeczy do zrobienia, by było dobrze:
-1. Dodać komentarze
+1. Dodać komentarze /poprawić dodawanie (dzieci wewnątrz rodziców, co
+uprości wszystko)/
 2. Dodać wrzucanie obrazków do postów
-3. Zmigrować na WTFforms
-4. Zobaczyć jak ten nowy kod się sprawuje
+3. Poprawić panel administracyjny i ustawienia konta
+4. Zmigrować na WTFforms
+5. Zobaczyć jak ten nowy kod się sprawuje
 
 - Make loader be embeddable in objects, not only work on the full page
 - Add Mozilla Persona login
