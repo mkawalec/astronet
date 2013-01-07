@@ -89,10 +89,13 @@ class Comment
             event.preventDefault()
             $(@comment_box).toggle 'fast'
 
+        @children_box = document.createElement 'div'
+        $(@children_box).attr 'class', 'children_box'
 
         @comment.appendChild @author
         @comment.appendChild @timestamp
         @comment.appendChild @body
+        @comment.appendChild @children_box
 
         if uid.length > 0
             @comment.appendChild @write_btn
