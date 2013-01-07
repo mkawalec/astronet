@@ -173,10 +173,15 @@ def create_query(feed):
             query += word
     return query
 
-def stringify(results):
+def stringify(results, one=False):
     """ Encode all of the results as strings to get rid of non-matching
         datatypes issues
     """
+    if one:
+        for param in results:
+            results[param] = unicode(results[param])
+        return results
+
     for result in results:
         for param in result:
             result[param] = unicode(result[param])

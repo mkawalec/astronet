@@ -1,6 +1,6 @@
 # coding=utf-8
 from ..api import api, auth_required
-from ..helpers import gen_filename, query_db
+from ..helpers import gen_filename, query_db, stringify
 from flask import request, jsonify,g 
 
 class TreeElement:
@@ -96,9 +96,10 @@ def comment(comment_id):
             return jsonify(status='db_null_error')
         return jsonify(status='not_authorized')
 
-    elif request.methods == 'GET':
+    elif request.method == 'GET':
         ret = query_db('SELECT string_id, author, parent, '
                 'timestamp, body FROM comments WHERE string_id=%s',
                 [comment_id], one=True)
+        ret = stringify(ret, one=True)
         return jsonify(status='succ', comment=ret)
 

@@ -1,5 +1,5 @@
 class CommentBox
-    constructor: (post_id, parent=null) ->
+    constructor: (@post_id, @parent=null) ->
         box = document.createElement 'div'
         $(box).attr 'class', 'comment_box'
 
@@ -20,13 +20,16 @@ class CommentBox
 
             $.ajax {
                 type: 'POST'
-                url: script_root + '/api/comments/' + post_id
+                url: script_root + '/api/comments/' + @post_id
                 data:
-                    parent: parent
-                    post: post_id
+                    parent: @parent
+                    post: @post_id
                     body: $.trim comment_input.value
                 success: (data) =>
                     $(box).hide 'fast'
+                    comment_input.value = ''
+
+                    @get_comment data.string_id
                 error: (data) =>
                     $(send_btn).text 'Błąd!'
             }
@@ -36,20 +39,44 @@ class CommentBox
 
         return box
 
+    get_comment: (comment_id) ->
+        $.ajax {
+            type: 'GET'
+            url: script_root + '/api/comment/' + comment_id
+            success: (data) =>
+                if data.status == 'succ'
+                    parent = $(".comment[data-string_id='#{@parent}']")
+                    lvl = ((parent.attr 'class').match /level[0-9]/)[0].match /[0-9]/[0]
+                    console.log data.comment
+                    new Comment null, null, lvl+2, @post_id, @parent, data.comment
+                return
+            error: (data) ->
+                console.log data, 'error'
+        }
+
+
 class Comment
-    constructor: (@tree, @i, @level, @post_id, @parent=null) ->
+    constructor: (@tree, @i, @level, @post_id, @parent=null, @comm=null) ->
         @wrapper = $('.comments_wrapper')[0]
-        @id = @tree[@i].comment['string_id']
+
+        if @tree != null
+            @id = @tree[@i].comment['string_id']
 
         @bootstrap()
+        console.log 'dssad2222'
         return
 
     bootstrap: ->
-        comment = @tree[@i].comment
+        comment = null
+        if @tree != null
+            comment = @tree[@i].comment
+        else
+            comment = @comm
 
         @comment = document.createElement 'div'
         $(@comment).attr 'class', "comment level#{@level}"
         $(@comment).attr 'data-string_id', comment['string_id']
+        $(@comment).attr 'style', "margin-left:#{@level*15}px"
 
         @body = document.createElement 'div'
         $(@body).attr 'class', 'body'
@@ -69,8 +96,6 @@ class Comment
                     success: (data) =>
                         if data.status == 'succ'
                             $(@comment).hide 'fast'
-                            # TODO: Add getting the actual comment
-                            # from the server
                     error: (data) =>
                         console.log 'error'
                 }
@@ -107,16 +132,21 @@ class Comment
 
         $(@comment_box).hide()
         @append()
+        console.log 'sdsad'
 
     append: ->
+        console.log 'dupa'
         if @parent == null
             @wrapper.appendChild @comment
+            console.log 'blah'
         else
             parent = $(".comment[data-string_id='#{@parent}'] .children_box")[0]
             parent.appendChild @comment
+            console.log 'appending', @comment, 'to', parent
 
-        for child in @tree[@i].children
-            @children.push (new Comment @tree, child, @level+1, @post_id, @id)
+        if @tree != null
+            for child in @tree[@i].children
+                @children.push (new Comment @tree, child, @level+1, @post_id, @id)
 
     children: []
 
