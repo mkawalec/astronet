@@ -1,5 +1,6 @@
 from ..api import api, auth_required, query_db, gen_filename
 from flask import (request, g, jsonify, abort)
+from ..helpers import stringify
 
 from markdown import markdown
 
@@ -7,14 +8,16 @@ from markdown import markdown
 def post(post=None, string_id=None):
     """ Saves or gets a post """
     if string_id:
-        ret = query_db('SELECT author, title, body, string_id '
-                       'FROM posts WHERE '
-                       'draft=FALSE AND string_id=%s', (string_id,),
-                       one=True)
+        ret = query_db('SELECT u.email AS author, p.title, p.body, p.string_id, '
+                       'p.timestamp FROM posts p, users u WHERE '
+                       'p.draft=FALSE AND p.string_id=%s AND u.id=p.author', 
+                       [string_id], one=True)
         if ret == None:
             return jsonify(status='db_null_error')
 
         ret['body'] = markdown(ret['body'])
+        ret = stringify(ret, one=True)
+
         return jsonify(status='succ', post=ret)
 
 @api.route('/post', methods=['POST'])
@@ -43,12 +46,15 @@ def post_preview():
 def get_posts(author=None):
     """ Returns all posts visible to the user """
     if not author:
-        ret = query_db('SELECT author, title, lead, string_id FROM posts WHERE '
-                   'draft=FALSE ORDER BY id DESC')
+        ret = query_db('SELECT u.email AS author, p.title, p.lead, p.string_id, '
+                       'p.timestamp, p.body FROM posts p, users u WHERE '
+                       'p.draft=FALSE AND u.id=p.author ORDER BY p.id DESC')
     else:
-        ret = query_db('SELECT p.author, p.title, p.lead FROM posts p, users u '
-                   'WHERE p.author=u.id AND u.string_id=%s AND draft=FALSE '
-                   'ORDER BY p.id DESC', (author,))
+        ret = query_db('SELECT u.email AS author, p.title, p.lead, p.string_id, '
+                       'p.timestamp, p.body FROM posts p, users u '
+                       'WHERE p.author=u.id AND u.string_id=%s AND draft=FALSE '
+                       'ORDER BY p.id DESC', [author])
+    ret = stringify(ret)
     return jsonify(status='succ', posts=ret)
 
 
