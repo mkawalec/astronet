@@ -31,7 +31,8 @@ $$ LANGUAGE 'plpgsql';
 DROP FUNCTION IF EXISTS check_auth(varchar, bigint);
 CREATE FUNCTION check_auth(varchar, bigint) RETURNS integer AS $$
 BEGIN
-    IF (SELECT COUNT(*) FROM comments WHERE string_id=$1) = 0 THEN
+    IF (SELECT COUNT(*) FROM comments WHERE string_id=$1 AND 
+        deleted=FALSE) = 0 THEN
         RETURN -1;
     END IF;
     IF (SELECT COUNT(*) FROM comments WHERE string_id=$1 AND
