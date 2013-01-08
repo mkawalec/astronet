@@ -6,5 +6,6 @@ CREATE TABLE comments (
     post varchar REFERENCES posts(string_id),
 
     body varchar(1000), -- Is it a good limit?
-    timestamp timestamp DEFAULT now()
+    timestamp timestamp DEFAULT now(),
+    deleted boolean DEFAULT FALSE
 );
