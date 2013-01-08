@@ -82,11 +82,14 @@ class Comment
         $(@body).attr 'class', 'body'
         $(@body).html comment['body']
 
+        if bool comment['deleted']
+            @mark_deleted()
+
         @timestamp = document.createElement 'div'
         $(@timestamp).attr 'class', 'timestamp'
         $(@timestamp).html comment['timestamp']
 
-        if (parseInt uid) == comment['author']
+        if (parseInt uid) == comment['author'] and not bool comment['deleted']
             @delete = document.createElement 'div'
             $(@delete).text 'X'
             $(@delete).bind 'click', (event) =>
@@ -95,7 +98,9 @@ class Comment
                     url: script_root+'/api/comment/'+comment['string_id']
                     success: (data) =>
                         if data.status == 'succ'
-                            $(@comment).hide 'fast'
+                            $(@comment).effect 'highlight', {}, 2000
+                            @mark_deleted()
+
                     error: (data) =>
                         console.log 'error'
                 }
@@ -133,6 +138,17 @@ class Comment
         $(@comment_box).hide()
         @append()
 
+    mark_deleted: ->
+        $(@comment).addClass 'deleted'
+        $(@delete).text ''
+        $(@delete).unbind 'click'
+
+        deleted = document.createElement 'div'
+        $(deleted).attr 'class', 'deleted_msg'
+        $(deleted).text '[Ten komentaż został usunięty]'
+        $(@body).html ''
+        @body.appendChild deleted
+
     append: ->
         if @parent == null
             @wrapper.appendChild @comment
@@ -144,6 +160,8 @@ class Comment
             for child in @tree[@i].children
                 @children.push (new Comment @tree, child, @level+1, @post_id, @id)
 
+        if @comm != null
+            $(@comment).effect 'highlight', {}, 2000
     children: []
 
 class CommentList

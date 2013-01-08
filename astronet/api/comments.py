@@ -77,7 +77,7 @@ def comments(post_id=None):
 @api.route('/comments/<post_id>')
 def show_comments(post_id):
     comments = query_db('SELECT string_id, author, parent, '
-            'timestamp, body FROM comments WHERE post=%s '
+            'timestamp, body, deleted FROM comments WHERE post=%s '
             'ORDER BY id ASC',[post_id])
     if len(comments) == 0:
         return jsonify(status='db_null_error')
@@ -98,8 +98,10 @@ def comment(comment_id):
 
     elif request.method == 'GET':
         ret = query_db('SELECT string_id, author, parent, '
-                'timestamp, body FROM comments WHERE string_id=%s',
+                'timestamp, body, deleted FROM comments '
+                'WHERE string_id=%s',
                 [comment_id], one=True)
+
         ret = stringify(ret, one=True)
         return jsonify(status='succ', comment=ret)
 

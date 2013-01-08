@@ -302,3 +302,9 @@ chk_status = (waiter=null) -> (method) -> ->
 ajax_error = (data) ->
     console.log 'error'
     console.log data
+
+# Boolean tester
+bool = (value) ->
+    if value instanceof Boolean
+        return value
+    return !((/^(False)|(false)$/).test value)
