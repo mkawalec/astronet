@@ -8,7 +8,7 @@ BEGIN
         RETURN auth;
     END IF;
 
-    DELETE FROM comments WHERE string_id=$1;
+    UPDATE comments SET DELETED=TRUE WHERE string_id=$1;
     RETURN 1;
 END;
 $$ LANGUAGE 'plpgsql';

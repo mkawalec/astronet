@@ -7,5 +7,6 @@ CREATE TABLE posts (
     draft boolean DEFAULT FALSE,
 
     string_id varchar(12) NOT NULL UNIQUE,
-    timestamp timestamp DEFAULT now()
+    timestamp timestamp DEFAULT now(),
+    deleted boolean DEFAULT FALSE
 );
