@@ -16,7 +16,10 @@
 <script type="text/javascript">
     var script_root = {{ request.script_root|tojson|safe }};
     var url_root = {{ request.url_root|tojson|safe }};
-    var uid = "{{ session.uid }}";
+    var session = {
+        uid: "{{ session.uid }}",
+        email: "{{ session.email }}"
+    };
 </script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/helpers.js') }}">

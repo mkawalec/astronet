@@ -82,6 +82,7 @@ class Comment
         $(@body).attr 'class', 'body'
         $(@body).html comment['body']
 
+        console.log bool comment['deleted']
         if bool comment['deleted']
             @mark_deleted()
 
@@ -89,8 +90,10 @@ class Comment
         $(@timestamp).attr 'class', 'timestamp'
         $(@timestamp).html comment['timestamp']
 
-        if (parseInt uid) == comment['author'] and not bool comment['deleted']
+        if session.email == comment['author'] and not bool comment['deleted']
             @delete = document.createElement 'div'
+            $(@delete).attr 'class', 'delete_btn'
+
             $(@delete).text 'X'
             $(@delete).bind 'click', (event) =>
                 $.ajax {
@@ -129,7 +132,7 @@ class Comment
         @comment.appendChild @timestamp
         @comment.appendChild @body
 
-        if uid.length > 0
+        if session.uid.length > 0
             @comment.appendChild @write_btn
             @comment.appendChild @comment_box
 
@@ -179,7 +182,7 @@ class CommentList
         @holder.appendChild @add_new
         @holder.appendChild @comms_wrapper
 
-        if uid.length > 0
+        if session.uid.length > 0
             @holder.appendChild (new CommentBox @post_id)
         else
             @notice = document.createElement 'div'
