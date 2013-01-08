@@ -9,6 +9,7 @@
         <div class="post_author">{{ post.author }}</div>
         <div class="post_lead">{{ post.lead }}</div>
         <a href="{{ url_for('show_post', string_id=post.string_id) }}">Pokaż posta</a>
+        <div class="comments_count">{{ post.comments_count }}</div>
     </div>
     {% endfor %}
 </div>

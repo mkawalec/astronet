@@ -43,3 +43,11 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
+DROP FUNCTION IF EXISTS comments_count(varchar);
+CREATE FUNCTION comments_count(varchar) RETURNS integer AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM comments WHERE post=$1 AND 
+        DELETED=FALSE);
+END;
+$$ LANGUAGE 'plpgsql';
+

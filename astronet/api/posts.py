@@ -47,11 +47,13 @@ def get_posts(author=None):
     """ Returns all posts visible to the user """
     if not author:
         ret = query_db('SELECT u.email AS author, p.title, p.lead, p.string_id, '
-                       'p.timestamp, p.body FROM posts p, users u WHERE '
+                       'p.timestamp, p.body, comments_count(p.string_id) '
+                       'FROM posts p, users u WHERE '
                        'p.draft=FALSE AND u.id=p.author ORDER BY p.id DESC')
     else:
         ret = query_db('SELECT u.email AS author, p.title, p.lead, p.string_id, '
-                       'p.timestamp, p.body FROM posts p, users u '
+                       'p.timestamp, p.body, comments_count(p.string_id) '
+                       'FROM posts p, users u '
                        'WHERE p.author=u.id AND u.string_id=%s AND draft=FALSE '
                        'ORDER BY p.id DESC', [author])
     ret = stringify(ret)
