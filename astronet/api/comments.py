@@ -99,7 +99,7 @@ def comment(comment_id):
 
     elif request.method == 'GET':
         ret = query_db('SELECT c.string_id, u.email AS author, c.parent, '
-                'c.timestamp, c.body, c.deleted FROM comments c, users u'
+                'c.timestamp, c.body, c.deleted FROM comments c, users u '
                 'WHERE c.string_id=%s AND u.id=c.author',
                 [comment_id], one=True)
 
