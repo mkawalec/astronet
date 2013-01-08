@@ -40,3 +40,9 @@ body {
 
 .comment {
 }
+
+#dropbox {
+    height: 300px;
+    border: 2px dashed black;
+    float: right;
+}
