@@ -77,8 +77,9 @@ def comments(post_id=None):
 @api.route('/comments/<post_id>')
 def show_comments(post_id):
     comments = query_db('SELECT c.string_id, u.email AS author, c.parent, '
-            'c.timestamp, c.body, c.deleted FROM comments c WHERE c.post=%s '
-            'ORDER BY id ASC',[post_id])
+            'c.timestamp, c.body, c.deleted FROM comments c, users u '
+            'WHERE c.post=%s AND u.id=c.author '
+            'ORDER BY c.id ASC',[post_id])
     if len(comments) == 0:
         return jsonify(status='db_null_error')
     return jsonify(status='succ', comments=generate_tree(comments))
