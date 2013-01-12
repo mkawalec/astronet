@@ -103,7 +103,6 @@ def edit_profile():
             pass
         
         
-        
         if (len(email1) == 0) and (len(email2) == 0):
             pass
         elif (len(email1) == 0) or\
@@ -126,8 +125,6 @@ def edit_profile():
                 flash(u'Wystąpił błąd bazy danych', 'error')
         else:
             flash(u'Wprowadzono niepoprawny adres email', 'error')
-            
-            
             
         passwd_old = request.form['passwd_old'].strip()
         passwd1 = request.form['passwd1'].strip()
@@ -265,11 +262,20 @@ def register():
         email = request.form['email'].strip()
         passwd1 = request.form['passwd1'].strip()
         passwd2 = request.form['passwd2'].strip()
+        real_name = reques.form['real_name'].strip()
+
+        if len(real_name) < 5:
+            flash(u'Podane imię jest za krótkie')
+            return render_template('register.html',
+                                   email=email,
+                                   first=randint(1, 20),
+                                   second=randint(1,20))
         
         if passwd1 != passwd2:
             flash(u'Hasła nie są takie same', 'error')
             return render_template('register.html',
                                    email=email,
+                                   real_name=real_name,
                                    first=randint(1,20),
                                    second=randint(1,20))
 
@@ -277,6 +283,7 @@ def register():
             flash(u'Hasło jest puste', 'error')
             return render_template('register.html',
                                    email=email,
+                                   real_name=real_name,
                                    first=randint(1,20),
                                    second=randint(1,20))
 
@@ -285,6 +292,7 @@ def register():
             flash(u'Adres email ma zły format', 'error')
             return render_template('register.html',
                                    first=randint(1,20),
+                                   real_name=real_name,
                                    second=randint(1,20))
 
         if (request.form['result'].strip().isdigit() == False) or \
@@ -294,6 +302,7 @@ def register():
             flash(u'Wprowadzony wynik jest niepoprawny', 'error')
             return render_template('register.html',
                                    email=email,
+                                   real_name=real_name,
                                    first=randint(1,20),
                                    second=randint(1,20))
             
@@ -302,6 +311,7 @@ def register():
             flash(u'Podany email jest już w użyciu', 'error')
             return render_template('register.html', 
                                    email=email,
+                                   real_name=real_name,
                                    first=randint(1,20),
                                    second=randint(1,20))
         
@@ -324,7 +334,9 @@ def register():
         else:
             flash(u'Nastąpił błąd przy rejestracji', 'error')
         return redirect(url_for('home'))
-    return render_template('register.html', first=randint(1,20), second=randint(1,20))
+    return render_template('register.html', 
+                           first=randint(1,20), 
+                           second=randint(1,20))
 
 
 @app.route('/admin', methods=['GET'])
