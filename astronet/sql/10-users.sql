@@ -11,7 +11,7 @@ CREATE TABLE users (
     salt varchar(12), 
     disabled boolean DEFAULT FALSE,
     -- This will define user's role
-    role varchar(5) DEFAULT 'user',
+    role varchar(10) DEFAULT 'user',
 
     timestamp timestamp DEFAULT now()
 );

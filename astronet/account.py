@@ -366,7 +366,7 @@ def manage_user():
         flash(u'Nie masz wystarczających uprawnień.', 'error')
         return redirect(url_for('home'))
 
-    roles = ['user', 'admin']
+    roles = ['user', 'admin', 'redaktor']
     if request.method == 'POST':
         user_id = int(request.form['user_id'])
         user = query_db('SELECT email, real_name, disabled, role '
