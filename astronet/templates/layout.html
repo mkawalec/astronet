@@ -66,7 +66,7 @@
 
 
     <div id="page">
-        <div class="alerts" style="margin-top:5px">
+        <div class="alerts" style="margin-top:5px" id="alerts">
             {% for category, message in get_flashed_messages(with_categories=true) %}
             <div class='alert alert-{{ category }}'>
                 <button type="button" class="close" data-dismiss="alert">×</button>

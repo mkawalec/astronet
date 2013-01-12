@@ -15,7 +15,8 @@ Imię i nazwisko: {{ real_name }} </br>
         <div class="post_author">{{ post.author }}</div>
         <div class="post_lead">{{ post.lead }}</div>
         <div class="post_draft">{{ post.draft }}</div>
-        <a href="{{ url_for('show_post', string_id=post.string_id) }}">Pokaż posta</a>
+        <a href="{{ url_for('show_post', string_id=post.string_id) }}">Pokaż post</a>
+        <a href="{{ url_for('edit_post', string_id=post.string_id) }}">Edytuj post</a>
     </div>
     {% endfor %}
 </div>

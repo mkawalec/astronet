@@ -25,7 +25,39 @@ class MarkdownRender
             error: (data) =>
                 ajax_error data
         }
-              
+  
+class Editor
+    constructor: ->
+        @string_id = $("input[name='string_id']")[0].value
+
+        if (window.location.indexOf 'edit_post') != -1
+            @bootstrap()
+    
+    booststrap: ->
+        @edit_save = $('#edit_save')
+        $(@edit_save).attr 'style', ''
+
+        @edit_save.bind 'click', (event) ->
+            event.preventDefault()
+
+            $.ajax {
+                url: script_root + '/api/post'
+                type: 'PUT'
+                data:
+                    title: $('#input_title')[0].value
+                    lead: $('#input_lead')[0].value
+                    body: $('#input_body')[0].value
+                    string_id: @string_id
+                success: (data) ->
+                    if data.status != 'succ'
+                        @error()
+                        return
+
+                    alert_user 'alerts', 'Post został zapisany', 'success'
+                error: ->
+                    alert_user 'alerts', 'Błąd przy zapisie postu', 'error'
+            }
+
 
 class FormAjaxify
     constructor: (form_id, redirect_to=null) ->

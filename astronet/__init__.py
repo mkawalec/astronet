@@ -29,9 +29,10 @@ def home():
 def show_profile():
     """ Shows user's profile. He can manage it in here, see his posts,
         statistic, drafts(?) change password, email etc. """
-    posts = query_db('SELECT author, title, lead, draft FROM posts '
+    posts = query_db('SELECT author, title, lead, draft, string_id FROM posts '
                      'WHERE author=%s', (session['uid'],))
-    return render_template('profile.html',posts=posts,real_name=session["real_name"],email=session["email"])
+    return render_template('profile.html', posts=posts,
+            real_name=session["real_name"], email=session["email"])
 
 
 

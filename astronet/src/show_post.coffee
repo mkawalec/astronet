@@ -45,9 +45,12 @@ class CommentBox
             url: script_root + '/api/comment/' + comment_id
             success: (data) =>
                 if data.status == 'succ'
-                    parent = $(".comment[data-string_id='#{@parent}']")
-                    lvl = ((parent.attr 'class').match /level[0-9]/)[0]
-                    lvl = parseInt (lvl.match /[0-9]/)[0]
+                    lvl = -1
+
+                    if @parent != null
+                        parent = $(".comment[data-string_id='#{@parent}']")
+                        lvl = ((parent.attr 'class').match /level[0-9]/)[0]
+                        lvl = parseInt (lvl.match /[0-9]/)[0]
 
                     new Comment null, null, lvl+1, @post_id, @parent, data.comment
                 return

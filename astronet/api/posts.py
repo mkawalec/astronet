@@ -8,7 +8,7 @@ from markdown import markdown
 def post(post=None, string_id=None):
     """ Saves or gets a post """
     if string_id:
-        ret = query_db('SELECT u.email AS author, p.title, p.body, p.string_id, '
+        ret = query_db('SELECT u.real_name AS author, p.title, p.body, p.string_id, '
                        'p.timestamp, p.visits FROM posts p, users u WHERE '
                        'p.draft=FALSE AND p.string_id=%s AND u.id=p.author', 
                        [string_id], one=True)
@@ -31,7 +31,6 @@ def save_post(post=None):
         post = request.form
     ret = None
 
-    print 'In'
     if request.method == 'POST':
         ret = query_db('INSERT INTO posts (author, title, lead, '
                        'body, string_id) '
@@ -43,12 +42,12 @@ def save_post(post=None):
                        'WHERE string_id=%s AND author=%s',
                        (post['title'], post['lead'], post['body'],
                        post['string_id'], g.uid))
-    print 'after', ret
     if ret == 1:
         return jsonify(status='succ')
     elif ret == -1:
         return jsonify(status='db_constraints_error')
     return jsonify(status='db_error')
+
 
 @api.route('/post/preview', methods=['POST'])
 @auth_required
@@ -61,12 +60,12 @@ def post_preview():
 def get_posts(author=None):
     """ Returns all posts visible to the user """
     if not author:
-        ret = query_db('SELECT u.email AS author, p.title, p.lead, p.string_id, '
+        ret = query_db('SELECT u.real_name AS author, p.title, p.lead, p.string_id, '
                        'p.timestamp, p.body, comments_count(p.string_id) '
                        'FROM posts p, users u WHERE '
                        'p.draft=FALSE AND u.id=p.author ORDER BY p.id DESC')
     else:
-        ret = query_db('SELECT u.email AS author, p.title, p.lead, p.string_id, '
+        ret = query_db('SELECT u.real_name AS author, p.title, p.lead, p.string_id, '
                        'p.timestamp, p.body, comments_count(p.string_id) '
                        'FROM posts p, users u '
                        'WHERE p.author=u.id AND u.string_id=%s AND draft=FALSE '

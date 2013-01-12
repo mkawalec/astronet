@@ -60,4 +60,7 @@ def add_post():
 
     return render_template('add_post.html')
 
-
+@app.route('/edit_post/<string_id>')
+@login_required
+def edit_post(string_id):
+    return render_template('add_post.html', string_id=string_id)
