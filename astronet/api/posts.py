@@ -24,20 +24,31 @@ def post(post=None, string_id=None):
 
         return jsonify(status='succ', post=ret)
 
-@api.route('/post', methods=['POST'])
+@api.route('/post', methods=['POST', 'PUT'])
 @auth_required
 def save_post(post=None):
-        if post == None:
-            post = request.form
+    if post == None:
+        post = request.form
+    ret = None
 
-        ret = query_db('INSERT INTO posts (author, title, lead, body, string_id) '
+    print 'In'
+    if request.method == 'POST':
+        ret = query_db('INSERT INTO posts (author, title, lead, '
+                       'body, string_id) '
                        'VALUES (%s, %s, %s, %s, %s)',
-                       (g.uid, post['title'], post['lead'],post['body'], gen_filename()))
-        if ret == 1:
-            return jsonify(status='succ')
-        elif ret == -1:
-            return jsonify(status='db_constraints_error')
-        return jsonify(status='db_error')
+                       (g.uid, post['title'], post['lead'],
+                        post['body'], gen_filename()))
+    elif request.method == 'PUT':
+        ret = query_db('UPDATE posts SET title=%s, lead=%s, body=%s '
+                       'WHERE string_id=%s AND author=%s',
+                       (post['title'], post['lead'], post['body'],
+                       post['string_id'], g.uid))
+    print 'after', ret
+    if ret == 1:
+        return jsonify(status='succ')
+    elif ret == -1:
+        return jsonify(status='db_constraints_error')
+    return jsonify(status='db_error')
 
 @api.route('/post/preview', methods=['POST'])
 @auth_required
