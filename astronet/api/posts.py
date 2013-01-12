@@ -9,7 +9,7 @@ def post(post=None, string_id=None):
     """ Saves or gets a post """
     if string_id:
         ret = query_db('SELECT u.email AS author, p.title, p.body, p.string_id, '
-                       'p.timestamp FROM posts p, users u WHERE '
+                       'p.timestamp, p.visits FROM posts p, users u WHERE '
                        'p.draft=FALSE AND p.string_id=%s AND u.id=p.author', 
                        [string_id], one=True)
         if ret == None:
@@ -17,6 +17,10 @@ def post(post=None, string_id=None):
 
         ret['body'] = markdown(ret['body'])
         ret = stringify(ret, one=True)
+
+        # Save the stats
+        query_db('UPDATE posts SET visits=visits+1 WHERE string_id=%s',
+                [string_id])
 
         return jsonify(status='succ', post=ret)
 
