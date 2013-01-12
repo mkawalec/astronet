@@ -30,6 +30,7 @@ def save_post(post=None):
     if post == None:
         post = request.form
     ret = None
+    print post
 
     if request.method == 'POST':
         ret = query_db('INSERT INTO posts (author, title, lead, '

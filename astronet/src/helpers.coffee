@@ -234,9 +234,12 @@ nicefy_time = (number) ->
 
 # Alert a user in somewhere
 alert_user = (placeholder_id, message, alert_type) ->
-    for child in $("##{placeholder_id} div.alert div.message_wrapper")
+    ###for child in $("##{placeholder_id} div.alert div.message_wrapper")
         if ($.trim $(child).html()) == ($.trim message)
             return 0
+    ###
+
+    placeholder = $("##{placeholder_id}")[0]
 
     alert = document.createElement 'div'
     $(alert).attr 'class', "alert alert-#{alert_type} fade in"
@@ -245,9 +248,8 @@ alert_user = (placeholder_id, message, alert_type) ->
     $(close_button).attr 'class', 'close'
     $(close_button).attr 'data-dismiss', 'alert'
     $(close_button).text 'x'
-    $(close_button).bind 'click', (event) ->
-        $(alert).hide 'slide', 'fast', ->
-            $(alert).parent()[0].removeChild this
+    $(close_button).bind 'click', (event) =>
+        $(alert).hide 'fast'
 
     message_wrapper = document.createElement 'div'
     $(message_wrapper).attr 'class', 'message_wrapper'
@@ -257,7 +259,7 @@ alert_user = (placeholder_id, message, alert_type) ->
     alert.appendChild message_wrapper
     $(alert).hide()
 
-    $("##{placeholder_id}")[0].appendChild alert
+    placeholder.appendChild alert
     $(alert).show 'slide', 'fast'
     return 0
 

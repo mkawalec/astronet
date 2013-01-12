@@ -4,7 +4,7 @@ from flask import (Flask, request, redirect, url_for, abort,
         render_template, flash, jsonify, g, session, send_file)
 
 from astronet import app
-from astronet.helpers import login_required
+from astronet.helpers import login_required, query_db
 
 import json
 
@@ -63,4 +63,9 @@ def add_post():
 @app.route('/edit_post/<string_id>')
 @login_required
 def edit_post(string_id):
-    return render_template('add_post.html', string_id=string_id)
+    post = query_db('SELECT title, lead, body FROM posts '
+                    'WHERE string_id=%s', (string_id,), one=True)
+    return render_template('add_post.html', string_id=string_id, 
+                                            title=post['title'],
+                                            lead=post['lead'],
+                                            body=post['body'])

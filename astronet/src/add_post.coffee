@@ -30,14 +30,15 @@ class Editor
     constructor: ->
         @string_id = $("input[name='string_id']")[0].value
 
-        if (window.location.indexOf 'edit_post') != -1
+        if (window.location.href.indexOf 'edit_post') != -1
             @bootstrap()
     
-    booststrap: ->
+    bootstrap: ->
+        console.log 'bootstraping'
         @edit_save = $('#edit_save')
         $(@edit_save).attr 'style', ''
 
-        @edit_save.bind 'click', (event) ->
+        @edit_save.bind 'click', (event) =>
             event.preventDefault()
 
             $.ajax {
@@ -90,6 +91,7 @@ class FormAjaxify
 
 
 render = new MarkdownRender()
+editor = new Editor()
 
 # Zdecydowałem na razie, że nie będę Ajaxował tego forma
 #form = new FormAjaxify('add_post')
