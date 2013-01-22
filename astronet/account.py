@@ -262,7 +262,7 @@ def register():
         email = request.form['email'].strip()
         passwd1 = request.form['passwd1'].strip()
         passwd2 = request.form['passwd2'].strip()
-        real_name = reques.form['real_name'].strip()
+        real_name = request.form['real_name'].strip()
 
         if len(real_name) < 5:
             flash(u'Podane imię jest za krótkie')
