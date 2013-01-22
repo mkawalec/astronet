@@ -89,6 +89,7 @@ def logout():
 def edit_profile():
     """ One can manage user's profile profile. Change real name,
     password or email."""
+    #TODO: browser fills some form fields (for example mail and old pass) with login data and this is inconvenient when you change real name - you have to delete other forms, other way you've got error. Maybe new names for this fields will be nice.
     if request.method == 'POST':
         email1 = request.form['email1'].strip()
         email2 = request.form['email2'].strip()
