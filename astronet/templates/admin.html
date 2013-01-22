@@ -3,10 +3,10 @@
 {% block body %}
 <table class="users_table">
     <tr>
-        <td>Id</td>
-        <td>Imię i nazwisko</td>
-        <td>E-mail</td>
-        <td>Rola</td>
+        <td><a href="{{ url_for('show_admin_panel') }}?sort_by=id{% if request.args['sort_by'] == 'id'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Id</a></td>
+        <td><a href="{{ url_for('show_admin_panel') }}?sort_by=real_name{% if request.args['sort_by'] == 'real_name'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Imię i nazwisko</a></td>
+        <td><a href="{{ url_for('show_admin_panel') }}?sort_by=email{% if request.args['sort_by'] == 'email'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">E-mail</a></td>
+        <td><a href="{{ url_for('show_admin_panel') }}?sort_by=role{% if request.args['sort_by'] == 'role'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Rola</a></td>
         <!-- <td>Data rejestracji(?)</td> -->
     </tr>
     {% for user in users %}
@@ -27,7 +27,7 @@
     </form>
     {% endfor %}
 </table><br>
-<form method="get">
+<!--<form method="get">
     Sortuj po: 
     <select name="sort_by">
         <option value="id">Id</option>
@@ -37,6 +37,6 @@
     </select> 
     <label><input type="checkbox" name="desc"> malejąco</label>
     <button class="btn btn-submit">Sortuj</button>
-</form>
+</form>-->
 {% endblock %}
 
