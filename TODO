@@ -3,6 +3,9 @@ Rzeczy do zrobienia, by było dobrze:
 2. Poprawić panel administracyjny i ustawienia konta
 3. Zmigrować na WTFforms
 4. Zobaczyć jak ten nowy kod się sprawuje
+5. Zrobić zgłaszanie błędów w artykule. Przyda się tak czy inaczej,
+   a przy przerzucaniu bazy pewnie będą jakieś błędy, więc ludzie 
+   mogę klikać jak coś będzie nie tak ze starymi artykułami.
 
 NOTE: Use #include clauses for coffeescript classes
 
