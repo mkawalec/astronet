@@ -1,7 +1,7 @@
 Rzeczy do zrobienia, by było dobrze:
 1. Dodać wrzucanie obrazków do postów
-2. Poprawić panel administracyjny i ustawienia konta
-3. Zmigrować na WTFforms
+2. Poprawić panel administracyjny i ustawienia konta ([Daniel]co dokładnie? ) 
+3. Zmigrować na WTFforms ([Daniel] nie mogę nigdzie znaleźć dlaczego to jest fajne)
 4. Zobaczyć jak ten nowy kod się sprawuje
 5. Zrobić zgłaszanie błędów w artykule. Przyda się tak czy inaczej,
    a przy przerzucaniu bazy pewnie będą jakieś błędy, więc ludzie 
@@ -27,15 +27,8 @@ Rzeczy do zrobienia:
 1. Dodać komcie. To zrobię ja (Michał), bo mam gdzieś w jakimś
 wcześniejszym projekcie wyczesany kod komciów, który trzeba poprawić
 trochę i będzie gicior.
-2. Dodać, że jeśli ktoś ma rolę 'admin' (albo coś takiego) może
-zarządzać userami (tabelka pokazująca nazwy userów, ilości artykułów
-jakie napisali itepe z możliwością przejścia do profilu/podniesienia
-rangi/usunięcia konta/wyłączenia lub włączenia możliwości publikowania)
-3. Dodać stronę usera
-    - zmiana hasła i maila z poziomu niej
-(done: D)
-4. Zarządzanie szkicami
-5. Dzielenie wyników postów na podstrony.
+2. Zarządzanie szkicami
+
 
 - zrezygnowac z dodawania numerkow, albo wygenerowac rysunki, bo bot i
 tak pobierze numerki ze zrodla strony i doda (nie wiem czy komus by sie
