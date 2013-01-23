@@ -6,6 +6,8 @@ Rzeczy do zrobienia, by było dobrze:
 5. Zrobić zgłaszanie błędów w artykule. Przyda się tak czy inaczej,
    a przy przerzucaniu bazy pewnie będą jakieś błędy, więc ludzie 
    mogę klikać jak coś będzie nie tak ze starymi artykułami.
+   Panel raportów, zarządzanie raportami (sortowanie, usuwanie, odklikiwanie nieaktualnych,
+   przechodzenie do edycji artykułów)
 6. Zgłaszanie flame'u w komentarzach?
 
 NOTE: Use #include clauses for coffeescript classes
