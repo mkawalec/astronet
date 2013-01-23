@@ -13,4 +13,27 @@
     </div>
     {% endfor %}
 </div>
+
+<div class=pagination>
+{% if pagination.has_prev %}
+<a href="{{ url_for_other_page(pagination.page - 1)
+    }}">Poprzedni &laquo;</a>
+{% endif %}
+{% for page in pagination.iter_pages() %}
+{% if page %}
+    {% if page != pagination.page %}
+    <a href="{{ url_for_other_page(page) }}">{{ page }}</a>
+    {% else %}
+    <strong>{{ page }}</strong>
+    {% endif %}
+{% else %}
+    <span class=ellipsis>…</span>
+{% endif %}
+{% endfor %}
+{% if pagination.has_next %}
+<a href="{{ url_for_other_page(pagination.page + 1)
+    }}">Następny &raquo;</a>
+{% endif %}
+</div>
+
 {% endblock %}

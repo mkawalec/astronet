@@ -18,11 +18,17 @@ from helpers import *
 from account import *
 from posts import *
 
-@app.route('/')
-def home():
+# Rewritten from this site (http://flask.pocoo.org/snippets/44/); dunno what macros do and %- operator
+@app.route('/', defaults={'page': 1})
+@app.route('/<int:page>/')
+def home(page):
     """ Return the homepage with all the posts """
+    per_page = 2 # to configuration file?
     posts = json.loads(get_posts().data)['posts']
-    return render_template('home.html', posts=posts)
+    count = len(posts)
+    pagination = Pagination(page, per_page, count)
+    posts = posts[(page-1)*per_page:(page)*per_page]
+    return render_template('home.html', posts=posts, pagination=pagination)
 
 @app.route('/user', methods=['GET', 'POST'])
 @login_required
