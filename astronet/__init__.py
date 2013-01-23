@@ -23,7 +23,7 @@ from posts import *
 @app.route('/<int:page>/')
 def home(page):
     """ Return the homepage with all the posts """
-    per_page = 2 # to configuration file?
+    per_page = 10 # to configuration file?
     posts = json.loads(get_posts().data)['posts']
     count = len(posts)
     pagination = Pagination(page, per_page, count)
