@@ -362,7 +362,6 @@ def show_admin_panel():
 @app.route('/admin/manage_user', methods=['GET', 'POST'])
 @login_required
 def manage_user():
-    # TODO: remove user
     if session['role'] != 'admin':
         flash(u'Nie masz wystarczających uprawnień.', 'error')
         return redirect(url_for('home'))
@@ -422,7 +421,8 @@ def manage_user():
                 flash(u'Uaktualniono stan zablokowania', 'success')
             else:
                 flash(u'Wystąpił błąd bazy danych', 'error')
-                
+        
+        # TODO: delete from database or mark deleted somewhere?
         if delete:
             if query_db('DELETE FROM users WHERE id=%s',
                         (user_id,)):
