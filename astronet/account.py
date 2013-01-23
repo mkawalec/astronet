@@ -89,7 +89,7 @@ def logout():
 def edit_profile():
     """ One can manage user's profile profile. Change real name,
     password or email."""
-    #TODO: browser fills some form fields (for example mail and old pass) with login data and this is inconvenient when you change real name - you have to delete other forms, other way you've got error. Maybe new names for this fields will be nice.
+    #TODO: browser fills some form fields (for example mail and old pass) with login data and this is inconvenient when you change real name - you have to delete other forms, other way you've got error. Maybe new names for this fields will be nice. Changing field name doesnt work!
     if request.method == 'POST':
         email1 = request.form['email1'].strip()
         email2 = request.form['email2'].strip()
@@ -377,7 +377,7 @@ def manage_user():
         real_name = request.form['real_name'].strip()
         role = request.form['role'].strip()
         disabled = ('disabled' in request.form)
-        
+        delete = ('delete' in request.form)
 
         if len(real_name) != 0 and real_name != user['real_name']:
             if query_db('UPDATE users SET real_name=%s WHERE id=%s',
@@ -420,6 +420,13 @@ def manage_user():
             if query_db('UPDATE users SET disabled=%s WHERE id=%s',
                         (disabled,user_id)):
                 flash(u'Uaktualniono stan zablokowania', 'success')
+            else:
+                flash(u'Wystąpił błąd bazy danych', 'error')
+                
+        if delete:
+            if query_db('DELETE FROM users WHERE id=%s',
+                        (user_id,)):
+                flash(u'Użytkownik został usunięty', 'success')
             else:
                 flash(u'Wystąpił błąd bazy danych', 'error')
 

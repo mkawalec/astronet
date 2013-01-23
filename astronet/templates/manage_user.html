@@ -7,6 +7,7 @@
         <td>E-mail</td>
         <td>Ranga</td>
         <td>Zablokowany</td>
+        <td>Usuń</td>
         <!-- <td>Data rejestracji(?)</td> -->
     </tr>
     <form method="post" action="{{ url_for('manage_user') }}">
@@ -23,6 +24,7 @@
             </td>
             <td class="user_disabled"><input type="checkbox" name="disabled" {% if user.disabled %} checked {% endif %}></td>
             <!-- <td class="user_timestamp">{{ user.timestamp }}</td> -->
+            <td class="user_disabled"><input type="checkbox" name="delete"></td> <!-- TODO Dorobić w JS okno wyskakujący czy na pewno -->
             <td><button class="btn btn-submit">Zmień dane</button></td>
         </tr>
     </form>
