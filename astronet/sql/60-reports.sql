@@ -1,6 +1,7 @@
 CREATE TABLE reports(
     id BIGSERIAL PRIMARY KEY,
     author bigint REFERENCES users(id),
+    post bigint REFERENCES posts(id),
     type varchar(20), --typo, link not active, lie, grammar...
 
     body varchar,
