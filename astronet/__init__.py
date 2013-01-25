@@ -40,8 +40,27 @@ def show_profile():
     return render_template('profile.html', posts=posts,
             real_name=session["real_name"], email=session["email"])
 
+@app.route('/reports/')
+@app.route('/reports/<string_id>')
+@login_required
+def show_reports(string_id=None):
+    """ Shows reports. Allows to manage reports (edit posts, 
+    correct errors). """
+    if session['role'] != 'admin':
+        flash(u'Nie masz wystarczających uprawnień.', 'error')
+        return redirect(url_for('home'))
+    if string_id == None:
+        reports = query_db('SELECT r.id, u.real_name as author, r.type, ' 
+        'r.timestamp, r.string_id FROM reports r, users u WHERE r.done=False AND '
+        'author=r.author ORDER BY timestamp')
+        return render_template('reports.html', reports=reports)
+    else:
+        report = query_db('SELECT u.real_name as real_name, '
+        ' p.title as title, r.string_id, r.type, r.body, r.timestamp '
+        ' FROM reports r, users u, posts p WHERE r.string_id=%s LIMIT 1'
+        ,(string_id,), one=True)
+        return render_template('show_report.html', report=report)
+    #TODO deleting reports and making them done; also showing done
+    #TODO redirecting to editing post
 
 
-        
-
-        

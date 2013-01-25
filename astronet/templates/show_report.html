@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="report_title">Gdzie: {{ report.title }}</div>
+<div class="report_views">Co: {{ report.type}}</div>
+<div class="report_author">Autor: {{ report.real_name}}</div>
+<div class="report_body">{{ report.body|safe }}</div>
+
+<div id="comments"></div>
+
+{% endblock %}
+
+
+
