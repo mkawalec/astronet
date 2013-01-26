@@ -3,10 +3,10 @@
 {% block body %}
 <table class="reports_table">
     <tr>
-        <td><a href="{{ url_for('show_reports') }}?sort_by=id{% if request.args['sort_by'] == 'id'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Id</a></td>
-        <td><a href="{{ url_for('show_reports') }}?sort_by=author{% if request.args['sort_by'] == 'author'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Autor</a></td>
-        <td><a href="{{ url_for('show_reports') }}?sort_by=type{% if request.args['sort_by'] == 'type'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Typ</a></td>
-        <td><a href="{{ url_for('show_reports') }}?sort_by=date{% if request.args['sort_by'] == 'date'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Data</a></td>
+        <td><a href="{{ url_for('show_reports',sort_by='id', desc=desc) }}">Id</a></td>
+        <td><a href="{{ url_for('show_reports',sort_by='author', desc=desc) }}">Autor</a></td>
+        <td><a href="{{ url_for('show_reports',sort_by='type', desc=desc) }}">Typ</a></td>
+        <td><a href="{{ url_for('show_reports',sort_by='date', desc=desc) }}">Data</a></td>
     </tr>
     {% for reports in reports %}
     <form method="get" action="{{ url_for('show_reports') }}">
@@ -15,8 +15,8 @@
             <td class="reports_id">{{ reports.id }}</td>
             <td class="reports_id">{{ reports.author }}</td>
             <td class="reports_type">{{ reports.type }}</td>
-            <td class="reports_timestamp">{{ reports.timestamp }}</td>
-            <td><a href="{{ url_for('show_reports')}}{{ reports.string_id}}">Pokaż raport</td>
+            <td class="reports_timestamp">{{ reports.date}}</td>
+            <td><a href="{{ url_for('show_reports', string_id=reports.string_id)}}">Pokaż raport</td>
         </tr>
     </form>
     {% endfor %}

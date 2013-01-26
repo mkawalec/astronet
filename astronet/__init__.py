@@ -41,7 +41,7 @@ def show_profile():
             real_name=session["real_name"], email=session["email"])
 
 @app.route('/reports/')
-@app.route('/reports/<string_id>')
+@app.route('/reports/<string_id>/')
 @login_required
 def show_reports(string_id=None):
     """ Shows reports. Allows to manage reports (edit posts, 
@@ -49,15 +49,30 @@ def show_reports(string_id=None):
     if session['role'] != 'admin':
         flash(u'Nie masz wystarczających uprawnień.', 'error')
         return redirect(url_for('home'))
+    keys = ['id', 'author', 'type', 'date']
+    sort_by = 'id'
+    if 'sort_by' in request.args:
+        if keys.index(request.args['sort_by']) != ValueError:
+            sort_by = request.args['sort_by']
+    if 'desc' in request.args:
+        if int(request.args['desc']):
+            desc = 1
+            sort_by += ' DESC'
+        else:
+            desc = 0
+            sort_by += ' ASC'
+    else:
+        desc = 0
     if string_id == None:
         reports = query_db('SELECT r.id, u.real_name as author, r.type, ' 
-        'r.timestamp, r.string_id FROM reports r, users u WHERE r.done=False AND '
-        'author=r.author ORDER BY timestamp')
-        return render_template('reports.html', reports=reports)
+        'r.timestamp as date, r.string_id FROM reports r JOIN users u ON u.id=r.author WHERE r.done=FALSE '
+        ' ORDER BY %s' % (sort_by))
+        return render_template('reports.html', reports=reports, desc=(int(desc)+1)%2)
     else:
-        report = query_db('SELECT u.real_name as real_name, '
-        ' p.title as title, r.string_id, r.type, r.body, r.timestamp '
-        ' FROM reports r, users u, posts p WHERE r.string_id=%s LIMIT 1'
+        report = query_db('SELECT u.real_name as real_name, p.title as '
+        ' title, r.string_id, r.type, r.body, r.timestamp FROM reports r '
+        ' JOIN users u ON (r.author=u.id) JOIN posts p ON (r.post=p.id) '
+        ' WHERE  r.string_id=%s LIMIT 1'
         ,(string_id,), one=True)
         return render_template('show_report.html', report=report)
     #TODO deleting reports and making them done; also showing done
