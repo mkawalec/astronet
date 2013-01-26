@@ -78,4 +78,25 @@ def show_reports(string_id=None):
     #TODO deleting reports and making them done; also showing done
     #TODO redirecting to editing post
 
-
+@app.route('/reports/delete/<string_id>/')
+@login_required
+def do_report(string_id=None):
+    """ Changes raport's status to DONE. """
+    if session['role'] != 'admin':
+        flash(u'Nie masz wystarczających uprawnień.', 'error')
+        return redirect(url_for('home'))
+    if string_id != None:
+        query_db('UPDATE reports SET done=TRUE WHERE string_id=%s', (string_id,))
+        return redirect(url_for('show_reports'))
+        
+@app.route('/reports/delete/<string_id>/')
+@login_required
+def delete_report(string_id=None):
+    """ Deletes raport. """
+    if session['role'] != 'admin':
+        flash(u'Nie masz wystarczających uprawnień.', 'error')
+        return redirect(url_for('home'))
+    if string_id != None:
+        query_db('DELETE FROM reports WHERE string_id=%s', (string_id,))
+        return redirect(url_for('show_reports'))
+        
