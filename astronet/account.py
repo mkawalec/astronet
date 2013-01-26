@@ -354,10 +354,17 @@ def show_admin_panel():
         if keys.index(request.args['sort_by']) != ValueError:
             sort_by = request.args['sort_by']
     if 'desc' in request.args:
-        sort_by += ' DESC'
+        if int(request.args['desc']):
+            desc = 1
+            sort_by += ' DESC'
+        else:
+            desc = 0
+            sort_by += ' ASC'
+    else:
+        desc = 0
     users = query_db('SELECT id, string_id, email, real_name, disabled, role, timestamp '
                      'FROM users ORDER BY %s' % (sort_by))
-    return render_template('admin.html', users=users)
+    return render_template('admin.html', users=users, desc=(int(desc)+1)%2)
 
 @app.route('/admin/manage_user/<string_id>/', methods=['GET','POST'])
 @login_required #TODO here admin_required decorator is needed IHMO

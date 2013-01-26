@@ -3,10 +3,10 @@
 {% block body %}
 <table class="users_table">
     <tr>
-        <td><a href="{{ url_for('show_admin_panel') }}?sort_by=id{% if request.args['sort_by'] == 'id'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Id</a></td>
-        <td><a href="{{ url_for('show_admin_panel') }}?sort_by=real_name{% if request.args['sort_by'] == 'real_name'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Imię i nazwisko</a></td>
-        <td><a href="{{ url_for('show_admin_panel') }}?sort_by=email{% if request.args['sort_by'] == 'email'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">E-mail</a></td>
-        <td><a href="{{ url_for('show_admin_panel') }}?sort_by=role{% if request.args['sort_by'] == 'role'%}{% if not request.args['desc']%}&desc=on{% endif %}{% endif %}">Rola</a></td>
+        <td><a href="{{ url_for('show_admin_panel',sort_by='id', desc=desc) }}">Id</a></td>
+        <td><a href="{{ url_for('show_admin_panel',sort_by='real_name', desc=desc) }}">Imię i nazwisko</a></td>
+        <td><a href="{{ url_for('show_admin_panel',sort_by='email', desc=desc) }}">E-mail</a></td>
+        <td><a href="{{ url_for('show_admin_panel',sort_by='role', desc=desc) }}">Rola</a></td>
         <!-- <td>Data rejestracji(?)</td> -->
     </tr>
     {% for user in users %}
