@@ -355,22 +355,22 @@ def show_admin_panel():
             sort_by = request.args['sort_by']
     if 'desc' in request.args:
         sort_by += ' DESC'
-    users = query_db('SELECT id, email, real_name, disabled, role, timestamp '
+    users = query_db('SELECT id, string_id, email, real_name, disabled, role, timestamp '
                      'FROM users ORDER BY %s' % (sort_by))
     return render_template('admin.html', users=users)
 
-@app.route('/admin/manage_user', methods=['GET', 'POST'])
-@login_required
-def manage_user():
+@app.route('/admin/manage_user/<string_id>/', methods=['GET','POST'])
+@login_required #TODO here admin_required decorator is needed IHMO
+def manage_user(string_id):
     if session['role'] != 'admin':
         flash(u'Nie masz wystarczających uprawnień.', 'error')
         return redirect(url_for('home'))
-
+    
+    
     roles = ['user', 'admin', 'redaktor']
     if request.method == 'POST':
-        user_id = int(request.form['user_id'])
         user = query_db('SELECT email, real_name, disabled, role '
-                        'FROM users WHERE id=%s', (user_id,), one=True)
+                        'FROM users WHERE string_id=%s', (string_id,), one=True)
         
         email = request.form['email'].strip()
         real_name = request.form['real_name'].strip()
@@ -379,8 +379,8 @@ def manage_user():
         delete = ('delete' in request.form)
 
         if len(real_name) != 0 and real_name != user['real_name']:
-            if query_db('UPDATE users SET real_name=%s WHERE id=%s',
-                        (real_name,user_id)):
+            if query_db('UPDATE users SET real_name=%s WHERE string_id=%s',
+                        (real_name,string_id)):
                 flash(u'Uaktualniono imię i naziwsko', 'success')
             else:
                 flash(u'Wystąpił błąd bazy danych', 'error')
@@ -397,7 +397,7 @@ def manage_user():
                 u'lub podany adres jest już zajęty', 'error')
         else:
              if query_db('UPDATE users SET email=%s WHERE '
-                    'id=%s', (email,user_id)):
+                    'string_id=%s', (email,string_id)):
                 flash(u'Uaktualniono adres email', 'success')
              else:
                 flash(u'Wystąpił błąd bazy danych', 'error')
@@ -406,8 +406,8 @@ def manage_user():
         if role == user['role']:
             pass
         elif role in roles:
-            if query_db('UPDATE users SET role=%s WHERE id=%s',
-                        (role, user_id)):
+            if query_db('UPDATE users SET role=%s WHERE string_id=%s',
+                        (role, string_id)):
                 flash(u'Uaktualniono rolę', 'success')
             else:
                 flash(u'Wystąpił błąd bazy danych', 'error')
@@ -416,25 +416,26 @@ def manage_user():
 
 
         if disabled != user['disabled']:
-            if query_db('UPDATE users SET disabled=%s WHERE id=%s',
-                        (disabled,user_id)):
+            if query_db('UPDATE users SET disabled=%s WHERE string_id=%s',
+                        (disabled,string_id)):
                 flash(u'Uaktualniono stan zablokowania', 'success')
             else:
                 flash(u'Wystąpił błąd bazy danych', 'error')
         
         # TODO: delete from database or mark deleted somewhere?
+        # in case of deleting an author, maybe safer is just to mark
+        # him as deleted (because what with his articles?)
         if delete:
-            if query_db('DELETE FROM users WHERE id=%s',
-                        (user_id,)):
+            if query_db('DELETE FROM users WHERE string_id=%s',
+                        (string_id,)):
                 flash(u'Użytkownik został usunięty', 'success')
             else:
                 flash(u'Wystąpił błąd bazy danych', 'error')
 
 
         return redirect(url_for('show_admin_panel'))
-    else:
-        user_id = int(request.args['user_id'])
-        user = query_db('SELECT id, email, real_name, disabled, role, timestamp '
-                        'FROM users WHERE id=%s', (user_id,), one=True)
-        return render_template('manage_user.html', user=user, roles=roles)
+    #else:
+    user = query_db('SELECT id, string_id, email, real_name, disabled, role, timestamp '
+                    'FROM users WHERE string_id=%s', (string_id,), one=True)
+    return render_template('manage_user.html',string_id=string_id, user=user, roles=roles)
 

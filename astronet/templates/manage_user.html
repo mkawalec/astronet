@@ -10,8 +10,8 @@
         <td>Usuń</td>
         <!-- <td>Data rejestracji(?)</td> -->
     </tr>
-    <form method="post" action="{{ url_for('manage_user') }}">
-        <input type="hidden" name="user_id" value="{{ user.id }}">
+    <form method="post" action="{{ url_for('manage_user', string_id=user.string_id) }}">
+        
         <tr class="user">
             <td class="user_real_name"><input type="text" name="real_name" value="{{ user.real_name }}"></td>
             <td class="user_email"><input type="text" name="email" value="{{ user.email }}"></td>
