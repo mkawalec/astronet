@@ -29,9 +29,9 @@ body {
     padding: 2px;
 }
 
-.tab-pane {
-    width: auto;
-}
+/*.tab-pane {
+     width: auto; 
+}*/
 
 #markdown_render {
     border: 1px dashed black;
