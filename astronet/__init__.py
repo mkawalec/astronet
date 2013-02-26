@@ -40,6 +40,17 @@ def show_profile():
     return render_template('profile.html', posts=posts,
             real_name=session["real_name"], email=session["email"])
 
+@app.route('/images/')
+@app.route('/images/<string_id>/')
+@login_required
+def show_images(string_id=None):
+    """ Shows images. Allows to add and manage images."""
+    title = None
+    source =  None
+    description =  None
+    return render_template('add_image.html' )
+
+
 @app.route('/reports/')
 @app.route('/reports/<string_id>/')
 @login_required
