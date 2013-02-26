@@ -15,6 +15,10 @@ Rzeczy do zrobienia, by było dobrze:
 9.  Nowa Struktura - Fotogaleria (lista zdjęć z podpisami zdjęć i podpisami slajdów)
 10. data ważności artykułu (np. data końca perseid, żeby przestał być wyświetlany w 
     kolumnie w kawałku dotyczącym wydazreń TERAZ typu zaćmienia, złączenia planet)
+11. komentarze: po dodaniu komentarza trzeba odświeżyć stronę, żeby wyświetliło
+    się polę do wpisania nowego; jeżeli usunięte komentarze nie są niczyimi
+    rodzicami, to usunąć z bazy, a nie pisać, że usunięty
+
 
 NOTE: Use #include clauses for coffeescript classes
 
