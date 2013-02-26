@@ -18,7 +18,8 @@ Rzeczy do zrobienia, by było dobrze:
 11. komentarze: po dodaniu komentarza trzeba odświeżyć stronę, żeby wyświetliło
     się polę do wpisania nowego; jeżeli usunięte komentarze nie są niczyimi
     rodzicami, to usunąć z bazy, a nie pisać, że usunięty
-
+12. priorytetowość newsa: (na podstawie której będą kolejkowane newsy, tak
+    aby nie wychodziło na raz 10, tylko co kilka godzin)
 
 NOTE: Use #include clauses for coffeescript classes
 
