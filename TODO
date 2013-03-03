@@ -20,6 +20,9 @@ Rzeczy do zrobienia, by było dobrze:
     rodzicami, to usunąć z bazy, a nie pisać, że usunięty
 12. priorytetowość newsa: (na podstawie której będą kolejkowane newsy, tak
     aby nie wychodziło na raz 10, tylko co kilka godzin)
+13. automatyczne rozwijanie skrotow: ESA, NASA... po najechaniu myszka albo
+    wybranie jednego z kilku wieloznacznych skrotow
+
 
 NOTE: Use #include clauses for coffeescript classes
 
