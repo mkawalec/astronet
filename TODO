@@ -22,7 +22,7 @@ Rzeczy do zrobienia, by było dobrze:
     aby nie wychodziło na raz 10, tylko co kilka godzin)
 13. automatyczne rozwijanie skrotow: ESA, NASA... po najechaniu myszka albo
     wybranie jednego z kilku wieloznacznych skrotow
-
+14. mail na bledy, ktory przekierowuje go do osob zajmujacych sie strona
 
 NOTE: Use #include clauses for coffeescript classes
 
