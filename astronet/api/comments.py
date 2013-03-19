@@ -1,6 +1,6 @@
 # coding=utf-8
 from ..api import api, auth_required
-from ..helpers import gen_filename, query_db, stringify
+from ..helpers import gen_filename, stringify
 from flask import request, jsonify,g 
 
 class TreeElement:

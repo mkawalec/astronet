@@ -1,5 +1,6 @@
 from sqlalchemy import (Column, Integer, String,
-        DateTime, Sequence, Boolean)
+        DateTime, Sequence, Boolean, Table,
+        ForeignKey)
 from sqlalchemy.orm import relationship, backref
 
 from .database import Base
@@ -103,7 +104,7 @@ class Post(Boilerplate, Base):
         self.title = title
         self.body = body
 
-        self.draft = False
+        self.draft = True 
         self.visits = 0
 
     def __repr__(self):
@@ -147,7 +148,7 @@ post_images = Table('post_images', Base.metadata,
 
 
 class Image(Boilerplate, Base):
-    __tablename__ = 'comments'
+    __tablename__ = 'images'
     id = Column(Integer, Sequence('images_id_seq'),
             primary_key=True)
 

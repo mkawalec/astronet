@@ -1,12 +1,17 @@
-from ..api import api, auth_required, query_db
+from ..api import api, auth_required
 from flask import (request, render_template, g, jsonify, abort)
 
+from ..database import db_session
+from ..models import User
+from sqlalchemy.orm.exc import NoResultFound
 
+from ..helpers import db_commit
 
 # User name operations
-@api.route('/user/name', methods=['GET', 'POST'])
+@api.route('/user/name', methods=['GET', 'PUT'])
+@api.route('/user/name/<string_id>', methods=['GET', 'PUT'])
 @auth_required
-def user_name():
+def user_name(string_id=None):
     """ If accessed by **GET** returns the user real_name, if known.
         
         If **POST** is used the real name for the currently authenticated
@@ -15,26 +20,28 @@ def user_name():
             request.form = {
                 'real_name': user_real_name
             }
-
-        The real_name is not used in any operations-critical part of the program
     """
-    if request.method == 'POST':
-        ret = query_db('UPDATE users SET real_name=%s WHERE id=%s',
-                      [(request.form['real_name']).strip(), g.uid])
-        if ret == 1:
-            return jsonify(status='succ')
-        elif ret == -1:
-            return jsonify(status='db_constraints_error')
-        return jsonify(status='db_error')
+    try:
+        if not string_id:
+            string_id = g.string_id
+
+        user = db_session.query(User).\
+            filter(User.string_id == string_id).one()
+    except NoResultFound:
+        # No such user exist
+        abort(404)
+
+    if request.method == 'PUT':
+        user.real_name = request.form['real_name']
+        return db_commit()
     
     if request.method == 'GET':
-        ret = query_db('SELECT real_name FROM users WHERE id=%s',
-                       [g.uid], one=True)
-        if ret == None:
-            return jsonify(status='db_null_error')
-        return jsonify(status='succ', real_name=ret['real_name'])
+        return jsonify(status='succ', 
+                real_name=user.real_name)
 
 # Email operations
+# TODO: Couple with confirmation codes
+'''
 @api.route('/user/email', methods=['GET', 'POST'])
 @auth_required
 def user_email():
@@ -60,23 +67,20 @@ def user_email():
             return jsonify(status='db_null_error')
         else:
             return jsonify(status='succ', email=email['email'])
+'''
 
 # Password change
 @api.route('/user/password', methods=['POST'])
 @auth_required
 def user_password():
     """ Enables the user to change her password """
-    passwd = query_db('SELECT salt,passwd FROM users WHERE id=%s',
-                    [g.uid], one=True)
-    if sha256(request.form['pass_old']+passwd['salt']+app.config['SALT']).hexdigest()!=passwd['passwd']:
-        # The old password is incorrect
-        return jsonify(status='old_pass_incorrect')
+    user = db_session.query(User).\
+            filter(User.string_id == g.string_id).one()
 
-    ret = query_db('UPDATE users SET passwd=%s WHERE id=%s',
-                   [sha256(request.form['pass1']+passwd['salt']+app.config['SALT']).hexdigest(),
-                    g.uid])
-    if ret == -1:
-        return jsonify(status='db_constraints_error')
-    elif ret == 0:
-        return jsonify(status='db_error')
-    return jsonify(status='succ')
+    ret = user.update_pass(request.form['pass_old'],
+            request.form['pass1'])
+    if ret:
+        return db_commit()
+    else:
+        abort(409)
+    

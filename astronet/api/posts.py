@@ -1,53 +1,111 @@
-from ..api import api, auth_required, query_db, gen_filename
+from ..api import api, auth_required, gen_filename
 from flask import (request, g, jsonify, abort)
-from ..helpers import stringify
+from ..helpers import (stringify, stringify_class, db_commit,
+        FoundExc, get_user)
 
 from markdown import markdown
+from functools import wraps
 
-@api.route('/post/<string_id>')
-def post(post=None, string_id=None):
-    """ Saves or gets a post """
-    if string_id:
-        ret = query_db('SELECT u.real_name AS author, p.title, p.body, p.string_id, '
-                       'p.timestamp, p.visits FROM posts p, users u WHERE '
-                       'p.draft=FALSE AND p.string_id=%s AND u.id=p.author', 
-                       [string_id], one=True)
-        if ret == None:
-            return jsonify(status='db_null_error')
+from ..database import db_session
+from ..models import Post, User
+from sqlalchemy.orm.ext import NoResultFound
+from sqlalchemy.orm import joinedload
 
-        ret['body'] = markdown(ret['body'])
-        ret = stringify(ret, one=True)
+def prepare_post(f):
+    @wraps(f)
+    def fn(*args, **kwargs):
+        try:
+            post = db_session.query(Post).\
+                options(joinedload(Post.authors)).\
+                filter(Post.string_id == kwargs['post_id']).one()
+            if request.method != 'GET':
+                if not g.string_id:
+                    abort(403)
+                try:
+                    user = db_session.query(User).\
+                        filter(User.string_id == g.string_id).one()
+                except NoResultFound:
+                    abort(409)
 
-        # Save the stats
-        query_db('UPDATE posts SET visits=visits+1 WHERE string_id=%s',
-                [string_id])
+                # Check if the currently accessing user has the rights
+                # to modify this post
+                if user.role != 'admin':
+                    for author in post.authors:
+                        if author.string_id == g.string_id:
+                            raise FoundExc()
+                    abort(403)
+            except NoResultFound:
+        abort(404)
+        except FoundExc:
+            pass
+        return f(*args, **kwargs, post=post, user=user)
+    return fn
 
-        return jsonify(status='succ', post=ret)
+@api.route('/post/<post_id>', methods=['GET', 'PUT', 'DELETE'])
+@prepare_post
+def post(post_id, post, user):
+    """ Updates, gets or deletes a post """
+    if request.method == 'GET':
+        return jsonify(post=stringify_class(post, one=True))
 
-@api.route('/post', methods=['POST', 'PUT'])
-@auth_required
-def save_post(post=None):
-    if post == None:
-        post = request.form
-    ret = None
-    print post
+    elif request.method == 'DELETE':
+        post.disabled = True
+        return db_commit()
 
-    if request.method == 'POST':
-        ret = query_db('INSERT INTO posts (author, title, lead, '
-                       'body, string_id) '
-                       'VALUES (%s, %s, %s, %s, %s)',
-                       (g.uid, post['title'], post['lead'],
-                        post['body'], gen_filename()))
     elif request.method == 'PUT':
-        ret = query_db('UPDATE posts SET title=%s, lead=%s, body=%s '
-                       'WHERE string_id=%s AND author=%s',
-                       (post['title'], post['lead'], post['body'],
-                       post['string_id'], g.uid))
-    if ret == 1:
-        return jsonify(status='succ')
-    elif ret == -1:
-        return jsonify(status='db_constraints_error')
-    return jsonify(status='db_error')
+        for prop in request.form:
+            post.__dict__[prop] = request.form[prop]
+        return db_commit()
+
+@api.route('/post/<post_id>/authors', methods=['GET', 'PUT', 'DELETE', 'POST'])
+@prepare_post
+def post_authors(string_id, post, user):
+    ''' Updates, gets or deletes post authors '''
+    
+    if request.method == 'GET':
+        return jsonify(authors=stringify_class(post.authors))
+
+    elif request.method == 'DELETE':
+        # Remove all the authors matching the criteria 
+        # from the authors list
+        for aid in request.form.getlist('ids'):
+            for author in post.authors:
+                if author.string_id == aid:
+                    post.authors.remove(author)
+                    break
+        return db_commit()
+
+    elif request.method == 'PUT':
+        users = db_session.query(User).\
+                filter(User.string_id.in_(request.form.getlist('ids'))).\
+                all()
+        post.authors = users
+        return db_commit()
+
+    elif request.method == 'POST':
+        users = db_session.query(User).\
+                filter(User.string_id.in_(request.form.getlist('ids'))).\
+                all()
+        post.authods.extend(users)
+        return db_commit()
+
+
+@api.route('/post', methods=['POST'])
+@auth_required
+@get_user
+def save_post(user):
+    ''' Saves a post '''
+    f = request.form
+
+    post = Post(f['title'], f['body'])
+    post.draft = False if f['draft'] == False
+
+    db_session.add(post)
+    db_session.flush()
+
+    post.authors.append(user)
+    return db_commit()
+
 
 
 @api.route('/post/preview', methods=['POST'])

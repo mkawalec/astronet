@@ -3,6 +3,8 @@ from flask import (g, redirect, url_for, flash, session, request)
 
 from . import app
 from .database import db_session
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import state
 
 from contextlib import closing
 
@@ -85,6 +87,20 @@ def login_required(f):
             return redirect(url_for('login', next=request.path))
         return f(*args, **kwargs)
     return decorated_function
+
+def get_user(f):
+    ''' Gets a current user and passes it as a \'user\' parameter
+        to the function '''
+    @wraps(f)
+    def fn(*args, **kwargs):
+        try:
+            user = db_session.query(User).\
+                    filter(User.string_id == g.string_id).one()
+        except NoResultFound:
+            abort(500)
+
+        return f(*args, **kwargs, user=user)
+    return fn
 
 def create_query(feed):
     """ Creates a full-text query from user-provided text data in *feed* """
@@ -177,3 +193,44 @@ def url_for_other_page(page):
     args['page'] = page
     return url_for(request.endpoint, **args)
 app.jinja_env.globals['url_for_other_page'] = url_for_other_page
+
+def db_commit():
+    try:
+        db_session.commit()
+        return jsonify(status='succ')
+    except IntegrityError:
+        db_session.rollback()
+        return abort(409)
+
+def stringify_class(results, one=False):
+    ret = None
+    if not one:
+        ret = []
+        for result in results:
+            ret.append(stringify_one(result))
+
+    else:
+        ret = stringify_one(results)
+    return ret
+
+def stringify_one(result):
+    obj = {}
+    for el in result.__dict__:
+        if el == 'id' or \
+                el == 'password' or \
+                el == 'password_swapped' or \
+                el == 'salt' or \
+                isinstance(result.__dict__[el], state.InstanceState):
+                    continue
+        elif isinstance(result.__dict__[el], datetime):
+            obj[el] = unicode(result.__dict__[el])
+        else:
+            obj[el] = result.__dict__[el]
+    return el
+
+class FoundExc(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __repr__(self):
+        return self.value
+
