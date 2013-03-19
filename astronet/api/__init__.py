@@ -1,6 +1,9 @@
 # coding=utf-8
 from .. import app
-from ..helpers import query_db, login_required, gen_filename
+from ..helpers import login_required, gen_filename
+from ..database import db_session
+from ..models import User
+
 from flask import (Blueprint, render_template,
         abort, request, Response, g, jsonify, session)
 from hashlib import sha256
@@ -8,20 +11,17 @@ from functools import wraps
 
 from datetime import datetime, timedelta
 
-from psycopg2.extensions import adapt
-
+from sqlalchemy.orm.exc import NoResultFound
 
 api = Blueprint('api', __name__,
                         template_folder='../templates/api')
 
-def log_me_in(uid,email,string_id,real_name,role):
+def log_in(user):
     """Automatically logging the user """
     session['logged_in'] = True
-    session['uid'] = uid
-    session['email'] = email
-    session['string_id'] = string_id
-    session['real_name'] = real_name
-    session['role'] = role
+    session['string_id'] = user.string_id
+    session['email'] = user.email
+    session['real_name'] = user.real_name
                         
 def check_auth(username='', password=''):
     """ Authentication checker. Works both for browsers autenticating
@@ -31,29 +31,20 @@ def check_auth(username='', password=''):
     # If the user has a session (ie. is accessing the api
     # through a logged in browser), allow her to proceed
     if 'logged_in' in session:
-        print True
         if session['logged_in'] == True:
-            #TODO tutaj powinno sie dopisac 
-            #real_name, string_id etc czy g nie obsuguje tego?
             g.email = session['email']
-            g.uid = session['uid']
+            g.string_id = session['string_id']
             return True
 
     # If the API is accessed programmatically, ask about the
     # password
-    passwd = query_db('SELECT passwd FROM users WHERE uname=%s LIMIT 1',
-            (username,), one=True)
-    if passwd == None:
+    try:
+        user = db_session.query(User).\
+                filter(User.email == username).one()
+    except NoResultFound:
         return False
-    passwd = passwd['passwd']
-    
-    if passwd == (sha256(password + app.config['SALT']).hexdigest()):
-        g.username = username
-       #TODO osochodzi? UNAME - nie ma czegoś takiego w bazie?!
-        g.uid = query_db('SELECT id FROM users WHERE uname=%s LIMIT 1',
-                         (username,), one=True)['id']
-        return True
-    return False
+
+    return user.check_pass(password)
 
 
 def authenticate():
