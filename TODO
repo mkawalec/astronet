@@ -1,7 +1,9 @@
 Rzeczy do zrobienia, by było dobrze:
 1.  Dodać wrzucanie obrazków do postów
 2.  Poprawić panel administracyjny i ustawienia konta ([Daniel]co dokładnie? ) 
-3.  Zmigrować na WTFforms ([Daniel] nie mogę nigdzie znaleźć dlaczego to jest fajne)
+3.  Zmigrować na WTFforms ([Daniel] nie mogę nigdzie znaleźć dlaczego to
+jest fajne):
+[Michał] Bo wprowadza dziedziczenie i łatwośc zarządzania do formularzy
 4.  Zobaczyć jak ten nowy kod się sprawuje
 5.  Zrobić zgłaszanie błędów w artykule. Przyda się tak czy inaczej,
     a przy przerzucaniu bazy pewnie będą jakieś błędy, więc ludzie 
