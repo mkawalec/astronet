@@ -1,109 +1,34 @@
 # coding=utf-8
-from astronet import app
 from flask import (g, redirect, url_for, flash, session, request)
+
+from . import app
+from .database import db_session
 
 from contextlib import closing
 
-import psycopg2
-from psycopg2.pool import ThreadedConnectionPool
-
 from hashlib import sha256
 from base64 import b64encode
+import pylibmc
 
 from functools import wraps
-
 from random import randint
-
 from glob import glob
 
-from multiprocessing import Process
-from subprocess import call
-
-devnull = open('/dev/null', 'w')
-
-# Creating a database connection pool
-pool = ThreadedConnectionPool(20, 100, dsn='dbname='+app.config['DB']+\
-        ' user=postgres port='+app.config['DB_PORT'])
-
-def connect_db():
-    """ Connect to the database and return the connection object """
-    return pool.getconn()
-
-def init_db():
-    """ Initialises (creates) a database, useful for testing """
-    create = Process(target=create_db, args=(app.config['DB'],))
-    create.start()
-    create.join()
-
-    with closing(connect_db()) as db:
-        files = glob('/home/michal/build/startup/srv/srv/sql/*')
-        files.sort()
-        files = files[1:len(files)]
-
-        for table in files:
-            with app.open_resource(table) as f:
-                db.cursor().execute(f.read())
-                db.commit()
-
-def destroy_db():
-    """ Removes the database """
-    destroy = Process(target=remove_db, args=(app.config['DB'],))
-    destroy.start()
-    destroy.join()
-
-def create_db(dbname):
-    call("echo \"CREATE DATABASE "+dbname+" ENCODING 'UTF8' "
-         "TEMPLATE template0\"|psql -U postgres", 
-         stdout=devnull, stderr=devnull, shell=True)
-
-def remove_db(db_name):
-    call("echo 'DROP DATABASE "+db_name+"'|psql -U postgres", 
-        stdout=devnull, stderr=devnull, shell=True)
 
 @app.before_request
 def before_request():
-    """ Stuff executed before the request. Sets up the database connection """
-    g.db = connect_db()
-    g.db.set_client_encoding('UTF8')
-    g.db_cursor = g.db.cursor()
-    psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, g.db_cursor)
+    """ Stuff executed before the request. Sets up the cache """
+    g.cache = pulibmc.Client(['127.0.0.1'], binary=True,
+            behaviors={'tcp_nodelay': True,
+                       'ketama': True})
+
+    g.debug = app.debug
 
 
 @app.teardown_request
 def teardown_request(exception):
     """ Stuff executed at the end of request. Disconnects from the database """
-    pool.putconn(g.db)
-
-
-def query_db(query, args=(), one=False):
-    """ A database interface proxy. Returns a list of dictionaries
-        with dictionary keys corresponding to column names. 
-
-        if *one* is True, only the first result is returned as
-        a dictionary (NOT a list having one element)
-    """
-    cursor = g.db_cursor
-    try:
-        cursor.execute(query, args)
-    except psycopg2.IntegrityError:
-        ## Constraints not met
-        g.db.rollback()
-        return -1
-
-    g.db.commit()
-
-    try:
-        rv = [
-                dict((cursor.description[idx][0], value)
-                 for idx, value in enumerate(row)
-                ) for row in cursor.fetchall()]
-    except psycopg2.ProgrammingError:
-        #print 'Nothing to fetch'
-        return 1
-    except:
-        return 0
-    
-    return (rv[0] if rv else None) if one else rv
+    db_session.remove()
 
 def gen_filename(length=12):
     """ Generates a (rougly) random string of a given length
@@ -112,7 +37,7 @@ def gen_filename(length=12):
         The default works well for situations when a reasonable 
         entropy is needed (filenames?)
     """
-    filename = ''
+    filename = []
     chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
              'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'w', 'x',
              'y', 'q', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -121,8 +46,8 @@ def gen_filename(length=12):
              '6', '7', '8', '9', '0']
     
     for i in range(length):
-        filename += chars[randint(0, len(chars)-1)]
-    return filename
+        filename.append(chars[randint(0, len(chars)-1)])
+    return ''.join(filename)
 
 ## Sends to the client a StringIO object not analysing
 ## its contents in any way - it will be base64
@@ -167,6 +92,9 @@ def create_query(feed):
     
     query = ''
     for (i,word) in enumerate(words):
+        if '|' in word:
+            # We don't want weird words
+            continue
         if len(word) > 2:
             if i != 0 and len(query) > 0:
                 query += ' | '
