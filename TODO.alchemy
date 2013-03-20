@@ -1,3 +1,14 @@
 - Finish purging view-related functions
 - Add comprehensive tests to all the backend functions
 - Do the interface:D
+
+Removed functionality that must exist:
+- registration, sending of the registration email and 
+  activating the account
+- altering the user account details: name, email (with confirmation),
+  password, role, state
+- tags added to posts
+- mailing functionality - sending notification emails (with subscriptions
+  by a user)
+- babel translations
+- resetting password
