@@ -21,7 +21,7 @@ from markdown import markdown
 @app.before_request
 def before_request():
     """ Stuff executed before the request. Sets up the cache """
-    g.cache = pulibmc.Client(['127.0.0.1'], binary=True,
+    g.cache = pylibmc.Client(['127.0.0.1'], binary=True,
             behaviors={'tcp_nodelay': True,
                        'ketama': True})
 

@@ -3,7 +3,7 @@ from __future__ import division
 from flask import (Flask, request, redirect, url_for, abort,
         render_template, flash, jsonify, g, session, send_file)
 
-from .. import app
+from . import app
 
 import json
 

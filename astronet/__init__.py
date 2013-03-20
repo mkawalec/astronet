@@ -10,13 +10,13 @@ import json
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 
-from astronet.api import api, post, get_posts, get_drafts
+from .api import api
 app.register_blueprint(api, url_prefix='/api')
 
 from helpers import *
 from posts import *
 
 @app.route('/')
-def home(page):
+def home():
     """ Return the homepage template """
     return render_template('home.html')
