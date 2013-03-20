@@ -16,6 +16,7 @@ from functools import wraps
 from random import randint
 from glob import glob
 
+from markdown import markdown
 
 @app.before_request
 def before_request():
@@ -99,7 +100,7 @@ def get_user(f):
         except NoResultFound:
             abort(500)
 
-        return f(*args, **kwargs, user=user)
+        return f(*args,user=user, **kwargs)
     return fn
 
 def create_query(feed):
@@ -214,6 +215,10 @@ def stringify_class(results, one=False):
     return ret
 
 def stringify_one(result):
+    ''' Stringifies an instance of the class,
+        ignoring the masked methods and caching 
+        post body rendering '''
+
     obj = {}
     for el in result.__dict__:
         if el == 'id' or \
@@ -224,6 +229,13 @@ def stringify_one(result):
                     continue
         elif isinstance(result.__dict__[el], datetime):
             obj[el] = unicode(result.__dict__[el])
+        elif el == 'body':
+            rv = g.cache.get('astronet-post'+obj[string_id])
+            if not rv:
+                rv = markdown(resul.__dict__[el])
+                g.cache.set('astronet-post'+obj[string_id],
+                        rv, time=60*5)
+            obj[el] = rv
         else:
             obj[el] = result.__dict__[el]
     return el
