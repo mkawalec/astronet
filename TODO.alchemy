@@ -12,3 +12,9 @@ Removed functionality that must exist:
   by a user)
 - babel translations
 - resetting password
+
+We define what applets we want included on the template level
+with something like data-applet='posts-display'. Then the hashtags are used 
+to determine which template to display and the template itself 
+defines the applets it uses (there is a loop over all elements having a
+data-applet attribute)
