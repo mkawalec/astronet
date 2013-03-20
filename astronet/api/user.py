@@ -39,36 +39,6 @@ def user_name(string_id=None):
         return jsonify(status='succ', 
                 real_name=user.real_name)
 
-# Email operations
-# TODO: Couple with confirmation codes
-'''
-@api.route('/user/email', methods=['GET', 'POST'])
-@auth_required
-def user_email():
-    """ Either **GET** s the currently set email or enables the user
-        to **POST** a new one
-    """
-    # Update the email
-    if request.method == 'POST':
-        ret = query_db('UPDATE users SET email=%s WHERE id=%s',
-                       [(request.form['email']).strip(), g.uid])
-        if ret == 1:
-            return jsonify(status='succ')
-        elif ret == -1:
-            return jsonify(status='db_constraints_error')
-        return jsonify(status='db_error')
-    
-    # Get the email
-    if request.method == 'GET':
-        email = query_db('SELECT email FROM users WHERE id=%s',
-                         [g.uid], one=True)
-
-        if 'email' not in email:
-            return jsonify(status='db_null_error')
-        else:
-            return jsonify(status='succ', email=email['email'])
-'''
-
 # Password change
 @api.route('/user/password', methods=['POST'])
 @auth_required
