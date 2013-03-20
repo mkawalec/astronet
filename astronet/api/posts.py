@@ -121,7 +121,8 @@ def post_preview():
 def get_posts(author_id=None):
     ''' Return all posts by a given author or just all
         posts generally '''
-    posts = db_session.query(Post)
+    posts = db_session.query(Post).\
+            filter(Post.disabled == False)
 
     if author_id:
         posts = posts.filter(Post.string_id == author_id) 

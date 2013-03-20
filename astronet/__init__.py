@@ -14,7 +14,6 @@ from astronet.api import api, post, get_posts, get_drafts
 app.register_blueprint(api, url_prefix='/api')
 
 from helpers import *
-from account import *
 from posts import *
 
 @app.route('/')
