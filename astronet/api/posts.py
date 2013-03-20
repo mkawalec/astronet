@@ -1,7 +1,7 @@
-from ..api import api, auth_required, gen_filename
+from ..api import api, auth_required
 from flask import (request, g, jsonify, abort)
 from ..helpers import (stringify, stringify_class, db_commit,
-        FoundExc, get_user)
+        FoundExc, get_user, gen_filename)
 
 from markdown import markdown
 from functools import wraps

@@ -6,7 +6,6 @@ from ..models import User
 
 from flask import (Blueprint, render_template,
         abort, request, Response, g, jsonify, session)
-from hashlib import sha256
 from functools import wraps
 
 from datetime import datetime, timedelta
@@ -23,7 +22,7 @@ def log_in(user):
     session['email'] = user.email
     session['real_name'] = user.real_name
                         
-def check_auth(username='', password=''):
+def check_auth(username=None, password=None):
     """ Authentication checker. Works both for browsers autenticating
         with cookies and Basic HTTP Auth requests
     """
@@ -44,7 +43,10 @@ def check_auth(username='', password=''):
     except NoResultFound:
         return False
 
-    return user.check_pass(password)
+    ret = user.check_pass(password)
+    if ret:
+        log_in(user)
+    return ret
 
 
 def authenticate():
@@ -75,6 +77,7 @@ def auth_required(f):
 from user import *
 from posts import *
 from comments import *
+from account import *
 
 ################### Misc API
 
