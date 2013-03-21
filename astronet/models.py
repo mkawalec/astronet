@@ -22,8 +22,10 @@ class Boilerplate:
         self.disabled = False
 
     def __setattr__(self, name, value):
+        # Without accessing __dict__s we would get
+        # a forkbomb of doom
+        self.__dict__['edition_timestamp'] = datetime.now()
         self.__dict__[name] = value
-        self.edition_timestamp = datetime.now()
 
 class User(Boilerplate, Base):
     __tablename__ = 'users'
@@ -129,8 +131,7 @@ class Comment(Boilerplate, Base):
 
     parent_id = Column(Integer, ForeignKey('comments.id'),
             nullable=True)
-    parent = relationship('Comment',
-            backref=backref('child', order_by=id))
+    parent = relationship('Comment')
 
     def __init__(self, body, author, post, parent=None):
         super(Comment, self).__init__()

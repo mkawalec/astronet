@@ -37,6 +37,7 @@ class TestCase(unittest.TestCase):
              stderr=devnull)
         call("cat astronet/sql/*.sql|psql -U postgres -d %s" %
                 (self.db), shell=True, stdout=devnull, stderr=devnull)
+        astronet.database.rebind()
 
         init_db()
         setup_db()
@@ -44,12 +45,19 @@ class TestCase(unittest.TestCase):
 
 ### Decorators    
 def new_db(f):
+    ''' Requests a new database to be created for the test '''
 
     @wraps(f)
     def create_new(*args, **kwargs):
+        if 'not_create' in kwargs and \
+                kwargs['not_create']:
+                    ''' Sometimes we don't want a new database '''
+                    del kwargs['not_create']
+                    return f(*args, **kwargs)
+
         args[0].new_db = True
         TestCase.create_db(args[0])
         return f(*args, **kwargs)
     return create_new
 
-from homepage import *
+from users import *

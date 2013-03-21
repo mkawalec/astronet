@@ -1,11 +1,13 @@
 from . import app
-from flask import (request, render_template, g, jsonify, abort)
+from flask import (request, render_template, g, jsonify, abort,
+        session)
 
 from .database import db_session
 from .models import User
 from sqlalchemy.orm.exc import NoResultFound
 
-from .helpers import db_commit, auth_required
+from .helpers import (db_commit, auth_required,
+        stringify_class, get_user)
 
 # User name operations
 @app.route('/user/name', methods=['GET', 'PUT'])
@@ -53,4 +55,33 @@ def user_password():
         return db_commit()
     else:
         abort(409)
+
+@app.route('/user/<string_id>')
+@app.route('/user')
+@get_user
+def get_user(user, string_id=None):
+    if not string_id:
+        ''' Only enable the user to not specify the string_id if
+            the user is logged in. In such a case return details of
+            this user. 
+        '''
+        if user:
+            string_id = user.string_id
+        else:
+            abort(400)
+
+    try:
+        got_user = db_session.query(User)
+
+        if user and user.role != 'admin':
+            ''' Only admins can see disabled users '''
+            got_user = got_user.\
+                    filter(User.disabled == False)
+
+        got_user = got_user.\
+            filter(User.string_id == string_id).one()
+    except NoResultFound:
+        abort(404)
+    return jsonify(status='succ', user=stringify_class(got_user, one=True))
+
     

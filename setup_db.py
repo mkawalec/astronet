@@ -7,12 +7,17 @@ from astronet import app
 from sqlalchemy.orm.exc import NoResultFound
 
 def setup_db():
-        user = User('test@test.com', 'Test User', 'qwerty')
-        user.role = 'admin'
-        user.activated = True
+    admin = User('admin@test.com', 'Test Admin', 'qwerty')
+    admin.role = 'admin'
+    admin.activated = True
 
-        db_session.add(user)
-        db_session.commit()
+    db_session.add(admin)
+
+    user = User('user@test.com', 'Test User', 'qwerty')
+    user.activated = True
+    db_session.add(user)
+
+    db_session.commit()
 
 if __name__ == '__main__':
     init_db()

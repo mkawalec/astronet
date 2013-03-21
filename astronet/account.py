@@ -1,6 +1,6 @@
 from . import app
-from helpers import auth_required, log_in
-from flask import request, g, jsonify, abort
+from helpers import auth_required
+from flask import request, g, jsonify, abort, session
 
 from .database import db_session
 from .models import User
@@ -22,10 +22,11 @@ def login():
         abort(403)
 
 @app.route('/logout')
+@auth_required
 def logout():
     if 'logged_in' in session:
         if session['logged_in']:
-            del sesson['logged_in']
+            del session['logged_in']
             if 'string_id' in session:
                 del session['string_id']
             if 'email' in session:
@@ -36,3 +37,10 @@ def logout():
             return jsonify(status='succ')
 
     abort(409)
+
+def log_in(user):
+    """Automatically logging the user """
+    session['logged_in'] = True
+    session['string_id'] = user.string_id
+    session['email'] = user.email
+    session['real_name'] = user.real_name

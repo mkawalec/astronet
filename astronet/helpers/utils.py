@@ -4,6 +4,10 @@ from ..database import db_session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import state
 
+from random import randint
+
+from datetime import datetime
+
 
 def gen_filename(length=12):
     """ Generates a (rougly) random string of a given length
@@ -133,7 +137,7 @@ def stringify_one(result):
             obj[el] = rv
         else:
             obj[el] = result.__dict__[el]
-    return el
+    return obj
 
 class FoundExc(Exception):
     def __init__(self, value):
