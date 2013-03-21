@@ -22,5 +22,7 @@ class UserTests(basic.BasicTests):
         rv = self.app.get('/user')
         assert rv.status_code == 200
         
+    
+
 
 

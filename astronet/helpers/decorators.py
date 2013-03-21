@@ -24,6 +24,20 @@ def get_user(f):
         return f(*args, user=user, **kwargs)
     return fn
 
+def get_string_id(f):
+    ''' If string_id is not provided tries to get
+        string_id of the current user. If it is unavailable,
+        a 400 BAD REQUEST is raised. '''
+    @wraps(f)
+    def fn(*args, **kwargs):
+        if 'string_id' not in kwargs:
+            if kwargs['user']:
+                return f(*args, string_id=kwargs['user'].string_id, **kwargs)
+            else:
+                abort(400)
+        return f(*args, **kwargs)
+    return fn
+
 def localize(f):
     @wraps(f)
     def fn(*args, **kwargs):
