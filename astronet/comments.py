@@ -4,8 +4,8 @@ from helpers import (gen_filename, stringify,
         db_commit, stringify_class, auth_required)
 from flask import request, jsonify,g 
 
-from database import db_session
-from models import Comment, Post, User
+from .database import db_session
+from .models import Comment, Post, User
 from sqlalchemy.orm.exc import NoResultFound
 
 class TreeElement:

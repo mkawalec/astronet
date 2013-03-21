@@ -1,11 +1,11 @@
 from . import app
 from flask import (request, render_template, g, jsonify, abort)
 
-from database import db_session
-from models import User
+from .database import db_session
+from .models import User
 from sqlalchemy.orm.exc import NoResultFound
 
-from helpers import db_commit, auth_required
+from .helpers import db_commit, auth_required
 
 # User name operations
 @app.route('/user/name', methods=['GET', 'PUT'])

@@ -1,13 +1,13 @@
 from . import app
 from flask import (request, g, jsonify, abort)
-from helpers import (stringify, stringify_class, db_commit,
+from .helpers import (stringify, stringify_class, db_commit,
         FoundExc, get_user, gen_filename, auth_required)
 
 from markdown import markdown
 from functools import wraps
 
-from database import db_session
-from models import Post, User
+from .database import db_session
+from .models import Post, User
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import joinedload
 from sqlalchemy import desc

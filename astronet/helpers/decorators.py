@@ -1,9 +1,8 @@
 from functools import wraps
 
+from flask import abort, session, g, request
 from ..database import db_session
 from ..models import User
-
-from flask import abort, session, g, request
 
 def get_user(f):
     ''' Gets a current user and passes it as a \'user\' parameter
@@ -77,3 +76,4 @@ def authenticate():
     'Could not verify your access level for that URL.\n'
     'You have to login with proper credentials', 401,
     {'WWW-Authenticate': 'Basic realm="Login Required"'})
+

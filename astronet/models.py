@@ -4,7 +4,6 @@ from sqlalchemy import (Column, Integer, String,
 from sqlalchemy.orm import relationship, backref
 
 from .database import Base
-from .helpers import gen_filename
 from . import app
 
 from datetime import datetime
@@ -198,3 +197,5 @@ class ConfirmationCode(Boilerplate, Base):
         return '<ConfirmationCode %s, used: %s>' %\
                 (self.code, self.used)
 
+# Circular dependencies :(
+from .helpers import gen_filename

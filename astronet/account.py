@@ -1,9 +1,9 @@
 from . import app
-from helpers import auth, required, log_in
+from helpers import auth_required, log_in
 from flask import request, g, jsonify, abort
 
-from database import db_session
-from models import User
+from .database import db_session
+from .models import User
 from sqlalchemy.orm.exc import NoResultFound
 
 @app.route('/account/login', methods=['POST'])

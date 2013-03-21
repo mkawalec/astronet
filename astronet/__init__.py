@@ -1,6 +1,11 @@
 # coding=utf-8
-from helpers import gen_filename
-from flask import jsonify
+from flask import jsonify, Flask
+
+app = Flask(__name__)
+app.config.from_pyfile('config.cfg')
+
+import database
+import models
 
 import user
 import posts
@@ -8,9 +13,6 @@ import comments
 import account
 
 from helpers import auth_required
-
-app = Flask(__name__)
-app.config.from_pyfile('config.cfg')
 
 ################### Misc API
 
