@@ -3,7 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 from flask import url_for, g
-from flaskext.bable import gettext as _
+from flaskext.babel import gettext as _
 from .helpers import localize
 from .models import User
 

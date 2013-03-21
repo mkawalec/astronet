@@ -39,6 +39,7 @@ class User(Boilerplate, Base):
 
     role = Column(String(10))
     locale = Column(String(5))
+    activated = Column(Boolean)
 
     def __init__(self, email, real_name, password):
         super(User, self).__init__()
@@ -51,6 +52,8 @@ class User(Boilerplate, Base):
 
         self.role = 'user'
         self.locale = 'pl'
+
+        self.activated = False
 
     def __repr__(self):
         return '<User %s, %s>' % (self.email, self.real_name)

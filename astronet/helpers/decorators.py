@@ -1,8 +1,10 @@
 from functools import wraps
 
-from flask import abort, session, g, request
+from flask import abort, session, g, request, Response
 from ..database import db_session
 from ..models import User
+
+from flaskext.babel import refresh
 
 def get_user(f):
     ''' Gets a current user and passes it as a \'user\' parameter
@@ -16,6 +18,15 @@ def get_user(f):
             abort(500)
 
         return f(*args,user=user, **kwargs)
+    return fn
+
+def localize(f):
+    @wraps(f)
+    def fn(*args, **kwargs):
+        g.templang = args[0].user.locale
+        refresh()
+
+        return f(*args, **kwargs)
     return fn
 
 def auth_required(f):
