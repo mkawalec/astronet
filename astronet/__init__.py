@@ -1,9 +1,13 @@
 # coding=utf-8
 from flask import jsonify, Flask
+import os
 
 app = Flask(__name__)
 app.config.from_object('astronet.configs.default')
-app.config.from_envvar('ASTRONET_SETTINGS')
+
+if 'ASTRONET_SETTINGS' in os.environ and \
+        os.environ['ASTRONET_SETTINGS']:
+            app.config.from_envvar('ASTRONET_SETTINGS')
 
 import database
 import models
