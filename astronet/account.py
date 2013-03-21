@@ -1,11 +1,12 @@
-from ..api import api, auth_required, log_in
+from . import app
+from helpers import auth, required, log_in
 from flask import request, g, jsonify, abort
 
-from ..database import db_session
-from ..models import User
+from database import db_session
+from models import User
 from sqlalchemy.orm.exc import NoResultFound
 
-@api.route('/account/login', methods=['POST'])
+@app.route('/account/login', methods=['POST'])
 def login():
     try:
         user = db_session.query(User).\
@@ -20,7 +21,7 @@ def login():
     else:
         abort(403)
 
-@api.route('/logout')
+@app.route('/logout')
 def logout():
     if 'logged_in' in session:
         if session['logged_in']:

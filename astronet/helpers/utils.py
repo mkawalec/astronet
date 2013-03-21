@@ -1,37 +1,9 @@
-# coding=utf-8
-from flask import (g, redirect, url_for, flash, session, request)
+from flask import Response
 
-from . import app
-from .database import db_session
+from ..database import db_session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import state
 
-from contextlib import closing
-
-from hashlib import sha256
-from base64 import b64encode
-import pylibmc
-
-from functools import wraps
-from random import randint
-from glob import glob
-
-from markdown import markdown
-
-@app.before_request
-def before_request():
-    """ Stuff executed before the request. Sets up the cache """
-    g.cache = pylibmc.Client(['127.0.0.1'], binary=True,
-            behaviors={'tcp_nodelay': True,
-                       'ketama': True})
-
-    g.debug = app.debug
-
-
-@app.teardown_request
-def teardown_request(exception):
-    """ Stuff executed at the end of request. Disconnects from the database """
-    db_session.remove()
 
 def gen_filename(length=12):
     """ Generates a (rougly) random string of a given length
@@ -67,41 +39,6 @@ def send_base64(what):
             direct_passthrough=True, status='200 OK')
 
 
-def login_required(f):
-    """ Wraps a method so that it can only be ran by an authorized user.
-        It is used as follows::
-            
-            @login_required
-            def restricted_function():
-
-        .. NOTE::
-            Be aware that it doesn't check if user has any rights to the
-            given page, it only checks if she is logged in.
-    """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'logged_in' not in session:
-            flash('You must be logged in to access this place', 'info')
-            return redirect(url_for('login', next=request.path))
-        elif session['logged_in'] == False:
-            flash('You must be logged in to access this place', 'info')
-            return redirect(url_for('login', next=request.path))
-        return f(*args, **kwargs)
-    return decorated_function
-
-def get_user(f):
-    ''' Gets a current user and passes it as a \'user\' parameter
-        to the function '''
-    @wraps(f)
-    def fn(*args, **kwargs):
-        try:
-            user = db_session.query(User).\
-                    filter(User.string_id == g.string_id).one()
-        except NoResultFound:
-            abort(500)
-
-        return f(*args,user=user, **kwargs)
-    return fn
 
 def create_query(feed):
     """ Creates a full-text query from user-provided text data in *feed* """
@@ -153,48 +90,6 @@ def get_size(bb, sizex, sizey):
 
     return (int(width*mult), int(height*mult))
 
-from math import ceil
-
-
-class Pagination(object):
-    def __init__(self, page, per_page, total_count):
-        self.page = page
-        self.per_page = per_page
-        self.total_count = total_count
-
-    @property
-    def pages(self):
-        return int(ceil(self.total_count / float(self.per_page)))
-
-    @property
-    def has_prev(self):
-        return self.page > 1
-
-    @property
-    def has_next(self):
-        return self.page < self.pages
-
-    def iter_pages(self, left_edge=2, left_current=2,
-                   right_current=5, right_edge=2):
-        last = 0
-        for num in xrange(1, self.pages + 1):
-            if num <= left_edge or \
-               (num > self.page - left_current - 1 and \
-                num < self.page + right_current) or \
-               num > self.pages - right_edge:
-                if last + 1 != num:
-                    yield None
-                yield num
-                last = num
-
-def url_for_other_page(page):
-    """ Returns page with certain number. Used by pagination.
-    """
-    args = request.view_args.copy()
-    args['page'] = page
-    return url_for(request.endpoint, **args)
-app.jinja_env.globals['url_for_other_page'] = url_for_other_page
-
 def db_commit():
     try:
         db_session.commit()
@@ -245,4 +140,3 @@ class FoundExc(Exception):
         self.value = value
     def __repr__(self):
         return self.value
-

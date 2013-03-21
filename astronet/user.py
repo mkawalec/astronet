@@ -1,15 +1,15 @@
-from ..api import api, auth_required
+from . import app
 from flask import (request, render_template, g, jsonify, abort)
 
-from ..database import db_session
-from ..models import User
+from database import db_session
+from models import User
 from sqlalchemy.orm.exc import NoResultFound
 
-from ..helpers import db_commit
+from helpers import db_commit, auth_required
 
 # User name operations
-@api.route('/user/name', methods=['GET', 'PUT'])
-@api.route('/user/name/<string_id>', methods=['GET', 'PUT'])
+@app.route('/user/name', methods=['GET', 'PUT'])
+@app.route('/user/name/<string_id>', methods=['GET', 'PUT'])
 @auth_required
 def user_name(string_id=None):
     """ If accessed by **GET** returns the user real_name, if known.
@@ -40,7 +40,7 @@ def user_name(string_id=None):
                 real_name=user.real_name)
 
 # Password change
-@api.route('/user/password', methods=['POST'])
+@app.route('/user/password', methods=['POST'])
 @auth_required
 def user_password():
     """ Enables the user to change her password """

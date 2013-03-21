@@ -1,11 +1,11 @@
 # coding=utf-8
-from ..api import api, auth_required
-from ..helpers import (gen_filename, stringify, 
-        db_commit, stringify_class)
+from . import app
+from helpers import (gen_filename, stringify, 
+        db_commit, stringify_class, auth_required)
 from flask import request, jsonify,g 
 
-from ..database import db_session
-from ..models import Comment, Post, User
+from database import db_session
+from models import Comment, Post, User
 from sqlalchemy.orm.exc import NoResultFound
 
 class TreeElement:
@@ -55,7 +55,7 @@ def generate_tree(comments):
         ret.append(comment.serialize())
     return ret
 
-@api.route('/comment/<comment_id>', 
+@app.route('/comment/<comment_id>', 
         methods=['POST', 'PUT', 'GET', 'DELETE'])
 @auth_required
 def comments(comment_id=None):
@@ -113,7 +113,7 @@ def comments(comment_id=None):
                 comment=stringify_class(comment, one=True))
 
 
-@api.route('/comments/<post_id>')
+@app.route('/comments/<post_id>')
 def show_comments(post_id):
     comms = db_session.query(Comment).\
             options(joinedload(Comment.author)).\

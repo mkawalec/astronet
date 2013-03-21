@@ -1,20 +1,32 @@
 # coding=utf-8
-from __future__ import division
-from flask import (Flask, request, redirect, url_for, abort,
-        render_template, flash, jsonify, g, session, send_file)
-from flaskext.babel import Babel, refresh, gettext as _
+from helpers import gen_filename
+from flask import jsonify
 
-from markdown import markdown
+import user
+import posts
+import comments
+import account
 
-import json
-   
+from helpers import auth_required
+
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-babel = Babel(app)
 
-from .api import api
-app.register_blueprint(api, url_prefix='/api')
+################### Misc API
 
-from helpers import *
-from posts import *
+@app.route('/test')
+@auth_required
+def test():
+    """ A test function that always returns::
+
+            {
+                status: 'succ',
+                result: 'test'
+            }
+
+        .. NOTE:: 
+            It is intended to check if you can connect and authenticate 
+            with the site properly
+    """
+    return jsonify(status='succ', result='test')
 
