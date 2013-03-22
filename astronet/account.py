@@ -1,5 +1,5 @@
 from . import app
-from helpers import auth_required
+from helpers import auth_required, stringify_class
 from flask import request, g, jsonify, abort, session
 
 from .database import db_session
@@ -11,13 +11,16 @@ def login():
     try:
         user = db_session.query(User).\
             filter(User.email == request.form['email'].strip()).\
+            filter(User.disabled == False).\
+            filter(User.activated == True).\
             one()
     except NoResultFound:
         abort(404)
 
     if user.check_pass(request.form['password']):
         log_in(user)
-        return jsonify(status='succ')
+        return jsonify(status='succ', 
+                user=stringify_class(user, one=True))
     else:
         abort(403)
 
