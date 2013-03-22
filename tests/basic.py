@@ -10,19 +10,22 @@ class BasicTests(TestCase):
 
     @new_db
     def test_correct_login(self):
-        self.app.post('/account/login', data=dict(
+        details = self.app.post('/account/login', data=dict(
             email='admin@test.com',
             password='qwerty'))
         rv = self.app.get('/test')
         assert rv.status_code == 200
+        return details
 
     @new_db
-    def test_standard_login(self):
-        self.app.post('/account/login', data=dict(
+    def test_standard_login(self, password='qwerty', test=True):
+        details = self.app.post('/account/login', data=dict(
             email='user@test.com',
-            password='qwerty'))
+            password=password))
         rv = self.app.get('/test')
-        assert rv.status_code == 200
+        if test:
+            assert rv.status_code == 200
+        return details
 
     @new_db
     def test_incorrect_login(self):
@@ -44,10 +47,11 @@ class BasicTests(TestCase):
     def test_logout(self, login=True):
         if login:
             self.test_correct_login(not_create=True)
-        self.app.get('/logout')
+        details = self.app.get('/logout')
 
         rv = self.app.get('/test')
         assert rv.status_code == 403
+        return details
 
     
 

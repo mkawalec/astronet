@@ -18,6 +18,7 @@ def get_user(f):
                 raise NoResultFound
 
             user = db_session.query(User).\
+                    filter(User.disabled == False).\
                     filter(User.string_id == session['string_id']).one()
         except NoResultFound:
             user = None

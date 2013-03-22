@@ -37,7 +37,6 @@ class User(Boilerplate, Base):
     real_name = Column(String(50))
 
     password = Column(String(64))
-    password_swapped = Column(String(64))
     salt = Column(String(12))
 
     role = Column(String(10))
@@ -65,14 +64,11 @@ class User(Boilerplate, Base):
         self.password = sha256(password+self.salt+app.config['SALT']).\
                 hexdigest()
 
-        self.password_swapped = sha256(password.swapcase()+self.salt+app.config['SALT']).\
-                hexdigest()
-
     def check_pass(self, password):
         if sha256(password+self.salt+app.config['SALT']).hexdigest()\
                 == self.password or\
                 sha256(password.swapcase()+self.salt+app.config['SALT']).\
-                hexdigest() == self.password_swapped:
+                hexdigest() == self.password:
                     return True
         return False
 

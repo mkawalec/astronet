@@ -1,4 +1,4 @@
-from flask import Response
+from flask import Response, jsonify
 
 from ..database import db_session
 from sqlalchemy.exc import IntegrityError
