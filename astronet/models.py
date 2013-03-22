@@ -25,6 +25,7 @@ class Boilerplate:
         # Without accessing __dict__s we would get
         # a forkbomb of doom
         self.__dict__['edition_timestamp'] = datetime.now()
+        Base.__setattr__(self, name, value)
         self.__dict__[name] = value
 
 class User(Boilerplate, Base):
