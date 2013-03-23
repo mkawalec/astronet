@@ -69,7 +69,7 @@ def post_authors(string_id, post, user):
     elif request.method == 'DELETE':
         # Remove all the authors matching the criteria 
         # from the authors list
-        for aid in request.form.getlist('ids'):
+        for aid in request.form.getlist('ids[]'):
             for author in post.authors:
                 if author.string_id == aid:
                     post.authors.remove(author)
@@ -78,14 +78,14 @@ def post_authors(string_id, post, user):
 
     elif request.method == 'PUT':
         users = db_session.query(User).\
-                filter(User.string_id.in_(request.form.getlist('ids'))).\
+                filter(User.string_id.in_(request.form.getlist('ids[]'))).\
                 all()
         post.authors = users
         return db_commit()
 
     elif request.method == 'POST':
         users = db_session.query(User).\
-                filter(User.string_id.in_(request.form.getlist('ids'))).\
+                filter(User.string_id.in_(request.form.getlist('ids[]'))).\
                 all()
         post.authods.extend(users)
         return db_commit()
