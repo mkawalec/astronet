@@ -99,16 +99,14 @@ def save_post(user):
     f = request.form
 
     post = Post(f['title'], f['body'])
-    if f['draft'] == False:
+    if 'draft' in f and f['draft'] == False:
         post.draft = False 
 
     db_session.add(post)
     db_session.flush()
 
     post.authors.append(user)
-    return db_commit()
-
-
+    return db_commit(post)
 
 @app.route('/post/preview', methods=['POST'])
 @auth_required
@@ -118,21 +116,46 @@ def post_preview():
 
 @app.route('/posts/<author_id>')
 @app.route('/posts')
-def get_posts(author_id=None):
+@get_user
+def get_posts(user=None, author_id=None):
     ''' Return all posts by a given author or just all
         posts generally '''
     posts = db_session.query(Post).\
+            options(joinedload(Post.authors)).\
             filter(Post.disabled == False)
 
     if author_id:
-        posts = posts.filter(Post.string_id == author_id) 
-    if request.args.get('drafts') == True:
+        posts = posts.\
+                join(User).filter(User.string_id == author_id)
+
+    if bool(request.args.get('draft')) == True:
+        if not user:
+            abort(403)
+        if user.role != 'admin':
+            if author_id and author_id != user.string_id:
+                abort(403)
+            posts = posts.\
+                    join(Post.authors).filter(User.string_id == user.string_id)
         posts = posts.filter(Post.draft == True)
     else:
         posts = posts.filter(Post.draft == False)
 
+    limit = request.args.get('limit')
+    if not limit or limit > 30:
+        limit = 30
+
+    after = request.args.get('after')
+    if after:
+        stmt = db_session.query(User).\
+                filter(User.string_id == after).\
+                subquery()
+
+        posts = posts.\
+                filter(Post.id > stmt.c.id)
+    
     posts = posts.\
-            order_by(desc(Post.edition_timestamp)).\
+            order_by(desc(Post.timestamp)).\
+            limit(limit).\
             all()
 
-    return jsonify(status='succ', posts=posts)
+    return jsonify(status='succ', posts=stringify_class(posts))

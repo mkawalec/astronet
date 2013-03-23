@@ -13,14 +13,14 @@ class UserTests(basic.BasicTests):
         rv = self.app.get('/user')
         assert rv.status_code == 400
 
-        self.test_correct_login(not_create=True)
+        self.correct_login(not_create=True)
 
         rv = self.app.get('/user')
         assert rv.status_code == 200
 
-        self.test_logout(login=False, not_create=True)
+        self.logout(login=False, not_create=True)
 
-        self.test_standard_login(not_create=True)
+        self.standard_login(not_create=True)
         rv = self.app.get('/user')
         assert rv.status_code == 200
        
@@ -37,7 +37,7 @@ class UserTests(basic.BasicTests):
         assert data['users'][0]['real_name'] == 'Test User'
 
         # Test deleting the account
-        rv = self.test_standard_login(not_create=True)
+        rv = self.standard_login(not_create=True)
         string_id = json.loads(rv.data)['user']['string_id']
         rv = self.app.delete('/user')
         assert rv.status_code == 200
@@ -45,27 +45,27 @@ class UserTests(basic.BasicTests):
         rv = self.app.get('/test')
         assert rv.status_code == 403
 
-        rv = self.test_standard_login(not_create=True, test=False)
+        rv = self.standard_login(not_create=True, test=False)
         assert rv.status_code == 404
 
         # Test enabling the account
-        rv = self.test_correct_login(not_create=True)
+        rv = self.correct_login(not_create=True)
         assert rv.status_code == 200
         
         rv = self.app.post('/user/'+string_id)
         assert rv.status_code == 200
 
-        rv = self.test_logout(login=False, not_create=True)
+        rv = self.logout(login=False, not_create=True)
         assert rv.status_code == 200
 
-        rv = self.test_standard_login(not_create=True)
+        rv = self.standard_login(not_create=True)
         assert rv.status_code == 200
 
-        rv = self.test_logout(login=False, not_create=True)
+        rv = self.logout(login=False, not_create=True)
         assert rv.status_code == 200
 
         # Test changing the account
-        rv = self.test_correct_login(not_create=True)
+        rv = self.correct_login(not_create=True)
         assert rv.status_code == 200
 
         # That that indeed we cannot set the properties
@@ -100,8 +100,8 @@ class UserTests(basic.BasicTests):
 
         # Make sure that the standard user cannot
         # change roles
-        self.test_logout(login=False, not_create=True)
-        self.test_standard_login(not_create=True)
+        self.logout(login=False, not_create=True)
+        self.standard_login(not_create=True)
         rv = self.app.put('/user', data=dict(
             role='admin'))
         assert rv.status_code == 409
@@ -114,8 +114,8 @@ class UserTests(basic.BasicTests):
             password='qwerty1'))
         assert rv.status_code == 200
 
-        self.test_logout(login=False, not_create=True)
-        rv = self.test_standard_login(not_create=True, password='qwerty1')
+        self.logout(login=False, not_create=True)
+        rv = self.standard_login(not_create=True, password='qwerty1')
         assert rv.status_code == 200
 
         # Check that wrong password doesn't impact anything
@@ -130,7 +130,7 @@ class UserTests(basic.BasicTests):
         assert rv.status_code == 400
 
         # Check that the swapped case password works
-        self.test_logout(login=False, not_create=True)
-        self.test_standard_login(not_create=True, password='QWERTY1')
+        self.logout(login=False, not_create=True)
+        self.standard_login(not_create=True, password='QWERTY1')
 
 

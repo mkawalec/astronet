@@ -60,4 +60,5 @@ def new_db(f):
         return f(*args, **kwargs)
     return create_new
 
-from users import *
+#from users import *
+from posts import *

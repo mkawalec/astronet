@@ -71,7 +71,7 @@ def set_user_data(user, string_id):
 
             elif prop == 'email':
                 # TODO: implement
-                continue
+                abort(501)
 
             else:
                 if prop in change_user.__dict__:

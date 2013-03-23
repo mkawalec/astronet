@@ -1,4 +1,4 @@
-from flask import Response, jsonify
+from flask import Response, jsonify, g
 
 from ..database import db_session
 from sqlalchemy.exc import IntegrityError
@@ -7,6 +7,8 @@ from sqlalchemy.orm import state
 from random import randint
 
 from datetime import datetime
+from markdown import markdown
+import json
 
 
 def gen_filename(length=12):
@@ -94,13 +96,15 @@ def get_size(bb, sizex, sizey):
 
     return (int(width*mult), int(height*mult))
 
-def db_commit():
+def db_commit(obj=None):
     try:
         db_session.commit()
+        if obj:
+            return jsonify(string_id=obj.string_id)
         return jsonify(status='succ')
     except IntegrityError:
         db_session.rollback()
-        return abort(409)
+        abort(409)
 
 def stringify_class(results, one=False):
     ret = None
@@ -129,14 +133,19 @@ def stringify_one(result):
         elif isinstance(result.__dict__[el], datetime):
             obj[el] = unicode(result.__dict__[el])
         elif el == 'body':
-            rv = g.cache.get('astronet-post'+obj[string_id])
+            rv = g.cache.get('astronet-post-'+str(result.__dict__['string_id']))
             if not rv:
-                rv = markdown(resul.__dict__[el])
-                g.cache.set('astronet-post'+obj[string_id],
+                rv = markdown(result.__dict__[el])
+                g.cache.set('astronet-post-'+str(result.__dict__['string_id']),
                         rv, time=60*5)
             obj[el] = rv
         else:
-            obj[el] = result.__dict__[el]
+            try:
+                json.dumps(result.__dict__[el])
+                obj[el] = result.__dict__[el]
+            except TypeError:
+                obj[el] = stringify_class(result.__dict__[el])
+
     return obj
 
 class FoundExc(Exception):

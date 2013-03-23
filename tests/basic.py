@@ -9,7 +9,7 @@ class BasicTests(TestCase):
         assert rv.status_code == 403
 
     @new_db
-    def test_correct_login(self):
+    def correct_login(self):
         details = self.app.post('/account/login', data=dict(
             email='admin@test.com',
             password='qwerty'))
@@ -18,7 +18,7 @@ class BasicTests(TestCase):
         return details
 
     @new_db
-    def test_standard_login(self, password='qwerty', test=True):
+    def standard_login(self, password='qwerty', test=True):
         details = self.app.post('/account/login', data=dict(
             email='user@test.com',
             password=password))
@@ -28,7 +28,7 @@ class BasicTests(TestCase):
         return details
 
     @new_db
-    def test_incorrect_login(self):
+    def incorrect_login(self):
         rv = self.app.post('/account/login', data=dict(
             email='admin@test.com',
             password='wrong_pass'))
@@ -44,7 +44,7 @@ class BasicTests(TestCase):
         assert rv2.status_code == 403
         
     @new_db
-    def test_logout(self, login=True):
+    def logout(self, login=True):
         if login:
             self.test_correct_login(not_create=True)
         details = self.app.get('/logout')
