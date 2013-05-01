@@ -1,0 +1,6 @@
+- Get the client-side logging server-side: errors pushing from the client
+  (which will conveniently get rid of ie8 errors:) )
+- get the templates specify the plugin that goes in a given DOM element
+  by data-plugin (applet? widget?) attribute
+- wrap it all up in a neat little package and make it usable
+
