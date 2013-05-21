@@ -3,15 +3,15 @@
 {% block body %}
 <table class="users_table">
     <tr>
-        <td>Id</td>
-        <td>Imię i nazwisko</td>
-        <td>E-mail</td>
-        <td>Rola</td>
+        <td><a href="{{ url_for('show_admin_panel',sort_by='id', desc=desc) }}">Id</a></td>
+        <td><a href="{{ url_for('show_admin_panel',sort_by='real_name', desc=desc) }}">Imię i nazwisko</a></td>
+        <td><a href="{{ url_for('show_admin_panel',sort_by='email', desc=desc) }}">E-mail</a></td>
+        <td><a href="{{ url_for('show_admin_panel',sort_by='role', desc=desc) }}">Rola</a></td>
         <!-- <td>Data rejestracji(?)</td> -->
     </tr>
     {% for user in users %}
-    <form method="get" action="{{ url_for('manage_user') }}">
-        <input type="hidden" name="user_id" value="{{ user.id }}">
+<!--     <form method="get" action="{{ url_for('manage_user', string_id=user.string_id) }}"> -->
+        
         {% if user.disabled %}
         <tr class="disabled_user">
         {% else %}
@@ -22,21 +22,11 @@
             <td class="user_email">{{ user.email }}</td>
             <td class="user_role">{{ user.role }}</td>
             <!-- <td class="user_timestamp">{{ user.timestamp }}</td> -->
-            <td><button class="btn btn-submit">Zarządzaj użytkownikiem</button></td>
+            <td><a href="{{ url_for('manage_user', string_id=user.string_id) }}">Zarządzaj użytkownikiem</a></td>
+<!--             <td><button class="btn btn-submit">Zarządzaj użytkownikiem</button></td> -->
         </tr>
-    </form>
+<!--     </form> -->
     {% endfor %}
 </table><br>
-<form method="get">
-    Sortuj po: 
-    <select name="sort_by">
-        <option value="id">Id</option>
-        <option value="real_name">Imię i nazwisko</option>
-        <option value="email">E-mail</option>
-        <option value="role">Rola</option>
-    </select> 
-    <label><input type="checkbox" name="desc"> malejąco</label>
-    <button class="btn btn-submit">Sortuj</button>
-</form>
 {% endblock %}
 

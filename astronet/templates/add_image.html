@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<form method="post" action="{{ url_for('show_images') }}" enctype="multipart/form-data"> <!-- TODO: add accepted types of files http://www.kurshtml.edu.pl/html/selektor_plikow,formularze.html -->
+    <dl>
+        <dt><input type="file" name="file" />
+        <dt><input type="text" name="title" class="input input-large" placeholder="Tytuł obrazka" value="{{ title }}" />
+        <dt><input type="text" name="source" class="input input-large" placeholder="Źródło obrazka" value="{{ source }}"  />
+        <dt><input type="text" name="description" class="input input-large" placeholder="Opis"  value="{{ description }}" />
+    </dl>
+    <input type="submit" class="btn btn-primary" value="Dodaj" />
+</form>
+
+{% endblock %}

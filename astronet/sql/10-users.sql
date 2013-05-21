@@ -4,7 +4,7 @@ CREATE TABLE users (
     -- User email - some additional constraints here
     email varchar(50) UNIQUE,
     -- The 'real' name of the user
-    real_name varchar(50),
+    real_name varchar(50) DEFAULT 'None',
     -- User password
     passwd varchar,
     -- Salt, user-variable
